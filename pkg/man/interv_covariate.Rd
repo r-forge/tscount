@@ -1,0 +1,53 @@
+\name{interv_covariate}
+\alias{interv_covariate}
+\title{
+Describing intervention effects for time series with deterministic covariates
+}
+\description{
+This function generates covariates describing certain types of intervention effects.
+}
+\usage{
+interv_covariate(n, tau, delta)
+}
+\arguments{
+  \item{n}{
+integer value giving the number of observations the covariates should have.
+}
+  \item{tau}{
+integer vector giving the times where intervention effects occur.
+}
+  \item{delta}{
+numeric vector with constants specifying the type of intervention (see Details). Must be of the same length as \code{tau}.
+}
+}
+\details{
+The intervention effect occuring at time \eqn{\tau} is described by the covariate
+\deqn{X_t = \delta^{t-\tau} I_{[\tau,\infty)}(tau),}{X_t = \delta^(t-\tau) I(t>=\tau),}
+where \eqn{I_{[\tau,\infty)}(tau)}{I(t>=\tau)} is the indicator function which is 0 for \eqn{t < \tau} and 1 for \eqn{t \geq \tau}{t >= \tau}. The constant \eqn{\delta} with \eqn{0 \leq \delta \leq 1}{0 <= \delta <= 1} specifies the type of intervention. For \eqn{\delta = 0} the intervention has an effect only at the time of its occurence, for \eqn{0 < \delta < 1} the effect decays exponentially and for \eqn{\delta = 1} there is a constant effect of the intervention after its occurence.
+
+If \code{tau} and \code{delta} are vectors, one covariate is generated with \code{tau[1]} as \eqn{\tau} and \code{delta[1]} as \eqn{\delta}, another one for the second elements and so on.
+}
+\value{
+A matrix with \code{n} rows and \code{length(tau)} columns. The generated covariates describing the interventions are the columns of the matrix.
+}
+\references{
+Fokianos, K. and Fried, R. (2010) Interventions in INGARCH processes. \emph{Journal of Time Series Analysis} \bold{31(3)}, 210--225, \url{http://dx.doi.org/10.1111/j.1467-9892.2010.00657.x}.
+
+Liboschik, T., Kerschke, P., Fokianos, K. and Fried, R. (2013) Modelling interventions in INGARCH processes. \emph{SFB 823 Discussion Paper} \bold{03/13}, \url{http://hdl.handle.net/2003/29878}.
+}
+\author{
+Tobias Liboschik
+}
+\seealso{
+\code{\link{ingarch}} for fitting an INGARCH model.
+\code{\link[=interv_test.ingarch]{interv_test}}, \code{\link[=interv_detect.ingarch]{interv_detect}} and \code{\link[=interv_multiple.ingarch]{interv_multiple}} for tests on and detection of intervention effects.
+}
+\examples{
+interv_covariate(n=140, tau=c(84,100), delta=c(1,0))
+}
+\keyword{intervention}
+\keyword{outlier}
+\keyword{level shift}
+\keyword{change point}
+\keyword{structural break}
+

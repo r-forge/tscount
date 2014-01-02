@@ -1,0 +1,42 @@
+export(
+  ingarch,
+  ingarch.fit,
+  ingarch.mean,
+  ingarch.var,
+  ingarch.acf,
+  ingarch.se,
+  ingarch.sim,
+  interv_covariate,
+  interv_detect,
+  interv_multiple,
+  interv_test,
+  invertinfo,
+  scoring,
+  pit,
+  marcal
+)
+
+S3method(logLik, tsglm)
+S3method(marcal, tsglm)
+S3method(pit, tsglm)
+S3method(scoring, tsglm)  
+
+S3method(print, ingarch)
+S3method(residuals, ingarch)
+S3method(summary, ingarch)
+S3method(vcov, ingarch)
+S3method(predict, ingarch)
+S3method(plot, ingarch)
+S3method(interv_test, ingarch)
+S3method(interv_detect, ingarch)
+S3method(interv_multiple, ingarch)
+
+S3method(print, summary.ingarch)
+
+S3method(print, interv_test)
+
+S3method(print, interv_detect)
+S3method(plot, interv_detect)
+
+S3method(print, interv_multiple)
+S3method(plot, interv_multiple)
