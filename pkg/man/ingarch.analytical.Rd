@@ -63,8 +63,9 @@ Tobias Liboschik and Philipp Probst
 
 \examples{
 ingarch.mean(0.3, c(0.1,0.1), 0.1)
+\dontrun{
 ingarch.var(0.3, c(0.1,0.1), 0.1)
-ingarch.acf(0.3, c(0.1,0.1,0.1), 0.1, type="acf", lag.max=15)
+ingarch.acf(0.3, c(0.1,0.1,0.1), 0.1, type="acf", lag.max=15)}
 }
 
 \keyword{INGARCH}
