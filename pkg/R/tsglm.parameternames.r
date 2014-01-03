@@ -1,7 +1,7 @@
-ingarch.parameternames <- function(model){
+tsglm.parameternames <- function(model){
   p <- length(model$past_obs)
   q <- length(model$past_mean)
-  r <- ncol(model$xreg)
+  r <- if(!is.null(model$xreg)) ncol(model$xreg) else 0
   R <- seq(along=numeric(r)) #sequence 1:r if r>0 and NULL otherwise
   #Set names of parameters:
   parameternames <- c(

@@ -32,16 +32,16 @@ ingarch.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, xreg=NULL,
   q_max <- max(model$past_mean, 0)
   r <- ncol(model$xreg)
   R <- seq(along=numeric(r)) #sequence 1:r if r>0 and NULL otherwise
-  parameternames <- ingarch.parameternames(model)
+  parameternames <- tsglm.parameternames(model)
   init_default <- list(method="CSS", use=Inf, optim.method="BFGS", optim.control=list(maxit=25))
-  if(!all(names(init.control)%in%c(names(init_default), "intercept", "past_obs", "past_mean", "xreg"))) stop("There are unknown list elements in argument 'init'")
+  if(!all(names(init.control) %in% c(names(init_default), "intercept", "past_obs", "past_mean", "xreg"))) stop("There are unknown list elements in argument 'init'")
   init_default[names(init.control)] <- init.control #options given by user override the default
   init.control <- init_default #use these options in the following
   if(!is.null(final.control)){
     final_default <- list(constrained=list(outer.iterations=100, outer.eps=1e-05), optim.method="BFGS", optim.control=list(maxit=100, reltol=1e-11))
     final_default[names(final.control)] <- final.control  
     final.control <- final_default
-    if(!all(names(final.control)%in%names(final_default))) stop("There are unknown list elements in argument 'final.control'")
+    if(!all(names(final.control) %in% names(final_default))) stop("There are unknown list elements in argument 'final.control'")
   }
   if(!is.null(inter.control)){
     inter_default <- list(constrained=list(outer.iterations=5, outer.eps=1e-05), optim.method="Nelder-Mead", optim.control=list(maxit=20, reltol=1e-8))
@@ -49,42 +49,48 @@ ingarch.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, xreg=NULL,
     inter.control <- inter_default
     if(!all(names(inter.control)%in%names(inter_default))) stop("There are unknown list elements in argument 'inter.control'")
   }
+  
   ##############
   #Initial estimation:
   begin_init <- proc.time()["elapsed"]
   param_init <- list(intercept=NULL, past_obs=NULL, past_mean=NULL, xreg=NULL)
-   if(init.control$method=="GLM"){
-    delayed_ts <- function(x,ts){
-      c(rep(0,x),ts[(x:n)-x])}
-    glm_fit <- glm(ts ~ cbind(sapply(model$past_obs,delayed_ts,ts=ts)) + model$xreg,family=poisson())$coefficients # has to be specified
-    intercept <- param_init$intercept <- glm_fit[1]
-    param_init$past_obs <- glm_fit[1+P] 
-    param_init$past_mean <- rep(0, q)
-    param_init$xreg <- glm_fit[1+p+R]
-   }else{
   if(init.control$method == "fixed"){ #fixed values, use given ones where available
     param_init$intercept <- if(!is.null(init.control$intercept)) init.control$beta_0 else 1
     param_init$past_obs <- if(!is.null(init.control$past_obs)) init.control$past_obs else rep(0, p)
     param_init$past_mean <- if(!is.null(init.control$past_mean)) init.control$past_mean else rep(0, q)
     param_init$xreg <- if(!is.null(init.control$xreg)) init.control$xreg else rep(0, r)
+  }else{
+    # # # # # # #
+    #Which observations to use for initial estimation?
+        if(is.null(init.control$use)) init.control$use <- n
+        if(length(init.control$use)<1 | length(init.control$use)>2) stop("Argument 'init.control$use' must be of length 1 or 2")
+        if(length(init.control$use)==1){
+          if(init.control$use==Inf) init.control$use <- n
+          if(init.control$use<p+q+1) stop(paste("Too few observations for initial estimation, argument 'init.control$use' must be greater than p+q+1=", p+q+1, sep=""))
+          if(init.control$use>n){ init.control$use <- n; warning(paste("Argument 'init.control$use' is out of range and set to the largest possible value n=", n, sep="")) }
+          init_use <- 1:init.control$use
+        }else{
+          if(init.control$use[2]-init.control$use[1]<=p+q+1) stop(paste("Too few observations for initial estimation, for argument 'init.control$use' the difference init.control$use[2]-init.control$use[1] must be greater than p+q+1=", p+q+1, sep=""))
+          if(init.control$use[2]>n | init.control$use[1]<1) stop(paste("Argument 'init.control$use' is out of range, init.control$use[1] must be greater than 1 and init.control$use[2] lower than n=", n, sep=""))
+          init_use <- init.control$use[1]:init.control$use[2]
+        }
+    ts_init <- ts[init_use]
+    # # # # # # #
   }
-  if(init.control$method %in% c("MM","CSS", "ML", "CSS-ML")){
-  # # # # # # #
-  #Which observations to use for initial estimation?
-      if(is.null(init.control$use)) init.control$use <- n
-      if(length(init.control$use)<1 | length(init.control$use)>2) stop("Argument 'init.control$use' must be of length 1 or 2")
-      if(length(init.control$use)==1){
-        if(init.control$use==Inf) init.control$use <- n
-        if(init.control$use<p+q+1) stop(paste("Too few observations for initial estimation, argument 'init.control$use' must be greater than p+q+1=", p+q+1, sep=""))
-        if(init.control$use>n){ init.control$use <- n; warning(paste("Argument 'init.control$use' is out of range and set to the largest possible value n=", n, sep="")) }
-        init_use <- 1:init.control$use
-      }else{
-        if(init.control$use[2]-init.control$use[1]<=p+q+1) stop(paste("Too few observations for initial estimation, for argument 'init.control$use' the difference init.control$use[2]-init.control$use[1] must be greater than p+q+1=", p+q+1, sep=""))
-        if(init.control$use[2]>n | init.control$use[1]<1) stop(paste("Argument 'init.control$use' is out of range, init.control$use[1] must be greater than 1 and init.control$use[2] lower than n=", n, sep=""))
-        init_use <- init.control$use[1]:init.control$use[2]
-      }
-      ts_init <- ts[init_use]
-      # # # # # # #
+  if(init.control$method == "GLM"){
+    if(p+r > 0){ #non-trivial case
+      delayed_ts <- function(x, timser) c(rep(0,x), timser[(x:length(timser))-x])
+      regressors <- cbind(sapply(model$past_obs, delayed_ts, timser=ts_init), model$xreg[init_use,])
+      glm_fit <- glm(ts_init ~ regressors, family=poisson(link="identity"))$coefficients
+      param_init$intercept <- intercept <- glm_fit[1]
+      param_init$past_obs <- glm_fit[1+P] 
+      param_init$past_mean <- rep(0, q)
+      param_init$xreg <- glm_fit[1+p+R]
+    }else{
+      param_init$intercept <- intercept <- mean(ts_init)
+    }  
+  }  
+  if(init.control$method %in% c("MM", "CSS", "ML", "CSS-ML")){
     k <- max(p_max, q_max)
     if(k > 0){ #non-trivial case for q>0 and p>0
       if(init.control$method == "MM"){ #moment estimator via ARMA(1,1) representation, assume parameters for higher order to be zero
@@ -99,7 +105,7 @@ ingarch.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, xreg=NULL,
         ar <- arma_fit[1:k]
         intercept <- arma_fit[k+k+1] 
       }
-         param_init$past_obs <- ar[model$past_obs]+ma[model$past_obs]
+      param_init$past_obs <- ar[model$past_obs]+ma[model$past_obs]
       param_init$past_mean <- -ma[model$past_mean] 
      }else{
       param_init$past_obs <- param_init$past_mean <- NULL
@@ -107,7 +113,6 @@ ingarch.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, xreg=NULL,
      }
      param_init$intercept <- intercept*(1-sum(param_init$past_obs)-sum(param_init$past_mean))
      param_init$xreg <- if(!is.null(init.control$xreg)) init.control$xreg else rep(0, r)
-  }
   }
   # # # # # # #
   #Transformation to a stationary solution of an INGARCH process:
@@ -120,7 +125,7 @@ ingarch.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, xreg=NULL,
     param_init$past_obs <- param_init$past_obs*shrinkage_factor
     #Note: This way former negative values, which have been set to epsilon before, become lower than epsilon!
   }
-  if(init.control$method %in% c("MM", "CSS", "ML", "CSS-ML","GLM")) param_init$intercept <- intercept*(1-sum(param_init$past_obs)-sum(param_init$past_mean)) #replaces the previous definition of beta_0_init by a one which depends on the new alpha and beta and has the same mean 
+  if(init.control$method %in% c("MM", "CSS", "ML", "CSS-ML", "GLM")) param_init$intercept <- intercept*(1-sum(param_init$past_obs)-sum(param_init$past_mean)) #replaces the previous definition of beta_0_init by a one which depends on the new alpha and beta and has the same mean 
   param_init$intercept <- max(param_init$intercept, slackvar+epsilon)
   param_init$xreg <- pmax(param_init$xreg, epsilon)
   # # # # # # #
@@ -133,7 +138,6 @@ ingarch.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, xreg=NULL,
   if(is.null(final.control)){
       durations["total"] <- proc.time()["elapsed"] - begin_total
       result <- list(init=paramvec_init, call=cl, n_obs=n, durations=durations, ts=ts, model=model) 
-  class(result) <- "ingarch"  
   return(result)      
   }
   ##############

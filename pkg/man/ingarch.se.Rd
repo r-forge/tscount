@@ -20,7 +20,7 @@ positive integer value giving the number of bootstrap samples to use for estimat
   logical value. If \code{parallel=TRUE}, the bootstrap is distributed to multiple cores parallely. Requires a computing cluster to be initialised by \code{\link[snowfall:sfInit]{sfInit}} from package \code{snowfall}. 
 }
   \item{...}{
-  additional arguments passed to the fitting function \code{\link{ingarch}}.
+  additional arguments passed to the fitting function \code{\link{ingarch}}. Only made use of if the standard errors are computed by the bootstrap procedure.
 }
 }
 
@@ -56,7 +56,9 @@ Tobias Liboschik and Philipp Probst
 seatbelts_fit <- ingarch(ts=Seatbelts[, "DriversKilled"],
   model=list(past_obs=1, past_mean=c(1, 12), xreg=Seatbelts[, "PetrolPrice"]), distr="poisson")
 ingarch.se(fit=seatbelts_fit) #by normal approximation
+\dontrun{
 ingarch.se(fit=seatbelts_fit, B=10) #by bootstrap
+}
 }
 
 \keyword{INGARCH}

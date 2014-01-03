@@ -53,11 +53,12 @@ ingarch.fit(ts, model = list(past_obs = NULL, past_mean = NULL,
     named list with optional elements that determine how to make initial estimation. Possible list elements are:
     \describe{  
       \item{\code{use}}{integer vector of length one or two giving the number of observations from the beginning (if of length one) or the range of observations (if of length two) used for initial estimation. For \code{use = Inf} all observations are used, which is the default when omitted.}
-      \item{\code{method}}{character specifying how initial estimators should be estimated. Possible values are \code{"CSS"}, \code{"CSS-ML"}, \code{"ML"}, \code{"MM"} and \code{"fixed"}. 
+      \item{\code{method}}{character specifying how initial estimators should be estimated. Possible values are \code{"CSS"}, \code{"CSS-ML"}, \code{"ML"}, \code{"MM"}, \code{"GLM"} and \code{"fixed"}. 
   If \code{method} is \code{"CSS"}, \code{"CSS-ML"} or \code{"ML"}, the initial estimate is based on an ARMA fit using the function \code{\link{arima}}, and list element \code{method} is passed to its argument of the same name.  
   If method is \code{"MM"}, the initial estimate is an ARMA(1,1) fit by moment estimators and parameters of higher order than one are set to zero.
+  If method is \code{"GLM"}, the estimated parameters of a generalised linear model with regression on the specified past observations and covariates, but not on past conditional means, are used as initial estimates. Initial estimates for the coefficients of past conditional means are set to zero.
   If method is \code{"fixed"}, parameters given in further named list elements of \code{init.control} are used when available, else predefined values are used.
-  For all methods the initial parameter values for the covariates are 0 by default and can be set in the list element \code{xreg}.}
+  For all methods except \code{"GLM"} the initial parameter values for the covariates are 0 by default and can be set in the list element \code{xreg}.}
       \item{\code{intercept}}{numeric value with initial value for the intercept parameter. Only used when \code{method="fixed"}. Default value is 1.}
       \item{\code{past_obs}}{numeric vector with initial value for parameters for regression on previous observations. Only used when \code{method="fixed"}. Default values are 0.}
       \item{\code{past_mean}}{numeric vector with initial value for parameters for regression on previous conditional means. Only used when \code{method="fixed"}. Default values are 0.}

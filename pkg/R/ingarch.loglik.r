@@ -16,13 +16,13 @@ ingarch.loglik <- function(paramvec, model, ts, score=FALSE, info=c("none", "sco
     score <- TRUE
     warning("Information matrix cannot be calculated without score vector. Argument score is set to TRUE.")
   }
-  derivatives <- if(!score) "none" else if(info=="hessian") "second" else "first"
+  derivatives <- if(!score) "none" else if(info == "hessian") "second" else "first"
   condmean <- ingarch.condmean(paramvec=paramvec, model=model, ts=ts, derivatives=derivatives, condmean=condmean, from=from)
   #Load objects and remove initialisation if necessary:
   z <- condmean$z[p_max+(1:n)]
   kappa <- condmean$kappa[q_max+(1:n)]
-  if(derivatives%in%c("first","second")) partial_kappa <- condmean$partial_kappa[q_max+(1:n), , drop=FALSE]
-  if(derivatives=="second") partial2_kappa <- condmean$partial2_kappa[q_max+(1:n), , , drop=FALSE]    
+  if(derivatives %in% c("first", "second")) partial_kappa <- condmean$partial_kappa[q_max+(1:n), , drop=FALSE]
+  if(derivatives == "second") partial2_kappa <- condmean$partial2_kappa[q_max+(1:n), , , drop=FALSE]    
   loglik_t <- ifelse(kappa>0, z*log(kappa)-kappa, -Inf)
   loglik <- sum(loglik_t)
   scorevec <- NULL
@@ -32,13 +32,13 @@ ingarch.loglik <- function(paramvec, model, ts, score=FALSE, info=c("none", "sco
   }
   outerscoreprod <- NULL
   infomat <- NULL
-  if(info!="none"){
-    if(info=="score"){
+  if(info != "none"){
+    if(info == "score"){
       outerscoreprod <- aperm(sapply(1:nrow(partial_kappa), function(i) partial_kappa[i,]%*%t(partial_kappa[i,]), simplify="array"), c(3,1,2))
       infomat <- apply(1/kappa*outerscoreprod, c(2,3), sum)
       #infomat <- (1/t(replicate(1+p+q+r, kappa))*t(partial_kappa)) %*% partial_kappa
     }else{
-      if(info=="hessian"){
+      if(info == "hessian"){
         hessian_t <- aperm((-z/kappa^2) * replicate(1+p+q+r, partial_kappa) * aperm(replicate(1+p+q+r, partial_kappa), perm=c(1,3,2)), perm=c(2,3,1)) + rep((z/kappa-1), each=(1+p+q+r)^2) * aperm(partial2_kappa, perm=c(2,3,1))
         infomat <- -apply(hessian_t, c(1,2), sum)
       }} 

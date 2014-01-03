@@ -14,7 +14,7 @@ ingarch.condmean <- function(paramvec, model, ts, derivatives=c("none", "first",
   Q_max <- seq(along=numeric(q_max))
   r <- max(ncol(model$xreg), 0)
   R <- seq(along=numeric(r)) #sequence 1:r if r>0 and NULL otherwise
-  parameternames <- ingarch.parameternames(model)
+  parameternames <- tsglm.parameternames(model)
   derivatives <- match.arg(derivatives)
   param <- list( #transform parameter vector to a list
     intercept=paramvec[1],
@@ -23,13 +23,13 @@ ingarch.condmean <- function(paramvec, model, ts, derivatives=c("none", "first",
     xreg=paramvec[1+p+q+R]
   )    
   if(!is.null(condmean)){ #If the output of a previous call is provided, the recursion starts from t=from. Else initialisation of all objects is necessary and the recursion starts from t=1.
-    times <- if(from<=n) from:n else NULL
+    times <- if(from <= n) from:n else NULL
     #Load objects:
     z <- condmean$z
     kappa <- condmean$kappa
-    if(derivatives%in%c("first","second")) partial_kappa <- condmean$partial_kappa
-    if(derivatives=="second") partial2_kappa <- condmean$partial2_kappa
-    #########include checks if argument condmean is sufficient for further calculations
+    if(derivatives %in% c("first","second")) partial_kappa <- condmean$partial_kappa
+    if(derivatives == "second") partial2_kappa <- condmean$partial2_kappa
+#########include checks if argument condmean is sufficient for further calculations
   }else{  
     times <- 1:n
     #Initialisation by stationary solution (and its partial derivatives):
@@ -44,7 +44,7 @@ ingarch.condmean <- function(paramvec, model, ts, derivatives=c("none", "first",
       partial_kappa[Q_max, 1+P] <- param$intercept/denom^2 #past_obs
       partial_kappa[Q_max, 1+p+Q] <- param$intercept/denom^2 #past_mean
       #derivatives with respect to the regressor coefficients are zero (which is the default)
-      if(derivatives=="second"){
+      if(derivatives == "second"){
         #Matrix of second partial derivatives of kappa with respect to the parameters:
         partial2_kappa <- array(0, dim=c(n+q_max, 1+p+q+r, 1+p+q+r))  
         partial2_kappa[Q_max, 1, 1+c(P,p+Q)] <- partial2_kappa[Q_max, 1+c(P,p+Q), 1] <- 1/denom^2
@@ -68,7 +68,7 @@ ingarch.condmean <- function(paramvec, model, ts, derivatives=c("none", "first",
     }
     dimnames(partial_kappa)[[2]] <- if(p==0 & q==0) list(parameternames) else parameternames
     result <- c(result, list(partial_kappa=partial_kappa))
-    if(derivatives=="second"){
+    if(derivatives == "second"){
       for(t in times){
         partial2_kappa[t+q_max, , ] <- apply(param$past_mean*partial2_kappa[t+q_max-model$past_mean, , , drop=FALSE], c(2,3), sum)
         partial2_kappa[t+q_max, 1+p+Q, 1+p+Q] <- partial2_kappa[t+q_max, 1+p+Q, 1+p+Q] + (partial_kappa[t+q_max-model$past_mean, 1+p+Q] + t(partial_kappa[t+q_max-model$past_mean, 1+p+Q]))/2 #from the formula we would only need the first part of the last summand, but in this case our matrix is not symmetrical, so we add this average
