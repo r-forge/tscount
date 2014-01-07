@@ -16,12 +16,12 @@ export(
   marcal
 )
 
+S3method(print, tsglm)
 S3method(logLik, tsglm)
 S3method(marcal, tsglm)
 S3method(pit, tsglm)
 S3method(scoring, tsglm)  
 
-S3method(print, ingarch)
 S3method(residuals, ingarch)
 S3method(summary, ingarch)
 S3method(vcov, ingarch)

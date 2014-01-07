@@ -1,5 +1,5 @@
 ingarch.sim <- function(n, param=list(intercept=1, past_obs=NULL, past_mean=NULL, xreg=NULL), model=list(past_obs=NULL, past_mean=NULL, xreg=NULL, external=FALSE), distr=c("poisson", "nbinom"), distrcoefs, fit, n_start=50){
-  
+
   #Use information of a previous model fit if provided:
   if(!missing(fit)){
     ingarch.check(fit)    
@@ -51,11 +51,11 @@ ingarch.sim <- function(n, param=list(intercept=1, past_obs=NULL, past_mean=NULL
   R <- seq(along=numeric(r)) #sequence 1:r if r>0 and NULL otherwise
   stopifnot(
     nrow(model$xreg)==n,
-    length(model$external)%in%c(r,1)
+    length(model$external)%in%c(r,1,0)
   )
   model$external <- as.logical(model$external)
   if(any(is.na(model$external))) stop("Argument 'model$external' could not be coerced to logical")
-  if(is.null(model$external)) model$external <- rep(FALSE, r) #by default covariate has internal effect
+  if(length(model$external)==0) model$external <- rep(FALSE, r) #by default covariate has internal effect
   if(length(model$external)==1 && r!=1) rep(model$external, r) #if only one value is given this is used for all covariates
   if(!missing(fit)){ #use information of previous model fit if provided:
     param <- list( #transform parameter vector to a list
