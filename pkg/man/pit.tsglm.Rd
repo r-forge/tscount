@@ -38,7 +38,9 @@ Philipp Probst and Tobias Liboschik
 }
 
 \seealso{
- \code{\link{ingarch}} for fitting an INGARCH model. S3 methods \code{\link[=marcal.tsglm]{marcal}} and \code{\link[=scoring.tsglm]{scoring}} for other predictive model assessment tools for time series following GLMs.
+\code{\link{tsglm}} for fitting a GLM for time series of counts.
+
+\code{\link[=marcal.tsglm]{marcal}} and \code{\link[=scoring.tsglm]{scoring}} for other predictive model assessment tools for time series following GLMs.
 }
 
 \examples{

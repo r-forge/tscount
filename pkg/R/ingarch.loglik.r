@@ -1,9 +1,11 @@
-ingarch.loglik <- function(paramvec, model, ts, score=FALSE, info=c("none", "score", "hessian"), condmean=NULL, from=1){
+ingarch.loglik <- function(paramvec, model, ts, score=FALSE, info=c("none", "score", "hessian"), condmean=NULL, from=1, init=c("marginal", "zero", "firstobs")){
   #Conditional log-likelihood function, score function and information matrix of an INGARCH(p,q) process (with intervention)
   #score: Logical. TRUE if score function should be computed.
   #info: Character. "none" if no information matrix should be computed, "score" for computation via first partial derivatives of the log-likelihood function, "hessian" for computation via second partial derivatives (cf. Ferland et al., 2006, section 3).
-  ##############################
-  #Check arguments:
+  
+  ##############
+  #Checks and preparations:
+  init <- match.arg(init)
   n <- length(ts)
   p <- length(model$past_obs)
   p_max <- max(model$past_obs, 0)
@@ -17,12 +19,14 @@ ingarch.loglik <- function(paramvec, model, ts, score=FALSE, info=c("none", "sco
     warning("Information matrix cannot be calculated without score vector. Argument score is set to TRUE.")
   }
   derivatives <- if(!score) "none" else if(info == "hessian") "second" else "first"
-  condmean <- ingarch.condmean(paramvec=paramvec, model=model, ts=ts, derivatives=derivatives, condmean=condmean, from=from)
+  ##############
+  
+  condmean <- ingarch.condmean(paramvec=paramvec, model=model, ts=ts, derivatives=derivatives, condmean=condmean, from=from, init=init)
   #Load objects and remove initialisation if necessary:
   z <- condmean$z[p_max+(1:n)]
   kappa <- condmean$kappa[q_max+(1:n)]
   if(derivatives %in% c("first", "second")) partial_kappa <- condmean$partial_kappa[q_max+(1:n), , drop=FALSE]
-  if(derivatives == "second") partial2_kappa <- condmean$partial2_kappa[q_max+(1:n), , , drop=FALSE]    
+  if(derivatives == "second") partial2_kappa <- condmean$partial2_kappa[q_max+(1:n), , , drop=FALSE]   
   loglik_t <- ifelse(kappa>0, z*log(kappa)-kappa, -Inf)
   loglik <- sum(loglik_t)
   scorevec <- NULL
@@ -34,7 +38,7 @@ ingarch.loglik <- function(paramvec, model, ts, score=FALSE, info=c("none", "sco
   infomat <- NULL
   if(info != "none"){
     if(info == "score"){
-      outerscoreprod <- aperm(sapply(1:nrow(partial_kappa), function(i) partial_kappa[i,]%*%t(partial_kappa[i,]), simplify="array"), c(3,1,2))
+      outerscoreprod <- if(p+q+r > 0) aperm(sapply(1:n, function(i) partial_kappa[i,]%*%t(partial_kappa[i,]), simplify="array"), c(3,1,2)) else array(partial_kappa[,1]^2, dim=c(n,1,1))
       infomat <- apply(1/kappa*outerscoreprod, c(2,3), sum)
       #infomat <- (1/t(replicate(1+p+q+r, kappa))*t(partial_kappa)) %*% partial_kappa
     }else{
@@ -46,4 +50,3 @@ ingarch.loglik <- function(paramvec, model, ts, score=FALSE, info=c("none", "sco
   result <- list(loglik=loglik, score=scorevec, info=infomat, outerscoreprod=outerscoreprod, kappa=kappa)
   return(result)
 }
- 

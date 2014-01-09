@@ -14,6 +14,7 @@ momest_arma11 <- function(ts){
     solutions <- -Qe/2
   }
   theta1 <- solutions[abs(solutions)<=1][1] #choose a solution for which the resulting ARMA(1,1) process can be stationary (although this is not yet guaranteed only by fulfilling abs(.)<=1)
+  sigmasq <- (1-psi1^2)/(1-theta1^2)*var(ts)
   result <- c(ar1=psi1, ma1=-theta1, intercept=m) #different parametrisation
   return(result)
 }

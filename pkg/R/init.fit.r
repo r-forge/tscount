@@ -6,7 +6,7 @@ init.fit <- function(allobj, linkfunc){
     if(linkfunc=="log") trafo <- function(x) if(!is.null(x)) log(x+1) else NULL  
     param_init <- list(intercept=NULL, past_obs=NULL, past_mean=NULL, xreg=NULL)
     if(init.control$method == "fixed"){ #fixed values, use given ones where available
-      param_init$intercept <- if(!is.null(init.control$intercept)) init.control$beta_0 else 1
+      param_init$intercept <- if(!is.null(init.control$intercept)) init.control$intercept else 1
       param_init$past_obs <- if(!is.null(init.control$past_obs)) init.control$past_obs else rep(0, p)
       param_init$past_mean <- if(!is.null(init.control$past_mean)) init.control$past_mean else rep(0, q)
       param_init$xreg <- if(!is.null(init.control$xreg)) init.control$xreg else rep(0, r)
@@ -68,25 +68,5 @@ init.fit <- function(allobj, linkfunc){
     }
     assign("result", param_init, envir=envi)
   })
-  return(result)
-}
-
-momest_arma11 <- function(ts){
-  #Moment estimators for ARMA(1,1) process
-  #ts: Numeric vector. Time series assumed to be a relaisation of an ARMA(1,1) process.
-  m <- mean(ts)
-  a <- acf(ts, lag.max=2, plot=FALSE)$acf[-1,,1]
-  psi1 <- a[2]/a[1]
-  #The MA parameter is the solution of a quadratic equation in monic form (i.e. the first coefficient is 1) which is solved using the pq formula:
-  Qe <- (psi1^2-2*a[1]*psi1+1)/(a[1]-psi1)
-  Pu <- 1
-  discriminant <- Qe^2-4*Pu
-  if(discriminant>=0){ #the solutions are real
-    solutions <- (-Qe + c(+1,-1)*sqrt(discriminant))/2
-  }else{ #the soulutions are complex (namely -Qe/2 + c(+1,-1)*i*sqrt(-discriminant)), use their orthogonal projection on the real axis instead
-    solutions <- -Qe/2
-  }
-  theta1 <- solutions[abs(solutions)<=1][1] #choose a solution for which the resulting ARMA(1,1) process can be stationary (although this is not yet guaranteed only by fulfilling abs(.)<=1)
-  result <- c(ar1=psi1, ma1=-theta1, intercept=m) #different parametrisation
   return(result)
 }

@@ -40,7 +40,7 @@ A named list with the following elements:
 
   \item{BIC}{Bayesian information criteria (BIC).}  
 
-  \item{pearson.resid}{Pearson residuals, see \code{\link{residuals.ingarch}}.}
+  \item{pearson.resid}{Pearson residuals, see \code{\link{residuals.tsglm}}.}
 }
 
 \author{

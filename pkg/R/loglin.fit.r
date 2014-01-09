@@ -1,9 +1,9 @@
-ingarch.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, xreg=NULL, external=NULL), score=TRUE, info=c("score", "none", "hessian"), init=c("marginal", "zero", "firstobs"), epsilon=1e-06, slackvar=1e-06, init.control=list(), final.control=list(), inter.control=NULL){
+loglin.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, xreg=NULL, external=NULL), score=TRUE, info=c("score", "none"), epsilon=1e-06, slackvar=1e-06, init.control=list(), final.control=list(), inter.control=NULL){
   ##############
   #Checks and preparations: 
   cl <- match.call()
   durations <- c(init=NA, inter=NA, final=NA, total=NA)
-  begin_total <- proc.time()["elapsed"] 
+  begin_total <- proc.time()["elapsed"]  
   model_names <- c("past_obs", "past_mean", "xreg", "external")
   stopifnot( #Are the arguments valid?
     all(names(model) %in% model_names)
@@ -34,15 +34,15 @@ ingarch.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, xreg=NULL,
   r <- ncol(model$xreg)
   R <- seq(along=numeric(r)) #sequence 1:r if r>0 and NULL otherwise
   parameternames <- tsglm.parameternames(model)
-  init_default <- list(method="CSS", use=Inf, optim.method="BFGS", optim.control=list(maxit=25))
-  if(!all(names(init.control) %in% c(names(init_default), "intercept", "past_obs", "past_mean", "xreg"))) stop("There are unknown list elements in argument 'init'")
+  init_default <- list(method="GLM", use=Inf)
+  if(!all(names(init.control)%in%c(names(init_default), "intercept", "past_obs", "past_mean", "xreg"))) stop("There are unknown list elements in argument 'init'")
   init_default[names(init.control)] <- init.control #options given by user override the default
   init.control <- init_default #use these options in the following
   if(!is.null(final.control)){
     final_default <- list(constrained=list(outer.iterations=100, outer.eps=1e-05), optim.method="BFGS", optim.control=list(maxit=100, reltol=1e-11))
     final_default[names(final.control)] <- final.control  
     final.control <- final_default
-    if(!all(names(final.control) %in% names(final_default))) stop("There are unknown list elements in argument 'final.control'")
+    if(!all(names(final.control)%in%names(final_default))) stop("There are unknown list elements in argument 'final.control'")
   }
   if(!is.null(inter.control)){
     inter_default <- list(constrained=list(outer.iterations=5, outer.eps=1e-05), optim.method="Nelder-Mead", optim.control=list(maxit=20, reltol=1e-8))
@@ -50,30 +50,24 @@ ingarch.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, xreg=NULL,
     inter.control <- inter_default
     if(!all(names(inter.control)%in%names(inter_default))) stop("There are unknown list elements in argument 'inter.control'")
   }
-  ##############
-
+  
   ##############
   #Initial estimation:
   begin_init <- proc.time()["elapsed"]
-  param_init <- do.call(init.fit, args=list(allobj=mget(ls()), linkfunc="identity"))
-
+  param_init <- do.call(init.fit, args=list(allobj=mget(ls()), linkfunc="log"))
+  
   # # # # # # #
-  #Transformation to a stationary solution of an INGARCH process:
-  marginalmean <- param_init$intercept/(1-sum(param_init$past_obs)-sum(param_init$past_mean))
-  param_init$past_mean <- pmax(param_init$past_mean, rep(epsilon, q)) #alpha_i in [0+epsilon,Inf)
-  param_init$past_obs <- pmax(param_init$past_obs, rep(epsilon, p)) #beta_i in [0+epsilon,Inf)
-  total <- sum(param_init$past_obs)+sum(param_init$past_mean)
+  #Transformation to a stationary solution of a autoregressive log-linear process process:
+  total <- sum(abs(param_init$past_obs))+sum(abs(param_init$past_mean))
   if(total > 1-epsilon-slackvar){ #Shrink the parameters to fulfill the stationarity condition if necessary:
     shrinkage_factor <- (1-slackvar-epsilon)/total #chosen, such that total_new = 1-slackvar-epsilon for total_new the sum of the alpha's and beta's after shrinkage
     param_init$past_mean <- param_init$past_mean*shrinkage_factor
     param_init$past_obs <- param_init$past_obs*shrinkage_factor
-    #Note: This way former negative values, which have been set to epsilon before, become lower than epsilon!
+#########correct the initial estimation of the intercept for this possible shrinkage?
   }
-  if(init.control$method %in% c("MM", "CSS", "ML", "CSS-ML", "GLM")) param_init$intercept <- marginalmean*(1-sum(param_init$past_obs)-sum(param_init$past_mean)) #replaces the previous value of the intercept by one which results, together with the corrected dependence parameters, to the same marginal mean as before the correction step
-  param_init$intercept <- max(param_init$intercept, slackvar+epsilon)
-  param_init$xreg <- pmax(param_init$xreg, epsilon)
   # # # # # # #
-    
+  
+  
   paramvec_init <- unlist(param_init)
   names(paramvec_init) <- parameternames
   # # # # # # #
@@ -90,12 +84,12 @@ ingarch.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, xreg=NULL,
   
   # # # # # # #
   #Create some functions as wrappers:
-    f <- function(paramvec, model) ingarch.loglik(paramvec=paramvec, model=model, ts=ts, score=FALSE, info="none", init=init)$loglik    
-    grad <- function(paramvec, model) ingarch.loglik(paramvec=paramvec, model=model, ts=ts, score=TRUE, info="none", init=init)$score
+    f <- function(paramvec, model) loglin.loglik(paramvec=paramvec, model=model, ts=ts, score=FALSE, info="none")$loglik    
+    grad <- function(paramvec, model) loglin.loglik(paramvec=paramvec, model=model, ts=ts, score=TRUE, info="none")$score
     optimisation <- function(starting_value, model, arguments){  
       if(!is.null(arguments$constrained)){
-        ui <- rbind(diag(1+p+q+r), c(0,rep(-1,p+q),rep(0, r)))
-        ci <- c(slackvar, rep(0, p+q+r), -1+slackvar) 
+        ui <- -cbind(rep(0,2^(p+q)), as.matrix(expand.grid(lapply(c(P,Q), function(x) c(-1,+1)))), matrix(0, ncol=r, nrow=2^(p+q)))
+        ci <- rep(-1+slackvar, 2^(p+q)) 
         optim_result <- do.call(constrOptim, args=c(list(theta=starting_value, f=f, grad=grad, ui=ui, ci=ci, method=arguments$optim.method, control=c(list(fnscale=-1), arguments$optim.control), model=model), arguments$constrained))
       }else{
         optim_result <- optim(par=starting_value, fn=f, gr=grad, model=model, method=arguments$optim.method, control=c(list(fnscale=-1), arguments$optim.control))
@@ -103,7 +97,6 @@ ingarch.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, xreg=NULL,
       return(optim_result)
     }
   # # # # # # #
-  
   if(is.null(inter.control)){ #no additional optimisation step is done
     inter_optim <- NULL
     durations["final"] <- system.time(final_optim <- optimisation(starting_value=paramvec_init, model=model, arguments=final.control))["elapsed"]
@@ -118,12 +111,12 @@ ingarch.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, xreg=NULL,
   ##############
   #Score vector and information matrix:
   #If score==FALSE and info=="none" the computation in the following two lines would not be necessary. However, the extra time needed to re-calculate the log-likelihood function which is already available in final_optim$value is negligable in comparison to the total duration of the function. This avoids some additional if-statements and the code is more readable.
-  condmean <- ingarch.condmean(paramvec=paramvec_final, model=model, ts=ts, derivatives={if(!score & info=="none") "none" else if(info=="hessian") "second" else "first"}, init=init)
-  loglik <- ingarch.loglik(paramvec=paramvec_final, model=model, ts=ts, score=score, info=info, condmean=condmean, from=Inf) #because of argument from=Inf no re-calculation of the recursion is done, instead the calculations from object condmean are used
+  condmean <- loglin.condmean(paramvec=paramvec_final, model=model, ts=ts, derivatives={if(!score & info=="none") "none" else "first"})
+  loglik <- loglin.loglik(paramvec=paramvec_final, model=model, ts=ts, score=score, info=info, condmean=condmean, from=Inf) #because of argument from=Inf no re-calculation of the recursion is done, instead the calculations from object condmean are used
   ##############
   
   durations["total"] <- proc.time()["elapsed"] - begin_total 
 #  if(all(abs((final_optim$par-paramvec_init)/final_optim$par) < 0.01)){warning("Final estimation is still very close to initial estimation.")}
-  result <- c(list(coefficients=final_optim$par, init=paramvec_init, inter=inter_optim, final=final_optim, residuals=ts-loglik$kappa, fitted.values=loglik$kappa, linear.predictors=loglik$kappa, logLik=loglik$loglik, score=loglik$score, info.matrix=loglik$info, outerscoreprod=loglik$outerscoreprod, call=cl, n_obs=n, durations=durations, ts=ts, model=model))
+  result <- c(list(coefficients=final_optim$par, init=paramvec_init, inter=inter_optim, final=final_optim, residuals=ts-exp(loglik$kappa), fitted.values=exp(loglik$kappa), linear.predictors=loglik$kappa, logLik=loglik$loglik, score=loglik$score, info.matrix=loglik$info, outerscoreprod=loglik$outerscoreprod, call=cl, n_obs=n, durations=durations, ts=ts, model=model))
   return(result)
 }

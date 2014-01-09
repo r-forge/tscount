@@ -1,4 +1,5 @@
 export(
+  tsglm,
   ingarch,
   ingarch.fit,
   ingarch.mean,
@@ -18,15 +19,15 @@ export(
 
 S3method(print, tsglm)
 S3method(logLik, tsglm)
+S3method(residuals, tsglm)
+S3method(plot, tsglm)
 S3method(marcal, tsglm)
 S3method(pit, tsglm)
 S3method(scoring, tsglm)  
 
-S3method(residuals, ingarch)
 S3method(summary, ingarch)
 S3method(vcov, ingarch)
 S3method(predict, ingarch)
-S3method(plot, ingarch)
 S3method(interv_test, ingarch)
 S3method(interv_detect, ingarch)
 S3method(interv_multiple, ingarch)

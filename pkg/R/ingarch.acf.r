@@ -1,7 +1,7 @@
 ingarch.acf <- function(intercept, past_obs, past_mean, lag.max=10, type=c("acf", "pacf", "acvf"), plot=TRUE, ...){
 #Theoretical autocorrelation function of an INGARCH(p,q) process
 ##############################
-  if(!is.element("ltsa", installed.packages()[,1])){stop("Installation of package 'ltsa' is required.")}
+  if(!require(ltsa)) stop("Installation of package 'ltsa' is required.")
   type <- match.arg(type)
   p <- length(past_mean)
   q <- length(past_obs)

@@ -1,18 +1,18 @@
-\name{residuals.ingarch}
-\alias{residuals.ingarch}
+\name{residuals.tsglm}
+\alias{residuals.tsglm}
 \title{
-Residuals of an INGARCH Model
+Residuals of a GLM for time series of counts
 }
 \description{
-Returns the residuals of a fitted INGARCH model.
+Returns the residuals of a fitted GLM-type model for time series of counts.
 }
 \usage{
-\method{residuals}{ingarch}(object, type = c("response", "pearson", "anscombe"), ...)
+\method{residuals}{tsglm}(object, type = c("response", "pearson", "anscombe"), ...)
 }
 
 \arguments{
   \item{object}{
-an object of class \code{"ingarch"}. Usually the result of a call to \code{\link{ingarch}}.
+an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{tsglm}}.
 }
   \item{type}{
 character value giving the type of residuals which should be returned. Choose \code{type="response"} for raw residuals, \code{type="pearson"} for Pearson residuals and \code{type="anscombe"} for Anscombe residuals, which are symmetric.
@@ -34,7 +34,7 @@ Tobias Liboschik and Philipp Probst
 }
 
 \seealso{
-\code{\link{ingarch}} for fitting an INGARCH model.
+\code{\link{tsglm}} for fitting a GLM for time series of counts.
 }
 
 \keyword{INGARCH}

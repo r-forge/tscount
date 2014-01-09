@@ -1,9 +1,5 @@
 \name{ingarch}
 \alias{ingarch}
-\alias{ingarch.fit}
-\alias{print.ingarch}
-\alias{logLik.ingarch}
-\alias{vcov.ingarch}
 \title{
 INGARCH Modelling of Time Series
 }
@@ -15,12 +11,13 @@ The function \code{ingarch.fit} is a lower level function to fit the mean specif
 \usage{
 ingarch(ts, model=list(past_obs = NULL, past_mean = NULL,
         xreg = NULL, external = NULL), distr=c("poisson", "nbinom"), ...)
-
-ingarch.fit(ts, model = list(past_obs = NULL, past_mean = NULL,
-            xreg = NULL, external = NULL), epsilon = 1e-06,
-            slackvar = 1e-06, init.control = list(),
-            final.control = list(), inter.control = NULL, 
-            score = TRUE, info = c("score", "none", "hessian")) 
+        
+%ingarch.fit(ts, model = list(past_obs = NULL, past_mean = NULL,
+%            xreg = NULL, external = NULL), score = TRUE,
+%            info = c("score", "none", "hessian"),
+%            init=c("marginal", "zero", "firstobs"),
+%            epsilon = 1e-06, slackvar = 1e-06, init.control = list(),
+%            final.control = list(), inter.control = NULL) 
 }
 
 
@@ -43,44 +40,47 @@ ingarch.fit(ts, model = list(past_obs = NULL, past_mean = NULL,
   \item{...}{
     additional arguments to be passed to the lower level fitting function \code{ingarch.fit}. See below.  
   }
-  \item{epsilon}{
-    numeric positive but small value determining how close parameters may come to the limits of the parameter space.
-  }
-  \item{slackvar}{
-    numeric positive but small value determining how true inequalities among the parameter restrictions are treated; a true inequality \code{x < y} will be transformed to \code{x + slackvar <= y}.
-  }
-  \item{init.control}{
-    named list with optional elements that determine how to make initial estimation. Possible list elements are:
-    \describe{  
-      \item{\code{use}}{integer vector of length one or two giving the number of observations from the beginning (if of length one) or the range of observations (if of length two) used for initial estimation. For \code{use = Inf} all observations are used, which is the default when omitted.}
-      \item{\code{method}}{character specifying how initial estimators should be estimated. Possible values are \code{"CSS"}, \code{"CSS-ML"}, \code{"ML"}, \code{"MM"}, \code{"GLM"} and \code{"fixed"}. 
-  If \code{method} is \code{"CSS"}, \code{"CSS-ML"} or \code{"ML"}, the initial estimate is based on an ARMA fit using the function \code{\link{arima}}, and list element \code{method} is passed to its argument of the same name.  
-  If \code{method="MM"}, the initial estimate is an ARMA(1,1) fit by moment estimators and parameters of higher order than one are set to zero. For this method the initial parameter values for the covariates are 0 by default and can be set in the list element \code{xreg}.
-  If \code{method="GLM"}, the estimated parameters of a generalised linear model with regression on the specified past observations and covariates, but not on past conditional means, are used as initial estimates. Initial estimates for the coefficients of past conditional means are set to zero.
-  If \code{method="fixed"}, parameters given in further named list elements of \code{init.control} are used when available, else predefined values are used.}
-      \item{\code{intercept}}{numeric value with initial value for the intercept parameter. Default value is 1.}
-      \item{\code{past_obs}}{numeric vector with initial value for parameters for regression on previous observations. Default values are 0.}
-      \item{\code{past_mean}}{numeric vector with initial value for parameters for regression on previous conditional means. Default values are 0.}
-      \item{\code{xreg}}{numeric vector with initial value for the regression parameters. These values will also be used if \code{method="MM"}. Default values are 0.}
-    }  
-  }
-  \item{final.control}{
-    named list with optional elements that determine how to make the final maximum likelihood estimation. If \code{final.control=NULL} only initial estimates are computed. Possible list elements are:
-    \describe{  
-      \item{\code{constrained}}{named list whose element are passed to function \code{\link{constrOptim}} with possible elements \code{mu}, \code{outer.iterations} and \code{outer.eps} (see \code{\link{constrOptim}} for details). If \code{constrained=NULL} an unconstrained optimisation is made with function \code{\link{optim}}. Note that this is likely to result in a non-stationary fitted model which might cause further problems.}
-      \item{\code{optim.method}}{character which is passed to functions \code{\link{constrOptim}} or \code{\link{optim}} as argument \code{method}.}
-      \item{\code{optim.control}}{named list which is passed to function \code{\link{constrOptim}} or \code{\link{optim}} as argument \code{control}. Must not contain the list element \code{fnscale}.}
-    }
-  }
-  \item{inter.control}{
-    named list determining how to maximise the log-likelihood function in a first step. This intermediate optimisation will start from the initial estimation and be followed by the final optimisation, which will in turn start from the intermediate optimisation result. This intermediate optimisation is intended to use a very quick but imprecise optimisation algorithm. Possible elements are the same as for \code{final.control}. The default is \code{inter.control=NULL}, which skips this intermediate optimisation step. 
-  }
-  \item{score}{
-    logical value indicating whether the score vector should be computed.
-  }
-  \item{info}{
-    optional character that determine if and how to compute the information matrix. Can be set to \code{"score"} (the default) for calculation via the outer product of the score vector or to \code{"hessian"} for calculation via the Hessian matrix of second derivatives. If set to \code{"none"} no information matrix is computed.
-  }
+%  \item{score}{
+%    logical value indicating whether the score vector should be computed.
+%  }
+%  \item{info}{
+%    character that determine if and how to compute the information matrix. Can be set to \code{"score"} (the default) for calculation via the outer product of the score vector or to \code{"hessian"} for calculation via the Hessian matrix of second derivatives. If set to \code{"none"} no information matrix is computed.
+%  }
+%  \item{init}{
+%    character that determines how the recursion of the conditional mean (and possibly of its derivatives) is initialised. If \code{init="marginal"} (the default) the marginal mean of a model without covariates and its derivatives are used. If \code{init="zero"} all values are initialised by zero, wheras for \code{init="firstobs"} the first obersvation is used.
+%  }
+%  \item{epsilon}{
+%    numeric positive but small value determining how close parameters may come to the limits of the parameter space.
+%  }
+%  \item{slackvar}{
+%    numeric positive but small value determining how true inequalities among the parameter restrictions are treated; a true inequality \code{x < y} will be transformed to \code{x + slackvar <= y}.
+%  }
+%  \item{init.control}{
+%    named list with optional elements that determine how to make initial estimation. Possible list elements are:
+%    \describe{  
+%      \item{\code{use}}{integer vector of length one or two giving the number of observations from the beginning (if of length one) or the range of observations (if of length two) used for initial estimation. For \code{use = Inf} all observations are used, which is the default when omitted.}
+%      \item{\code{method}}{character specifying how initial estimators should be estimated. Possible values are \code{"CSS"}, \code{"CSS-ML"}, \code{"ML"}, \code{"MM"}, \code{"GLM"} and \code{"fixed"}. 
+%  If \code{method} is \code{"CSS"}, \code{"CSS-ML"} or \code{"ML"}, the initial estimate is based on an ARMA fit using the function \code{\link{arima}}, and list element \code{method} is passed to its argument of the same name.  
+%  If \code{method="MM"}, the initial estimate is an ARMA(1,1) fit by moment estimators and parameters of higher order than one are set to zero. For this method the initial parameter values for the covariates are 0 by default and can be set in the list element \code{xreg}.
+%  If \code{method="GLM"}, the estimated parameters of a generalised linear model with regression on the specified past observations and covariates, but not on past conditional means, are used as initial estimates. Initial estimates for the coefficients of past conditional means are set to zero.
+%  If \code{method="fixed"}, parameters given in further named list elements of \code{init.control} are used when available, else predefined values are used.}
+%      \item{\code{intercept}}{numeric value with initial value for the intercept parameter. Default value is 1.}
+%      \item{\code{past_obs}}{numeric vector with initial value for parameters for regression on previous observations. Default values are 0.}
+%      \item{\code{past_mean}}{numeric vector with initial value for parameters for regression on previous conditional means. Default values are 0.}
+%      \item{\code{xreg}}{numeric vector with initial value for the regression parameters. These values will also be used if \code{method="MM"}. Default values are 0.}
+%    }  
+%  }
+%  \item{final.control}{
+%    named list with optional elements that determine how to make the final maximum likelihood estimation. If \code{final.control=NULL} only initial estimates are computed. Possible list elements are:
+%    \describe{  
+%      \item{\code{constrained}}{named list whose element are passed to function \code{\link{constrOptim}} with possible elements \code{mu}, \code{outer.iterations} and \code{outer.eps} (see \code{\link{constrOptim}} for details). If \code{constrained=NULL} an unconstrained optimisation is made with function \code{\link{optim}}. Note that this is likely to result in a non-stationary fitted model which might cause further problems.}
+%      \item{\code{optim.method}}{character which is passed to functions \code{\link{constrOptim}} or \code{\link{optim}} as argument \code{method}.}
+%      \item{\code{optim.control}}{named list which is passed to function \code{\link{constrOptim}} or \code{\link{optim}} as argument \code{control}. Must not contain the list element \code{fnscale}.}
+%    }
+%  }
+%  \item{inter.control}{
+%    named list determining how to maximise the log-likelihood function in a first step. This intermediate optimisation will start from the initial estimation and be followed by the final optimisation, which will in turn start from the intermediate optimisation result. This intermediate optimisation is intended to use a very quick but imprecise optimisation algorithm. Possible elements are the same as for \code{final.control}. The default is \code{inter.control=NULL}, which skips this intermediate optimisation step. 
+%  }
 }
 
 \details{
@@ -117,7 +117,7 @@ An object of class \code{"ingarch"} is a list with at least the following elemen
   
   \item{init}{a named vector of the estimated initial coefficients.}
   
-  \item{residuals}{a vector of residuals, which can be extracted by the \code{\link[=residuals.ingarch]{residuals}} method.}
+  \item{residuals}{a vector of residuals, which can be extracted by the \code{\link[=residuals.tsglm]{residuals}} method.}
 
   \item{fitted.values}{the fitted values, which can be extracted by the \code{\link{fitted}} method.}
 
@@ -172,9 +172,9 @@ Tobias Liboschik and Philipp Probst
 }
 
 \seealso{
-S3 methods \code{\link[=summary.ingarch]{summary}}, \code{\link{vcov}}, \code{\link[=residuals.ingarch]{residuals}} and \code{\link[=predict.ingarch]{predict}} for the class \code{"ingarch"}.
+S3 methods \code{\link[=summary.ingarch]{summary}}, \code{\link{vcov}} and \code{\link[=predict.ingarch]{predict}} for the class \code{"ingarch"}.
 
-S3 methods \code{\link{print}}, \code{\link{fitted}}, \code{\link{coef}}, \code{\link{logLik}}, \code{\link{AIC}} and \code{\link{BIC}} for the class \code{"tsglm"}. Additionally, there are the S3 methods \code{\link[=pit.tsglm]{pit}}, \code{\link[=marcal.tsglm]{marcal}} and \code{\link[=scoring.tsglm]{scoring}} for predictive model assessment.
+S3 methods \code{\link{print}}, \code{\link{fitted}}, \code{\link[=residuals.tsglm]{residuals}}, \code{\link{coef}}, \code{\link{logLik}}, \code{\link{AIC}} and \code{\link{BIC}} for the class \code{"tsglm"}. Additionally, there are the S3 methods \code{\link[=pit.tsglm]{pit}}, \code{\link[=marcal.tsglm]{marcal}} and \code{\link[=scoring.tsglm]{scoring}} for predictive model assessment.
 
 \code{\link{ingarch.se}} for standard errors of the coefficients and \code{\link{ingarch.sim}} for simulation from an INGARCH model.
 S3 methods \code{\link[=interv_test.ingarch]{interv_test}}, \code{\link[=interv_detect.ingarch]{interv_detect}} and \code{\link[=interv_multiple.ingarch]{interv_multiple}} for tests on and detection of intervention effects.

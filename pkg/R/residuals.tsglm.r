@@ -1,4 +1,4 @@
-residuals.ingarch <- function(object, type=c("response", "pearson", "anscombe"), ...){
+residuals.tsglm <- function(object, type=c("response", "pearson", "anscombe"), ...){
   type <- match.arg(type)
   if(type=="pearson"){
     #Standard deviation of the conditional distribution (cf. marcal.tsglm):
