@@ -208,13 +208,23 @@ Example time series of counts are \code{\link{campy}}, \code{\link{ecoli}}, \cod
 }
 
 \examples{
-seatbelts_fit <- ingarch(ts=Seatbelts[, "DriversKilled"],
-  model=list(past_obs=1, past_mean=c(1, 12), xreg=Seatbelts[, "PetrolPrice"]), distr="poisson")
+#Fit an INGARCH model with identity link function and negative binomial distribution:
+seatbelts_fit <- tsglm(ts=Seatbelts[, "DriversKilled"],
+  model=list(past_obs=1, past_mean=c(1, 12), xreg=Seatbelts[, "PetrolPrice"]),
+  link="identity", distr="nbinom")
 summary(seatbelts_fit)
 plot(seatbelts_fit)
+
+#Fit a log-linear model with Poisson distribution:
+seatbelts_fit <- tsglm(ts=Seatbelts[, "DriversKilled"],
+  model=list(past_obs=1, past_mean=c(1, 12), xreg=Seatbelts[, "PetrolPrice"]),
+  link="log", distr="poisson")
+seatbelts_fit
 }
 
 \keyword{INGARCH}
+\keyword{log-linear}
+\keyword{GLM}
 \keyword{fit}
 \keyword{model}
 \keyword{time series}
