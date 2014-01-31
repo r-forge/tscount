@@ -44,7 +44,7 @@ loglin.fit(ts, model = list(past_obs = NULL, past_mean = NULL,
     a univariate time series.
   }
   \item{model}{
-    a named list specifying the model for the conditional mean, which can have the following elements:
+    a named list specifying the model for the linear predictor, which can have the following elements:
     \describe{  
       \item{\code{past_obs}}{integer vector giving the previous observations to be regressed on (autoregression). This is a vector with the elements \eqn{i_1,\ldots,i_p}{i[1],\ldots,i[p]} (see Details). If omitted or of length zero there will be no regression on previous observations.}    
       \item{\code{past_mean}}{integer vector giving the previous conditional means to be regressed on. This is a vector with the elements \eqn{j_1,\ldots,j_q}{j[1],\ldots,j[q]} (see Details). If omitted or of length zero there will be no regression on previous conditional means.}
@@ -65,7 +65,7 @@ loglin.fit(ts, model = list(past_obs = NULL, past_mean = NULL,
     logical value indicating whether the score vector should be computed.
   }
   \item{info}{
-    character that determines if and how to compute the information matrix. Can be set to \code{"score"} (the default) for calculation via the outer product of the score vector or to \code{"hessian"} for calculation via the Hessian matrix of second derivatives. If set to \code{"none"} no information matrix is computed. For \code{link="log"} the alternative code{"hessian"} is currently not available and will reult in an error.
+    character that determines if and how to compute the information matrix. Can be set to \code{"score"} (the default) for calculation via the outer product of the score vector or to \code{"hessian"} for calculation via the Hessian matrix of second derivatives. If set to \code{"none"} no information matrix is computed. For \code{link="log"} the alternative \code{"hessian"} is currently not available and will reult in an error.
   }
   \item{init}{
     character that determines how the recursion of the conditional mean (and possibly of its derivatives) is initialised. If \code{init="marginal"} (the default) the marginal mean of a model without covariates and its derivatives are used. If \code{init="zero"} all values are initialised by zero, wheras for \code{init="firstobs"} the first obersvation is used. For \code{link="log"} this argument is currently ignored and initialisation is always done by zero.
@@ -109,7 +109,7 @@ The INGARCH model (argument \code{link="identity"}) used here follows the defini
     \deqn{Z_{t}|{\cal{F}}_{t-1} \sim \mathrm{Poi}(\kappa_{t}) \quad \mathrm{or} \quad \mathrm{NegBin}(\kappa_{t}, \nu),}{
     Z[t]|F[t-1] ~ Poi(\kappa[t]) or  NegBin(\kappa[t], \nu),}
 where \eqn{{\cal{F}}_{t-1}}{F[t-1]} is the \eqn{\sigma}-field containing the information about the past of the process up to time \eqn{t-1}.
-For the model with covariates having an internal effect (the default) the linear predictor of the INGARCH model (which is identical to the conditional mean) is given by
+For the model with covariates having an internal effect (the default) the linear predictor of the INGARCH model (which is identical to the conditional mean for the identity link) is given by
     \deqn{\kappa_t = \beta_0 + \beta_1 Z_{t-i_1} + \ldots + \beta_p Z_{t-i_p}
     + \alpha_1 \kappa_{t-j_1} + \ldots  + \alpha_q \kappa_{t-j_q}
     + \eta_1 X_{t,1} + \ldots + \eta_r X_{t,r}.}{
@@ -133,7 +133,7 @@ Note that because of the logarithmic link function the effect of single summands
 The Poisson distribution is parametrised by the mean \code{lambda} according to the definition in \code{\link{Poisson}}.
 The negative binomial distribution is parametrised by the mean \code{mu} with an additional dispersion parameter \code{size} according to the definition in \code{\link{NegBinomial}}. In the notation above its mean parameter \code{mu} is \eqn{\kappa_{t}}{\kappa[t]} and its dispersion parameter \code{size} is \eqn{\nu}.
 
-This function allows to include covariates in two different ways. A covariate can have a so-called internal effect as defined above, where its effect propagates via the regression on past values of the linear predictor and on past observations. Alternatively, it can have a so-called external effect, where its effect does not directly propagates via the feedback on past values of the linear predictor but only via past observations.
+This function allows to include covariates in two different ways. A covariate can have a so-called internal effect as defined above, where its effect propagates via the regression on past values of the linear predictor and on past observations. Alternatively, it can have a so-called external effect, where its effect does not directly propagates via the feedback on past values of the linear predictor, but only via past observations.
 For the model with external effects of the covariates, the linear predictor is given by
     \deqn{\kappa_t = \mu_t + \eta_1 X_{t,1} + \ldots + \eta_r X_{t,r},}{
     \kappa[t] = \mu[t] + \eta[1] X[t,1] + \ldots + \eta[r] X[t,r],}
@@ -147,7 +147,8 @@ for the model with identity link and analoguesly by
     \deqn{\mu_t = \beta_0 + \beta_1 log(Z_{t-i_1}+1) + \ldots + \beta_p log(Z_{t-i_p}+1)
     + \alpha_1 \lambda_{t-j_1} + \ldots  + \alpha_q \lambda_{t-j_q},}{
     \mu[t] = \beta[0] + \beta[1] log(Z[t-i[1]]+1) + \ldots + \beta[p] log(Z[t-i[p]+1)
-    + \alpha[1] \lambda[t-j[1]] + \ldots  + \alpha[q] \lambda[t-j[q]],} 
+    + \alpha[1] \lambda[t-j[1]] + \ldots  + \alpha[q] \lambda[t-j[q]],}
+for the model with logarithmic link. 
 It is also possible to model a combination of external and internal covariates, which can be defined straightforwardly by adding each covariate either to the linear predictor \eqn{\kappa_t}{\kappa[t]} itself (for an internal effect) or to \eqn{\mu_t}{\mu[t]} defined above (for an external effect).
 
 }
@@ -224,7 +225,7 @@ Additionally, there are the S3 methods \code{\link[=pit.tsglm]{pit}}, \code{\lin
 
 
 S3 methods \code{\link[=interv_test.ingarch]{interv_test}}, \code{\link[=interv_detect.ingarch]{interv_detect}} and \code{\link[=interv_multiple.ingarch]{interv_multiple}} for tests on and detection of intervention effects.
-\code{\link{tsglm.sim}} for simulation from GLM-type model for time series of counts.. \code{\link{ingarch.mean}}, \code{\link{ingarch.var}} and \code{\link{ingarch.acf}} for calculation of analytical mean, variance and autocorrelation function of an INGARCH model without covariates.
+\code{\link{tsglm.sim}} for simulation from GLM-type model for time series of counts. \code{\link{ingarch.mean}}, \code{\link{ingarch.var}} and \code{\link{ingarch.acf}} for calculation of analytical mean, variance and autocorrelation function of an INGARCH model (i.e. with identity link) without covariates.
 
 Example time series of counts are \code{\link{campy}}, \code{\link{ecoli}}, \code{\link{ehec}}, \code{\link{influenza}}, \code{\link{measles}} in this package, \code{\link[gamlss.data]{polio}} in package \code{gamlss.data}.
 }

@@ -1,7 +1,7 @@
 summary.tsglm <- function(object, B, parallel=FALSE, ...){
   cl <- object$call
   if(length(coef(object))){
-    ll <- logLik(object) # log-likelihood of the fitted model
+    ll <- logLik(object) #log-likelihood of the fitted model
     k <- attr(ll, "df") #number of parameters of the fitted model
     n <- attr(ll, "nobs") #number of observations used for model fit
     infer <- NULL
@@ -23,7 +23,7 @@ summary.tsglm <- function(object, B, parallel=FALSE, ...){
       number.coef=nrow(coefs),             
       logLik=logLik(object),             
       AIC=AIC(object), #Akaike's Information Criterion
-      corrected.AIC= -2*ll + 2*k + 2*k*(k+1)/(n-k-1), #AIC corrected for finite sample sizes
+      AICc= -2*ll + 2*k + 2*k*(k+1)/(n-k-1), #AIC corrected for finite sample sizes
       BIC=BIC(object), #Bayesian Information Criterion
       pearson.resid=residuals(object, type="pearson") #Pearson's residuals
     )  

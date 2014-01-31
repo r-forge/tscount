@@ -28,12 +28,11 @@ S3method(se, tsglm)
 S3method(marcal, tsglm)
 S3method(pit, tsglm)
 S3method(scoring, tsglm)
+S3method(interv_test, tsglm)
+S3method(interv_detect, tsglm)
+S3method(interv_multiple, tsglm)
 
 S3method(print, summary.tsglm)  
-
-S3method(interv_test, ingarch)
-S3method(interv_detect, ingarch)
-S3method(interv_multiple, ingarch)
 
 S3method(print, interv_test)
 

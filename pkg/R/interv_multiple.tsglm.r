@@ -4,7 +4,7 @@ interv_multiple <- function(...) UseMethod("interv_multiple")
 #Test on a single intervention of UNknown type at a UNknown point in time
 #(still needed, can be done with the function below on multiple interventions with signif_level=0, but this will not work for p-values which are exactly zero)
 
-interv_multiple.ingarch <- function(fit, taus=2:length(ts), deltas=c(0,0.8,1), external=FALSE, B=10, signif_level=0.05, init.control_bootstrap, final.control_bootstrap, inter.control_bootstrap, parallel=FALSE, ...){
+interv_multiple.tsglm <- function(fit, taus=2:length(ts), deltas=c(0,0.8,1), external=FALSE, B=10, signif_level=0.05, init.control_bootstrap, final.control_bootstrap, inter.control_bootstrap, parallel=FALSE, ...){
 #Test on (multiple) interventions of UNknown type at a UNknown points in time
   #taus: vector of times which should be considered for the interventions
   #B: Integer (>0). Number of bootstrap samples for estimation of the p-value.
@@ -26,7 +26,7 @@ interv_multiple.ingarch <- function(fit, taus=2:length(ts), deltas=c(0,0.8,1), e
   iteration <- 0
   repeat{
     iteration <- iteration + 1
-    if(iteration > 1) fit <- ingarch(ts=ts, model=model, score=FALSE, info="none", ...) #fit the model to the cleaned time series under the null hypothesis of no (further) intervention from the second iteration on, the model fit for the original time series in the first iteration has been done before
+    if(iteration > 1) fit <- tsglm(ts=ts, model=model, link=fit$link, distr=fit$link, score=FALSE, info="none", ...) #fit the model to the cleaned time series under the null hypothesis of no (further) intervention from the second iteration on, the model fit for the original time series in the first iteration has been done before
     testresult_single <- vector("list", L)
     for(l in 1:L){
       testresult_single[[l]] <- interv_detect(fit=fit, taus=taus, delta=deltas[l], external=external, B=B, init.control_bootstrap=init.control_bootstrap, final.control_bootstrap=final.control_bootstrap, inter.control_bootstrap=inter.control_bootstrap, parallel=parallel, est_interv=TRUE, ...)   
@@ -49,7 +49,7 @@ interv_multiple.ingarch <- function(fit, taus=2:length(ts), deltas=c(0,0.8,1), e
       }
       model_interv <- testresult_single[[l_chosen]]$model_interv
       fit_interv <- testresult_single[[l_chosen]]$fit_interv
-      decomposition <- ingarch.interv_decompose(ts=ts, model=model_interv, paramvec=fit_interv$coefficients, isolate=r+1)
+      decomposition <- tsglm.interv_decompose(ts=ts, model=model_interv, link=fit$link, paramvec=fit_interv$coefficients, isolate=r+1)
       ts <- decomposition$cleaned #use cleaned time series as the time series of the next step              
       result$interventions <- rbind(result$interventions, c(taus_max[l_chosen], deltas[l_chosen], sizes[l_chosen], test_statistics[l_chosen], p_values[l_chosen]))                              
       ts_cleaned <- c(ts_cleaned, list(ts))
@@ -74,7 +74,7 @@ interv_multiple.ingarch <- function(fit, taus=2:length(ts), deltas=c(0,0.8,1), e
     result$model_interv$xreg <- cbind(model$xreg, interv_covariate(n=n, tau=result$interventions$tau, delta=result$interventions$delta))
     result$model_interv$external <- c(model$external, rep(external, nrow(result$interventions)))
     ts <- result$fit_H0$ts #object ts has been replaced by a cleaned time series before and is now set to the original time series
-    result$fit_interv <- try(ingarch(ts=ts, model=result$model_interv, ...))
+    result$fit_interv <- try(tsglm(ts=ts, model=result$model_interv, link=fit$link, distr=fit$distr, ...))
   }else{
     result$fit_interv <- result$fit_H0
   }

@@ -1,9 +1,9 @@
-\name{interv_detect.ingarch}
-\alias{interv_detect.ingarch}
+\name{interv_detect.tsglm}
+\alias{interv_detect.tsglm}
 \alias{interv_detect}
 
 \title{
-Detecting an Intervention in INGARCH Processes
+Detecting an Intervention in Count Time Series following Generalised Linear Models
 }
 
 \description{
@@ -11,7 +11,7 @@ Detection procedure for an intervention of given type occuring at unknown time.
 }
 
 \usage{
-\method{interv_detect}{ingarch}(fit, taus=2:length(ts), delta, external=FALSE, 
+\method{interv_detect}{tsglm}(fit, taus=2:length(ts), delta, external=FALSE, 
               B=NULL, info=c("score", "hessian"), init.control_bootstrap, 
               final.control_bootstrap, inter.control_bootstrap, 
               parallel=FALSE, est_interv=TRUE, ...)
@@ -103,13 +103,13 @@ Tobias Liboschik and Philipp Probst
 S3 methods \code{print} and \code{\link[=plot.interv_detect]{plot}}.
 
 \code{\link{tsglm}} for fitting an INGARCH model.
-\code{\link[=interv_test.ingarch]{interv_test}} for testing on intervention effects and \code{\link[=interv_multiple.ingarch]{interv_multiple}} for iterative detection of multiple interventions of unknown types. \code{\link{interv_covariate}} for generation of deterministic covariates describing intervention effects.
+\code{\link[=interv_test.tsglm]{interv_test}} for testing on intervention effects and \code{\link[=interv_multiple.tsglm]{interv_multiple}} for iterative detection of multiple interventions of unknown types. \code{\link{interv_covariate}} for generation of deterministic covariates describing intervention effects.
 }
 
 \examples{
 #Searching for a potential intervention effect:
 #campy_fit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
-#campy_intervdetect <- interv_detect.ingarch(fit=campy_fit, taus=80:120,
+#campy_intervdetect <- interv_detect(fit=campy_fit, taus=80:120,
 #                            delta=1, external=FALSE)
 #campy_intervdetect
 #plot(campy_intervdetect)

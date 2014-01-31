@@ -17,7 +17,7 @@ tsglm.sim(n, param=list(intercept=1, past_obs=NULL, past_mean=NULL, xreg=NULL),
   integer value giving the number of observations to be simulated.
 }
   \item{param}{
-  a named list giving the parameters of the INGARCH model with the following elements: 
+  a named list giving the parameters for the linear predictor of the model, which has the following elements: 
     \describe{
       \item{intercept}{numeric positive value for the intercept \eqn{\beta_0}{\beta[0]}.}
       \item{past_obs}{numeric non-negative vector containing the coefficients \eqn{\beta_1,\ ldots, \beta_p}{\beta[1], \ldots, \beta[p]} for regression on previous observations (see Details).}
@@ -26,10 +26,10 @@ tsglm.sim(n, param=list(intercept=1, past_obs=NULL, past_mean=NULL, xreg=NULL),
   }
 }
   \item{model}{
-  a named list specifying the INGARCH model with the elements \code{past_obs}, \code{past_mean}, \code{xreg} and \code{external} (see function \code{\link{tsglm}} for details). This model specification must be in accordance to the parameters given in argument \code{param} (see Details).
+  a named list specifying the model for the linear predictor, which has the elements \code{past_obs}, \code{past_mean}, \code{xreg} and \code{external} (see function \code{\link{tsglm}} for details). This model specification must be in accordance to the parameters given in argument \code{param} (see Details).
 }
   \item{link}{
-    character giving the link function. Default is \code{"identity"}, simulating from an INGARCH model. Another possible choice is \code{"log"}, simulating from a log-linear model.
+    character giving the link function. Default is \code{"identity"}, simulating from a so-called INGARCH model. Another possible choice is \code{"log"}, simulating from a log-linear model.
   }
   \item{distr}{
   character giving the conditional distribution. Default is a Poisson distribution. Currently the only alternative is the negative binomial distribution.
@@ -46,7 +46,7 @@ tsglm.sim(n, param=list(intercept=1, past_obs=NULL, past_mean=NULL, xreg=NULL),
 }
 
 \details{
-The definition of an INGARCH model with covariates used here is like in function \code{\link{tsglm}}.
+The definition of the model used here is like in function \code{\link{tsglm}}.
 }
 
 \value{
@@ -55,10 +55,10 @@ The definition of an INGARCH model with covariates used here is like in function
 \item{\code{ts}}{
   an object of class \code{"ts"} with the simulated time series.
 }
-\item{\code{mean}}{
+\item{\code{linear.predictors}}{
   an object of class \code{"ts"} with the simulated conditional means \eqn{\kappa_t}{\kappa[t]} for all \eqn{t=1, \ldots, n}.
 }
-\item{\code{xreg_effect}}{
+\item{\code{xreg.effects}}{
   an object of class \code{"ts"} with the cumulated effect of the covariates \eqn{\eta_1 X_{t,1} + \ldots + \eta_r X_{t,r}}{\eta[1] X[t,1] + \ldots + \eta[r] X[t,r]} for all \eqn{t=1, \ldots, n}.
 }
 }
@@ -80,7 +80,7 @@ Tobias Liboschik and Philipp Probst
 }
 
 \seealso{
-\code{\link{tsglm}} for fitting a GLM for time series of counts, which includes INGARCH models.
+\code{\link{tsglm}} for fitting a GLM for time series of counts.
 }
 
 \examples{
@@ -88,8 +88,15 @@ Tobias Liboschik and Philipp Probst
 interventions <- interv_covariate(n=200, tau=c(50, 150), delta=c(1, 0.8))
 model <- list(past_obs=1, past_mean=c(1, 7), xreg=interventions, external=FALSE)
 param <- list(intercept=2, past_obs=0.3, past_mean=c(0.2, 0.1), xreg=c(3, 10))
-tsglm.sim(n=200, param=param, model=model, link="identity", distr="poisson")
+tsglm.sim(n=200, param=param, model=model, link="identity",
+          distr="nbinom", distrcoefs=c(size=1))
 }
 
 \keyword{INGARCH}
+\keyword{log-linear}
+\keyword{GLM}
+\keyword{fit}
+\keyword{model}
+\keyword{time series}
+\keyword{count data}
 \keyword{simulation} 

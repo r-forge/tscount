@@ -1,15 +1,15 @@
-\name{interv_multiple.ingarch}
-\alias{interv_multiple.ingarch}
+\name{interv_multiple.tsglm}
+\alias{interv_multiple.tsglm}
 \alias{interv_multiple}
 
 \title{
-Detecting Multiple Interventions in INGARCH Processes
+Detecting Multiple Interventions in Count Time Series following Generalised Linear Models
 }
 \description{
 Iterative detection procedure for multiple interventions of unknown types occuring at unknown times.
 }
 \usage{
-\method{interv_multiple}{ingarch}(fit, taus=2:length(ts), deltas=c(0,0.8,1),
+\method{interv_multiple}{tsglm}(fit, taus=2:length(ts), deltas=c(0,0.8,1),
                 external=FALSE, B=10, signif_level=0.05,
                 init.control_bootstrap, final.control_bootstrap,
                 inter.control_bootstrap, parallel=FALSE, ...)
@@ -95,14 +95,14 @@ Tobias Liboschik and Philipp Probst
 
 \seealso{
 \code{\link{tsglm}} for fitting a GLM for time series of counts.
-\code{\link{plot.interv_multiple}} for plotting, \code{\link[=interv_test.ingarch]{interv_test}} and \code{\link[=interv_detect.ingarch]{interv_detect}} for other intervention tests.
+\code{\link{plot.interv_multiple}} for plotting, \code{\link[=interv_test.tsglm]{interv_test}} and \code{\link[=interv_detect.tsglm]{interv_detect}} for other intervention tests.
 }
 
 \examples{
 \dontrun{
 #Searching for potential intervention effects:
 #campy_fit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
-#campy_intervmultiple <- interv_multiple.ingarch(fit=campy_fit, taus=80:120,
+#campy_intervmultiple <- interv_multiple(fit=campy_fit, taus=80:120,
 #                              deltas=c(0,0.8,1), external=FALSE, B=500,
 #                              signif_level=0.05) #runs several hours!
 #campy_intervmultiple

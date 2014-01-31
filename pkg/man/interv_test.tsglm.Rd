@@ -1,9 +1,9 @@
-\name{interv_test.ingarch}
-\alias{interv_test.ingarch}
+\name{interv_test.tsglm}
+\alias{interv_test.tsglm}
 \alias{interv_test}
 
 \title{
-Testing for Interventions in INGARCH Processes
+Testing for Interventions in Count Time Series following Generalised Linear Models
 }
 
 \description{
@@ -11,7 +11,7 @@ Test on one or more interventions of known type at known time.
 }
 
 \usage{
-\method{interv_test}{ingarch}(fit, tau, delta, external, 
+\method{interv_test}{tsglm}(fit, tau, delta, external, 
             info=c("score", "hessian"), est_interv=FALSE, ...)
 }
 
@@ -85,13 +85,13 @@ Tobias Liboschik and Philipp Probst
 S3 method \code{print}.
 
 \code{\link{tsglm}} for fitting a GLM for time series of counts.
-\code{\link[=interv_detect.ingarch]{interv_detect}} for detection of single interventions of given type and \code{\link[=interv_multiple.ingarch]{interv_multiple}} for iterative detection of multiple interventions of unknown types. \code{\link{interv_covariate}} for generation of deterministic covariates describing intervention effects.
+\code{\link[=interv_detect.tsglm]{interv_detect}} for detection of single interventions of given type and \code{\link[=interv_multiple.tsglm]{interv_multiple}} for iterative detection of multiple interventions of unknown types. \code{\link{interv_covariate}} for generation of deterministic covariates describing intervention effects.
 }
 
 \examples{
 #Test for the intervention effects found in Fokianos und Fried (2010):
 #campy_fit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
-#campy_intervtest <- interv_test.ingarch(fit=campy_fit, tau=c(84,100),
+#campy_intervtest <- interv_test(fit=campy_fit, tau=c(84,100),
 #                          delta=c(1,0), external=FALSE)
 #campy_intervtest
 }
