@@ -58,7 +58,7 @@ Tobias Liboschik and Philipp Probst
 }
 
 \seealso{
-\code{\link{ingarch}} for fitting a more general INGARCH model with covariates and \code{\link{ingarch.sim}} for simulation from such a model.
+\code{\link{tsglm}} for fitting a more general INGARCH model with covariates and \code{\link{tsglm.sim}} for simulation from such a model.
 }
 
 \examples{

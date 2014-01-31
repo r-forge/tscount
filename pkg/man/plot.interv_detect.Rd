@@ -25,14 +25,14 @@ Tobias Liboschik and Philipp Probst
 }
 
 \seealso{
-\code{\link[=interv_detect.ingarch]{interv_detect}} for detecting an intervention effect in an INGARCH process and \code{\link{ingarch}} for fitting an INGARCH model.
+\code{\link[=interv_detect.ingarch]{interv_detect}} for detecting an intervention effect in an INGARCH process and \code{\link{tsglm}} for fitting an INGARCH model.
 }
 
 \examples{
-campy_fit <- ingarch(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
-campy_intervdetect <- interv_detect(fit=campy_fit, taus=80:120,
-                        delta=1, external=FALSE)
-plot(campy_intervdetect)
+#campy_fit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
+#campy_intervdetect <- interv_detect(fit=campy_fit, taus=80:120,
+#                        delta=1, external=FALSE)
+#plot(campy_intervdetect)
 }
 
 \keyword{INGARCH}

@@ -8,7 +8,7 @@ interv_detect.ingarch <- function(fit, taus=2:length(ts), delta, external=FALSE,
   ##############################
   
   #Check and modify arguments:
-  ingarch.check(fit)
+  tsglm.check(fit)
   info <- match.arg(info)
   taus <- sort(unique(taus)) #ensure, that vector of considered time points is sorted and does not include any duplicates
   
@@ -37,7 +37,7 @@ interv_detect.ingarch <- function(fit, taus=2:length(ts), delta, external=FALSE,
       loglik <- ingarch.loglik(paramvec=param_H0_extended, model=model_extended, ts=ts, score=TRUE, info=info, condmean=condmean_H0, from=taus[j])
       
       infomat_corrected <- apply((1/loglik$kappa + fit$sigmasq)*loglik$outerscoreprod, c(2,3), sum)
-      vcov <- try(vcov.ingarch(list(info.matrix=loglik$info, info.matrix_corrected=infomat_corrected)) )
+      vcov <- try(vcov.tsglm(list(info.matrix=loglik$info, info.matrix_corrected=infomat_corrected)) )
       if(class(vcov)=="try-error"){
         return(list(error_message=paste("Error in invertinfo(mat) : \n", vcov[[1]], sep="")))
       }
@@ -89,7 +89,7 @@ interv_detect.ingarch <- function(fit, taus=2:length(ts), delta, external=FALSE,
     }
     bootstrap <- function(seed=NULL, fit_H0, n, model, distr, taus, delta, external, ...){
       if(!is.null(seed)) set.seed(seed)
-      ts.bootstrap <- ingarch.sim(fit=fit_H0)$ts
+      ts.bootstrap <- tsglm.sim(fit=fit_H0)$ts
       fit_H0.bootstrap <- if(bootstrap_noest) fit_H0 else NULL
       dotdotdot <- list(...)
       dotdotdot[names(dotdotdot) %in% c("init.control", "final.control", "inter.control")] <- NULL #remove these arguments to avoid matching multiple arguments in the following call

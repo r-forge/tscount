@@ -17,7 +17,7 @@ Test on one or more interventions of known type at known time.
 
 \arguments{
   \item{fit}{
-an object of class \code{"ingarch"}. Usually the result of a call to \code{\link{ingarch}}.
+an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{tsglm}}.
 }
   \item{tau}{
   integer vector of times at which the interventions occur which are tested for.
@@ -29,18 +29,18 @@ an object of class \code{"ingarch"}. Usually the result of a call to \code{\link
   logical vector of length \code{length(tau)} specifying for each intervention wether its effect is external or not (see Details). If this is only a scalar this choice will be used for all interventions. If this is only a scalar this choice will be used for all interventions. If omitted all interventions will have an internal effect (i.e. \code{external=FALSE}).
 } 
   \item{info}{
-  character value that determines how to calculate the information matrix, see \code{\link{ingarch}}.
+  character value that determines how to calculate the information matrix, see \code{\link{tsglm}}.
 }
   \item{est_interv}{
   logical value. If \code{est_interv=TRUE} a fit for the model with all specified interventions is computed and additionally returned.
 }
   \item{...}{
-  additional arguments passed to the fitting function \code{\link{ingarch}}.
+  additional arguments passed to the fitting function \code{\link{tsglm}}.
 }
 }
  
 \details{
-A score test on the null hypothesis of no interventions is done. The null hypothesis is that the data are generated from the model specified in the argument \code{model}, see definition in \code{\link{ingarch}}. Under the alternative there are one or more intervention effects occuring at times \code{tau}. The types of the intervention effects are specified by \code{delta} as defined in \code{\link{interv_covariate}}. The interventions are included as additional covariates according to the definition in \code{\link{ingarch}} and can have an internal (the default) or external \code{external=TRUE} effect.
+A score test on the null hypothesis of no interventions is done. The null hypothesis is that the data are generated from the model specified in the argument \code{model}, see definition in \code{\link{tsglm}}. Under the alternative there are one or more intervention effects occuring at times \code{tau}. The types of the intervention effects are specified by \code{delta} as defined in \code{\link{interv_covariate}}. The interventions are included as additional covariates according to the definition in \code{\link{tsglm}} and can have an internal (the default) or external \code{external=TRUE} effect.
 
 Under the null hypothesis the test statistic asymptotically has a chi-square distribution with \code{length(tau)} degrees of freedom. The returned p-value is based on this and approximately valid for \code{length(ts)} large.
 }
@@ -58,7 +58,7 @@ An object of class \code{"interv_test"}, which is a list with at least the follo
   p-value of the test.
 }
   \item{fit_H0}{
-  object of class \code{"ingarch"} with the fitted model under the null hypothesis of no intervention, see \code{\link{ingarch}}.
+  object of class \code{"tsglm"} with the fitted model under the null hypothesis of no intervention, see \code{\link{tsglm}}.
 }
   \item{model_interv}{
   model specification of the model with the specified interventions.
@@ -67,7 +67,7 @@ An object of class \code{"interv_test"}, which is a list with at least the follo
 If argument \code{est_interv=TRUE}, the following component is additionally returned:
 
   \item{fit_interv}{
-  object of class \code{"ingarch"} with the fitted model with the specified interventions, see \code{\link{ingarch}}.
+  object of class \code{"tsglm"} with the fitted model with the specified interventions, see \code{\link{tsglm}}.
 }
 }
 
@@ -84,14 +84,14 @@ Tobias Liboschik and Philipp Probst
 \seealso{
 S3 method \code{print}.
 
-\code{\link{ingarch}} for fitting an INGARCH model.
+\code{\link{tsglm}} for fitting a GLM for time series of counts.
 \code{\link[=interv_detect.ingarch]{interv_detect}} for detection of single interventions of given type and \code{\link[=interv_multiple.ingarch]{interv_multiple}} for iterative detection of multiple interventions of unknown types. \code{\link{interv_covariate}} for generation of deterministic covariates describing intervention effects.
 }
 
 \examples{
 #Test for the intervention effects found in Fokianos und Fried (2010):
-campy_fit <- ingarch(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
-campy_intervtest <- interv_test(fit=campy_fit, tau=c(84,100),
-                          delta=c(1,0), external=FALSE)
-campy_intervtest
+#campy_fit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
+#campy_intervtest <- interv_test.ingarch(fit=campy_fit, tau=c(84,100),
+#                          delta=c(1,0), external=FALSE)
+#campy_intervtest
 }

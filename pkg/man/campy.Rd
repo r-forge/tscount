@@ -28,7 +28,7 @@ Ferland, R., Latour, A. and Oraichi, D. (2006) Integer-valued GARCH process. \em
 plot(campy)
 
 #Fit the INGARCH model used in Ferland et al. (2006):
-campy_fit <- ingarch(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
+campy_fit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
 summary(campy_fit)
 plot(campy_fit)
 }

@@ -27,16 +27,16 @@ Tobias Liboschik and Philipp Probst
 }
 
 \seealso{
-\code{\link[=interv_multiple.ingarch]{interv_multiple}} for detecting multiple intervention effects in an INGARCH process and \code{\link{ingarch}} for fitting an INGARCH model.
+\code{\link[=interv_multiple.ingarch]{interv_multiple}} for detecting multiple intervention effects in an INGARCH process and \code{\link{tsglm}} for fitting an INGARCH model.
 }
 
 \examples{
 \dontrun{
-campy_fit <- ingarch(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
-campy_intervmultiple <- interv_multiple(fit=campy_fit, taus=80:120,
-                              deltas=c(0,0.8,1), external=FALSE, B=2,
-                              signif_level=0.05) #runs several hours!
-plot(campy_intervmultiple)}
+#campy_fit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
+#campy_intervmultiple <- interv_multiple(fit=campy_fit, taus=80:120,
+#                              deltas=c(0,0.8,1), external=FALSE, B=2,
+#                              signif_level=0.05) #runs several hours!
+#plot(campy_intervmultiple)}
 }
 
 \keyword{INGARCH}

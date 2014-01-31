@@ -5,7 +5,7 @@ interv_test.ingarch <- function(fit, tau, delta, external, info=c("score", "hess
 ##############################
   
   #Check and modify argument:  
-  ingarch.check(fit)
+  tsglm.check(fit)
   info <- match.arg(info)
   r <- length(tau)
   if(missing(external) | length(external)==0) external <- rep(FALSE, r) else external <- as.logical(external) #the default value for external is FALSE (i.e. an internal intervention effect)
@@ -20,7 +20,7 @@ interv_test.ingarch <- function(fit, tau, delta, external, info=c("score", "hess
     model_extended$external <- c(fit$model$external, external) 
   loglik <- ingarch.loglik(paramvec=param_H0_extended, model=model_extended, ts=fit$ts, score=TRUE, info=info)
   infomat_corrected <- apply((1/loglik$kappa + fit$sigmasq)*loglik$outerscoreprod, c(2,3), sum)
-  vcov <- vcov.ingarch(list(info.matrix=loglik$info, info.matrix_corrected=infomat_corrected))
+  vcov <- vcov.tsglm(list(info.matrix=loglik$info, info.matrix_corrected=infomat_corrected))
   test_statistic <- (t(loglik$score) %*% vcov %*% loglik$score)[1,1]
   p_value <- 1-pchisq(test_statistic, df=r)
   result <- list(

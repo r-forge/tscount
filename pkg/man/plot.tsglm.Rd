@@ -2,10 +2,10 @@
 \alias{plot.tsglm}
 
 \title{
-Plot Diagnostics for an \code{ingarch} Object
+Diagnostic Plots for a fitted GLM-type Model for Time Series of Counts
 }
 \description{
-\code{plot.tsglm} provides four plots for diagnostical analysis.
+This S3 method provides several diagnostic plots to asses the model fit provided in an object of class \code{"tsglm"}.
 }
 \usage{
 \method{plot}{tsglm}(x, ask = TRUE, ...)
@@ -33,13 +33,20 @@ Tobias Liboschik and Philipp Probst
 }
 
 \examples{
-seatbelts_fit <- ingarch(ts=Seatbelts[, "DriversKilled"],
-  model=list(past_obs=1, past_mean=c(1, 12), xreg=Seatbelts[, "PetrolPrice"]))
+seatbelts_fit <- tsglm(ts=Seatbelts[, "DriversKilled"],
+  model=list(past_obs=1, past_mean=c(1, 12), xreg=Seatbelts[, "PetrolPrice"]),
+  link="identity", distr="nbinom")
 op <- par(mfrow=c(2,2))
 plot(seatbelts_fit, ask=FALSE)
 par(op)
 }
 
 \keyword{INGARCH}
+\keyword{log-linear}
+\keyword{GLM}
+\keyword{fit}
+\keyword{model}
+\keyword{time series}
+\keyword{count data}
 \keyword{plot}
 

@@ -1,17 +1,19 @@
-ingarch.se <- function(fit, B, parallel=FALSE, ...){
-  ingarch.check(fit)
-  est <- c(coef(fit), fit$distrcoefs)
+se <- function(object, ...) UseMethod("se")
+
+se.tsglm <- function(object, B, parallel=FALSE, ...){
+  tsglm.check(object)
+  est <- c(coef(object), object$distrcoefs)
   if(missing(B)){
-    vcov <- vcov(fit)
+    vcov <- vcov(object)
     var <- diag(vcov)
-    se <- c(sqrt(var), rep(NA, length(fit$distrcoefs)))
-    result <- list(est=est, se=se, type="normapprox")
+    stderrors <- c(sqrt(var), rep(NA, length(object$distrcoefs)))
+    result <- list(est=est, se=stderrors, type="normapprox")
   }else{
     stopifnot(B>=2, B%%1==0)
     simfit <- function(seed, fit, ...){
       set.seed(seed)
-      ts_sim <- ingarch.sim(fit=fit)$ts
-      fit_sim <- ingarch(ts=ts_sim, model=fit$model, distr=fit$distr, score=FALSE, info="none", ...)
+      ts_sim <- tsglm.sim(fit=fit)$ts
+      fit_sim <- tsglm(ts=ts_sim, model=fit$model, link=fit$link, distr=fit$distr, score=FALSE, info="none", ...)
       result <- c(coef(fit_sim), fit_sim$distrcoefs)
       return(result)
     }
@@ -32,9 +34,9 @@ ingarch.se <- function(fit, B, parallel=FALSE, ...){
     }else{
       Sapply <- sapply
     }
-    bootstrap_coefs <- Sapply(seeds, simfit, fit=fit, ..., simplify=TRUE)
-    se <- apply(bootstrap_coefs, 1, sd)
-    result <- list(est=est, se=se, type="bootstrap", B=B)
+    bootstrap_coefs <- Sapply(seeds, simfit, fit=object, ..., simplify=TRUE)
+    stderrors <- apply(bootstrap_coefs, 1, sd)
+    result <- list(est=est, se=stderrors, type="bootstrap", B=B)
   }
   return(result)
 }

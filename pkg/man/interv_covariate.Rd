@@ -39,7 +39,7 @@ Liboschik, T., Kerschke, P., Fokianos, K. and Fried, R. (2013) Modelling interve
 Tobias Liboschik
 }
 \seealso{
-\code{\link{ingarch}} for fitting an INGARCH model.
+\code{\link{tsglm}} for fitting a GLM for time series of counts.
 \code{\link[=interv_test.ingarch]{interv_test}}, \code{\link[=interv_detect.ingarch]{interv_detect}} and \code{\link[=interv_multiple.ingarch]{interv_multiple}} for tests on and detection of intervention effects.
 }
 \examples{

@@ -44,7 +44,7 @@ Philipp Probst and Tobias Liboschik
 }
 
 \examples{
-campy_fit <- ingarch(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
+campy_fit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
 marcal(campy_fit)
 }
 

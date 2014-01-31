@@ -11,7 +11,7 @@ interv_multiple.ingarch <- function(fit, taus=2:length(ts), deltas=c(0,0.8,1), e
 ##############################
 
   #Check and modify arguments:
-  ingarch.check(fit)
+  tsglm.check(fit)
   ts <- fit$ts
   model <- fit$model
   n <- length(ts)

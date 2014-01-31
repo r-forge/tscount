@@ -1,17 +1,17 @@
-\name{predict.ingarch}
-\alias{predict.ingarch}
+\name{predict.tsglm}
+\alias{predict.tsglm}
 \title{
-Predict Method for INGARCH Fits
+Predict Method for Time Series of Counts following GLMs
 }
 \description{
-Predict future observations based on a fitted INGARCH model.
+Predict future observations based on a fitted GLM-type model for time series of counts.
 }
 \usage{
-\method{predict}{ingarch}(object, n.ahead = 1, newobs = NULL, newxreg = NULL, ...)
+\method{predict}{tsglm}(object, n.ahead = 1, newobs = NULL, newxreg = NULL, ...)
 }
 \arguments{
   \item{object}{
-an object of class \code{"ingarch"}. Usually the result of a call to \code{\link{ingarch}}.
+an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{tsglm}}.
 }
   \item{n.ahead}{
 positive integer value giving number of steps ahead for which prediction is required.
@@ -38,13 +38,15 @@ Tobias Liboschik and Philipp Probst
 }
 
 \seealso{
- \code{\link{ingarch}} for fitting an INGARCH model.
+\code{\link{tsglm}} for fitting a GLM for time series of counts.
 }
 
 \examples{
-campy_fit <- ingarch(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
+campy_fit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)),
+                    link="identity")
 predict(campy_fit, n.ahead=5)
 }
 
+\keyword{GLM}
 \keyword{INGARCH}
 \keyword{predict}

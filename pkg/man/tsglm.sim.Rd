@@ -1,15 +1,16 @@
-\name{ingarch.sim}
-\alias{ingarch.sim}
+\name{tsgml.sim}
+\alias{tsglm.sim}
 \title{
-Simulate from an INGARCH Model
+Simulate a time series following a generalised linear model
 }
 \description{
-Generates a simulated time series from an INGARCH model.
+Generates a simulated time series from a GLM-type time series of counts model.
 }
 \usage{
-ingarch.sim(n, param=list(intercept=1, past_obs=NULL, past_mean=NULL, xreg=NULL), 
-            model=list(past_obs=NULL, past_mean=NULL, xreg=NULL, external=FALSE), 
-            distr=c("poisson", "nbinom"), distrcoefs, fit, n_start=50)
+tsglm.sim(n, param=list(intercept=1, past_obs=NULL, past_mean=NULL, xreg=NULL), 
+            model=list(past_obs=NULL, past_mean=NULL, xreg=NULL, external=FALSE),
+            link=c("identity", "log"), distr=c("poisson", "nbinom"), distrcoefs,
+            fit, n_start=50)
 }
 \arguments{
   \item{n}{
@@ -25,8 +26,11 @@ ingarch.sim(n, param=list(intercept=1, past_obs=NULL, past_mean=NULL, xreg=NULL)
   }
 }
   \item{model}{
-  a named list specifying the INGARCH model with the elements \code{past_obs}, \code{past_mean}, \code{xreg} and \code{external} (see function \code{\link{ingarch}} for details). This model specification must be in accordance to the parameters given in argument \code{param} (see Details).
+  a named list specifying the INGARCH model with the elements \code{past_obs}, \code{past_mean}, \code{xreg} and \code{external} (see function \code{\link{tsglm}} for details). This model specification must be in accordance to the parameters given in argument \code{param} (see Details).
 }
+  \item{link}{
+    character giving the link function. Default is \code{"identity"}, simulating from an INGARCH model. Another possible choice is \code{"log"}, simulating from a log-linear model.
+  }
   \item{distr}{
   character giving the conditional distribution. Default is a Poisson distribution. Currently the only alternative is the negative binomial distribution.
 }
@@ -34,7 +38,7 @@ ingarch.sim(n, param=list(intercept=1, past_obs=NULL, past_mean=NULL, xreg=NULL)
   numeric vector of additional coefficients specifying the conditional distribution. For \code{distr="poisson"} no additional parameters need to be provided. 
 }
   \item{fit}{
-  an object of class \code{"ingarch"}. Usually the result of a call to \code{\link{ingarch}}. If argument \code{fit} is not missing, the model specification and estimated parameters from this argument are used instead of those in arguments \code{model} and \code{param}. The length of the simulated time seriesis only taken from argument \code{fit}, if no argument \code{n} is provided.  The same holds for arguments \code{distr} and \code{distrcoefs}, which are also prefered over the respective information provided in argument \code{fit}.
+  an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{tsglm}}. If argument \code{fit} is not missing, the model specification and estimated parameters from this argument are used instead of those in arguments \code{model} and \code{param}. The length of the simulated time seriesis only taken from argument \code{fit}, if no argument \code{n} is provided.  The same holds for arguments \code{link}, \code{distr} and \code{distrcoefs}, which are also prefered over the respective information provided in argument \code{fit}.
 }
   \item{n_start}{
   number of observations used as a burn-in.
@@ -42,7 +46,7 @@ ingarch.sim(n, param=list(intercept=1, past_obs=NULL, past_mean=NULL, xreg=NULL)
 }
 
 \details{
-The definition of an INGARCH model with covariates used here is like in function \code{\link{ingarch}}.
+The definition of an INGARCH model with covariates used here is like in function \code{\link{tsglm}}.
 }
 
 \value{
@@ -76,7 +80,7 @@ Tobias Liboschik and Philipp Probst
 }
 
 \seealso{
- \code{\link{ingarch}} for fitting an INGARCH model.
+\code{\link{tsglm}} for fitting a GLM for time series of counts, which includes INGARCH models.
 }
 
 \examples{
@@ -84,7 +88,7 @@ Tobias Liboschik and Philipp Probst
 interventions <- interv_covariate(n=200, tau=c(50, 150), delta=c(1, 0.8))
 model <- list(past_obs=1, past_mean=c(1, 7), xreg=interventions, external=FALSE)
 param <- list(intercept=2, past_obs=0.3, past_mean=c(0.2, 0.1), xreg=c(3, 10))
-ingarch.sim(n=200, param=param, model=model, distr="poisson")
+tsglm.sim(n=200, param=param, model=model, link="identity", distr="poisson")
 }
 
 \keyword{INGARCH}

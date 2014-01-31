@@ -19,7 +19,7 @@ Detection procedure for an intervention of given type occuring at unknown time.
 
 \arguments{
   \item{fit}{
-an object of class \code{"ingarch"}. Usually the result of a call to \code{\link{ingarch}}.
+an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{tsglm}}.
 }
   \item{taus}{
   integer vector of times which are considered for the possible intervention to occur.
@@ -35,16 +35,16 @@ an object of class \code{"ingarch"}. Usually the result of a call to \code{\link
   positive integer value giving the number of bootstrap samples for estimation of the p-value. For \code{B=NULL} (the default) no p-value is returned.
 }
   \item{info}{
-  character value that determines how to calculate the information matrix, see \code{\link{ingarch}}.
+  character value that determines how to calculate the information matrix, see \code{\link{tsglm}}.
 }
   \item{init.control_bootstrap}{
-  named list that determines how to make initial estimation in the bootstrap, see argument \code{init.control} in \code{\link{ingarch}}. If missing the same settings as for the regular estimation are used.
+  named list that determines how to make initial estimation in the bootstrap, see argument \code{init.control} in \code{\link{tsglm}}. If missing the same settings as for the regular estimation are used.
 }
   \item{final.control_bootstrap}{
-  named list that determines how to make final maximum likelihood estimation in the bootstrap, see argument \code{final.control} in \code{\link{ingarch}}. If missing the same settings as for the regular estimation are used.
+  named list that determines how to make final maximum likelihood estimation in the bootstrap, see argument \code{final.control} in \code{\link{tsglm}}. If missing the same settings as for the regular estimation are used.
 }
   \item{inter.control_bootstrap}{
-  named list  determining how to maximise the log-likelihood function in an intermediate step, see argument \code{inter.control} in \code{\link{ingarch.fit}}. If missing the same settings as for the regular estimation are used.
+  named list  determining how to maximise the log-likelihood function in an intermediate step, see argument \code{inter.control} in \code{\link{tsglm}}. If missing the same settings as for the regular estimation are used.
 }
   \item{parallel}{
   logical value. If \code{parallel=TRUE}, the bootstrap is distributed to multiple cores parallely. Requires a computing cluster to be initialised by \code{\link[snowfall:sfInit]{sfInit}} from package \code{snowfall}. 
@@ -53,12 +53,12 @@ an object of class \code{"ingarch"}. Usually the result of a call to \code{\link
   logical value. If \code{est_interv=TRUE} a fit for the model with the intervention effect with the largest test statistic is computed and additionally returned.
 }
   \item{...}{
-  additional arguments passed to the fitting function \code{\link{ingarch}}.
+  additional arguments passed to the fitting function \code{\link{tsglm}}.
 }
 }
  
 \details{
-For each time in \code{taus} the test statistic of a score test on an intervention effect occuring at that time is computed, see \code{\link[=interv_test.ingarch]{interv_test}}. The time with the maximum test statistic is considered as a candidate for a possible intervention effect at that time. The type of the intervention effect is specified by \code{delta} as described in \code{\link{interv_covariate}}.  The intervention is included as an additional covariate according to the definition in \code{\link{ingarch}} and can have an internal (the default) or external \code{external=TRUE} effect.
+For each time in \code{taus} the test statistic of a score test on an intervention effect occuring at that time is computed, see \code{\link[=interv_test.ingarch]{interv_test}}. The time with the maximum test statistic is considered as a candidate for a possible intervention effect at that time. The type of the intervention effect is specified by \code{delta} as described in \code{\link{interv_covariate}}.  The intervention is included as an additional covariate according to the definition in \code{\link{tsglm}} and can have an internal (the default) or external \code{external=TRUE} effect.
 
 If argument \code{B} is not \code{NULL}, the null hypothesis that there is no intervention effect at any time is tested. Test statistic for this test is the maximum test statistic of the score test (see above). The p-value is computed by a parametric bootstrap with \code{B} bootstrap samples. It is recommended to use at least several hundred bootstrap samples. Note that this bootstrap procedure is very time-consuming.
 }
@@ -76,7 +76,7 @@ If argument \code{B} is not \code{NULL}, the null hypothesis that there is no in
   time at which the score test statistic has its maximum.
 }
   \item{fit_H0}{
-  object of class \code{"ingarch"} with the fitted model under the null hypothesis of no intervention, see \code{\link{ingarch}}.
+  object of class \code{"tsglm"} with the fitted model under the null hypothesis of no intervention, see \code{\link{tsglm}}.
 }
   \item{model_interv}{
   model specification of the model with the specified intervention at time \code{tau_max}.
@@ -85,7 +85,7 @@ If argument \code{B} is not \code{NULL}, the null hypothesis that there is no in
 If argument \code{est_interv=TRUE} (the default), the following component is additionally returned:
 
   \item{fit_interv}{
-  object of class \code{"ingarch"} with the fitted model with the specified intervention at time \code{tau_max}, see \code{\link{ingarch}}.
+  object of class \code{"tsglm"} with the fitted model with the specified intervention at time \code{tau_max}, see \code{\link{tsglm}}.
 }
 }
 
@@ -102,15 +102,15 @@ Tobias Liboschik and Philipp Probst
 \seealso{
 S3 methods \code{print} and \code{\link[=plot.interv_detect]{plot}}.
 
-\code{\link{ingarch}} for fitting an INGARCH model.
+\code{\link{tsglm}} for fitting an INGARCH model.
 \code{\link[=interv_test.ingarch]{interv_test}} for testing on intervention effects and \code{\link[=interv_multiple.ingarch]{interv_multiple}} for iterative detection of multiple interventions of unknown types. \code{\link{interv_covariate}} for generation of deterministic covariates describing intervention effects.
 }
 
 \examples{
 #Searching for a potential intervention effect:
-campy_fit <- ingarch(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
-campy_intervdetect <- interv_detect(fit=campy_fit, taus=80:120,
-                            delta=1, external=FALSE)
-campy_intervdetect
-plot(campy_intervdetect)
+#campy_fit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
+#campy_intervdetect <- interv_detect.ingarch(fit=campy_fit, taus=80:120,
+#                            delta=1, external=FALSE)
+#campy_intervdetect
+#plot(campy_intervdetect)
 }
