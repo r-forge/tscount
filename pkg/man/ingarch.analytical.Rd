@@ -10,9 +10,9 @@ Analytical Mean, Variance and Autocorrelation of an INGARCH Process
 Functions to calculate the analytical mean, variance and autocorrelation/partial autocorrelation/autocovariance function of an INGARCH process.
 }
 \usage{
-ingarch.mean(intercept, past_obs, past_mean)
-ingarch.var(intercept, past_obs, past_mean)
-ingarch.acf(intercept, past_obs, past_mean, lag.max=10,
+ingarch.mean(intercept, past_obs=NULL, past_mean=NULL)
+ingarch.var(intercept, past_obs=NULL, past_mean=NULL)
+ingarch.acf(intercept, past_obs=NULL, past_mean=NULL, lag.max=10,
         type=c("acf", "pacf", "acvf"), plot=TRUE, ...)
 }
 

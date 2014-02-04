@@ -40,7 +40,7 @@ Tobias Liboschik
 }
 \seealso{
 \code{\link{tsglm}} for fitting a GLM for time series of counts.
-\code{\link[=interv_test.ingarch]{interv_test}}, \code{\link[=interv_detect.ingarch]{interv_detect}} and \code{\link[=interv_multiple.ingarch]{interv_multiple}} for tests on and detection of intervention effects.
+\code{\link[=interv_test.tsglm]{interv_test}}, \code{\link[=interv_detect.tsglm]{interv_detect}} and \code{\link[=interv_multiple.tsglm]{interv_multiple}} for tests on and detection of intervention effects.
 }
 \examples{
 interv_covariate(n=140, tau=c(84,100), delta=c(1,0))

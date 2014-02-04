@@ -1,6 +1,7 @@
-ingarch.acf <- function(intercept, past_obs, past_mean, lag.max=10, type=c("acf", "pacf", "acvf"), plot=TRUE, ...){
+ingarch.acf <- function(intercept, past_obs=NULL, past_mean=NULL, lag.max=10, type=c("acf", "pacf", "acvf"), plot=TRUE, ...){
 #Theoretical autocorrelation function of an INGARCH(p,q) process
 ##############################
+  ingarch.parametercheck(param=list(intercept=intercept, past_obs=past_obs, past_mean=past_mean, xreg=NULL))  
   if(!require(ltsa)) stop("Installation of package 'ltsa' is required.")
   type <- match.arg(type)
   p <- length(past_mean)
@@ -18,7 +19,7 @@ ingarch.acf <- function(intercept, past_obs, past_mean, lag.max=10, type=c("acf"
     names(result) <- 1:lag.max
   }  
   if(plot){
-    plot(result, type="h", xlab="Lag", ylab=type, ...)
+    plot(result, type="h", xlab="Lag", ylab=toupper(type), ...)
     abline(h=0)
     return(invisible(result))
   }else{ 

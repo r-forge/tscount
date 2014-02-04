@@ -1,8 +1,6 @@
 ingarch.condmean <- function(paramvec, model, ts, derivatives=c("none", "first", "second"), condmean=NULL, from=1, init=c("marginal", "zero", "firstobs")){
-  #Recursion for the conditional mean and its derivatives of an INGARCH(p,q) process (with intervention)
-  #derivatives. Character. "none" does only the recursion for the conditional mean, "first" additionally computes first partial derivatives, "second" also the second partial derivatives.
-  #condmean: List. Output of a previous call of this function with all arguments except tau identical to this call and tau of this call <= tau of the previous call. The recursion up to tau is taken from condmean, so that only the recursion from time point tau on has to be computed. If NULL the complete recursion is computed. For not computing anything of the recursion set argument tau=Inf.
-
+  #Recursion for the linear predictor (which is the conditional mean for the identity link) and its derivatives of a count time series following generalised linear models
+ 
   ##############
   #Checks and preparations:
   init <- match.arg(init)
@@ -109,7 +107,7 @@ ingarch.condmean <- function(paramvec, model, ts, derivatives=c("none", "first",
     dimnames(partial_kappa)[[2]] <- if(p==0 & q==0) list(parameternames) else parameternames
     result <- c(result, list(partial_kappa=partial_kappa))
   # # # # # # #
-    
+  
   # # # # # # #
   #Second derivative:
     if(derivatives == "second"){
@@ -119,7 +117,7 @@ ingarch.condmean <- function(paramvec, model, ts, derivatives=c("none", "first",
         partial2_kappa[t+q_max, 1+p+Q, 1+p+q+R] <- partial2_kappa[t+q_max, 1+p+Q, 1+p+q+R] + partial_kappa[t+q_max-model$past_mean, 1+p+q+R] - X[t+q_max-model$past_mean,]
         partial2_kappa[t+q_max, 1+p+q+R, 1+p+Q] <- t(partial2_kappa[t+q_max, 1+p+Q, 1+p+q+R])
       }
-      dimnames(partial_kappa)[[2]] <- dimnames(partial2_kappa)[[3]] <- if(p==0 & q==0) list(parameternames) else parameternames
+      dimnames(partial2_kappa)[[2]] <- dimnames(partial2_kappa)[[3]] <- if(p==0 & q==0) list(parameternames) else parameternames
       result <- c(result, list(partial2_kappa=partial2_kappa))  
     }    
   }

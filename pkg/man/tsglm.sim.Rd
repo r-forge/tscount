@@ -38,7 +38,7 @@ tsglm.sim(n, param=list(intercept=1, past_obs=NULL, past_mean=NULL, xreg=NULL),
   numeric vector of additional coefficients specifying the conditional distribution. For \code{distr="poisson"} no additional parameters need to be provided. 
 }
   \item{fit}{
-  an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{tsglm}}. If argument \code{fit} is not missing, the model specification and estimated parameters from this argument are used instead of those in arguments \code{model} and \code{param}. The length of the simulated time seriesis only taken from argument \code{fit}, if no argument \code{n} is provided.  The same holds for arguments \code{link}, \code{distr} and \code{distrcoefs}, which are also prefered over the respective information provided in argument \code{fit}.
+  an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{tsglm}}. If argument \code{fit} is not missing, the specification of the linear predictor, the link function and the estimated parameters from this argument are used instead of those in arguments \code{model}, \code{link} and \code{param}. The length of the simulated time seriesis only taken from argument \code{fit}, if no argument \code{n} is provided.  The same holds for arguments \code{distr} and \code{distrcoefs}, which are also prefered over the respective information provided in argument \code{fit} if both are provided.
 }
   \item{n_start}{
   number of observations used as a burn-in.

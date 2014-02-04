@@ -7,5 +7,6 @@ interv_covariate <- function(n, tau, delta){
   )
   single_intervention <- function(k) ifelse((1:n)>=tau[k], delta[k]^((1:n)-tau[k]), 0) #generates covariate vector for intervention k
   result <- vapply(seq(along=tau), single_intervention, FUN.VALUE=numeric(n)) #matrix with the k intervention covariates in the columns
+  if(length(tau)>0) colnames(result) <- paste("interv_", seq(along=tau), sep="")
   return(result)
 }

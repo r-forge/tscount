@@ -16,6 +16,7 @@ distr.fit <- function(object, distr){
     }else{
       size <- root$root 
     }
+  # Moment estimator (does not work reliably)  
   #   v_1 <- ((1/n) * sum(((ts-kappa)^2 - kappa)/(kappa^2)))^(-1)
   #   mom_est <- function(v){
   #     abs(sum((ts-kappa)^2/(kappa*(1+kappa/v))) - n + m)

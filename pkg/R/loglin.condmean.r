@@ -1,8 +1,6 @@
 loglin.condmean <- function(paramvec, model, ts, derivatives=c("none", "first"), condmean=NULL, from=1){
-  #Recursion for the conditional mean and its derivatives of a log-linear autoregressive process (with intervention)
-  #derivatives. Character. "none" does only the recursion for the conditional mean, "first" additionally computes first partial derivatives.
-  #condmean: List. Output of a previous call of this function with all arguments except tau identical to this call and tau of this call <= tau of the previous call. The recursion up to tau is taken from condmean, so that only the recursion from time point tau on has to be computed. If NULL the complete recursion is computed. For not computing anything of the recursion set argument tau=Inf.
-
+  #Recursion for the linear predictor (which is the conditional mean for the identity link) and its derivatives of a count time series following generalised linear models
+ 
   ##############
   #Checks and preparations:
   n <- length(ts)

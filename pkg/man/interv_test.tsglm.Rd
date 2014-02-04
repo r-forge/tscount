@@ -7,7 +7,7 @@ Testing for Interventions in Count Time Series following Generalised Linear Mode
 }
 
 \description{
-Test on one or more interventions of known type at known time.
+Test on one or more interventions of given type at given time.
 }
 
 \usage{
@@ -90,8 +90,7 @@ S3 method \code{print}.
 
 \examples{
 #Test for the intervention effects found in Fokianos und Fried (2010):
-#campy_fit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
-#campy_intervtest <- interv_test(fit=campy_fit, tau=c(84,100),
-#                          delta=c(1,0), external=FALSE)
-#campy_intervtest
+campy_fit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
+campy_intervtest <- interv_test(fit=campy_fit, tau=c(84,100), delta=c(1,0))
+campy_intervtest
 }

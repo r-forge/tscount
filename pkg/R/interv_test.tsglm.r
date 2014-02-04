@@ -3,20 +3,19 @@ interv_test <- function(...) UseMethod("interv_test")
 interv_test.tsglm <- function(fit, tau, delta, external, info=c("score", "hessian"), est_interv=FALSE, ...){
 #Test on one or several interventions of known types at known points in time
 ##############################
-  
+
   #Check and modify argument:  
   tsglm.check(fit)
   info <- match.arg(info)
   if(info=="hessian" && fit$link=="link") stop("For a model with logarithmic link argument 'info' needs to be set to \"score\"")
   r <- length(tau)
-  if(missing(external) | length(external)==0) external <- rep(FALSE, r) else external <- as.logical(external) #the default value for external is FALSE (i.e. an internal intervention effect)
+  if(missing(external) || length(external)==0) external <- rep(FALSE, r) else external <- as.logical(external) #the default value for external is FALSE (i.e. an internal intervention effect)
   if(length(external)==1) external <-  rep(external, r) else external <- as.logical(external) #if only one value for external is provided, this is used for all interventions
   
   #Add information about intervention effects:
     param_H0_extended <- c(fit$coefficients, numeric(r))
     model_extended <- fit$model
     covariate <- interv_covariate(n=length(fit$ts), tau=tau, delta=delta)
-    if(r > 0){colnames(covariate) <- {paste("eta", 1:r, sep="_")}}
     model_extended$xreg <- cbind(fit$model$xreg, covariate)
     model_extended$external <- c(fit$model$external, external) 
     loglik <- tsglm.loglik(link=fit$link, paramvec=param_H0_extended, model=model_extended, ts=fit$ts, score=TRUE, info=info)   

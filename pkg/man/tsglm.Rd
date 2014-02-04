@@ -172,7 +172,7 @@ An object of class \code{"tsglm"}, which is a list with at least the following e
 
   \item{info.matrix}{the information matrix at the maximum likelihood estimation assuming a Poisson distribution.}
 
-  \item{info.matrix}{the information matrix at the maximum likelihood estimation assuming the distribution specified in \code{distr}.}
+  \item{info.matrix_corrected}{the information matrix at the maximum likelihood estimation assuming the distribution specified in \code{distr}.}
 
   \item{call}{the matched call.}
 
@@ -224,7 +224,7 @@ The S3 method \code{\link[=se.tsglm]{se}} computes the standard errors of the pa
 Additionally, there are the S3 methods \code{\link[=pit.tsglm]{pit}}, \code{\link[=marcal.tsglm]{marcal}} and \code{\link[=scoring.tsglm]{scoring}} for predictive model assessment.
 
 
-S3 methods \code{\link[=interv_test.ingarch]{interv_test}}, \code{\link[=interv_detect.ingarch]{interv_detect}} and \code{\link[=interv_multiple.ingarch]{interv_multiple}} for tests on and detection of intervention effects.
+S3 methods \code{\link[=interv_test.tsglm]{interv_test}}, \code{\link[=interv_detect.tsglm]{interv_detect}} and \code{\link[=interv_multiple.tsglm]{interv_multiple}} for tests on and detection of intervention effects.
 \code{\link{tsglm.sim}} for simulation from GLM-type model for time series of counts. \code{\link{ingarch.mean}}, \code{\link{ingarch.var}} and \code{\link{ingarch.acf}} for calculation of analytical mean, variance and autocorrelation function of an INGARCH model (i.e. with identity link) without covariates.
 
 Example time series of counts are \code{\link{campy}}, \code{\link{ecoli}}, \code{\link{ehec}}, \code{\link{influenza}}, \code{\link{measles}} in this package, \code{\link[gamlss.data]{polio}} in package \code{gamlss.data}.

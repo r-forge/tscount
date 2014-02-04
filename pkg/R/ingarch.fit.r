@@ -113,6 +113,7 @@ ingarch.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, xreg=NULL,
   }
   paramvec_inter <- as.numeric(inter_optim$par)
   paramvec_final <- as.numeric(final_optim$par)
+  if(all(abs((paramvec_final-paramvec_init)/paramvec_final) < 0.01)) warning("Final estimation is still very close to initial estimation. This might indicate a problem with the optimisation but could also have happended by chance. Please check results carefully.")
   ##############  
   
   ##############
@@ -123,7 +124,6 @@ ingarch.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, xreg=NULL,
   ##############
   
   durations["total"] <- proc.time()["elapsed"] - begin_total 
-#  if(all(abs((final_optim$par-paramvec_init)/final_optim$par) < 0.01)){warning("Final estimation is still very close to initial estimation.")}
   result <- c(list(coefficients=final_optim$par, init=paramvec_init, inter=inter_optim, final=final_optim, residuals=ts-loglik$kappa, fitted.values=loglik$kappa, linear.predictors=loglik$kappa, logLik=loglik$loglik, score=loglik$score, info.matrix=loglik$info, outerscoreprod=loglik$outerscoreprod, call=cl, n_obs=n, durations=durations, ts=ts, model=model))
   return(result)
 }

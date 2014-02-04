@@ -48,14 +48,14 @@ an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{t
   logical value. If \code{parallel=TRUE}, the bootstrap is distributed to multiple cores parallely. Requires a computing cluster to be initialised by \code{\link[snowfall:sfInit]{sfInit}} from package \code{snowfall}. 
 }
   \item{...}{
-  additional arguments passed to the function for detection of single intervention effects \code{\link[=interv_detect.ingarch]{interv_detect}} and via this function some of the arguments are passed to the fitting function \code{\link{tsglm}}.
+  additional arguments passed to the function for detection of single intervention effects \code{\link[=interv_detect.tsglm]{interv_detect}} and via this function some of the arguments are passed to the fitting function \code{\link{tsglm}}.
 }
 }
 
 \details{
-This function performs an iterative procedure for detection of multiple intervention effects. In each step the function \code{\link[=interv_detect.ingarch]{interv_detect}} is applied for each of the possible intervention types provided in the argument \code{deltas}. If there is (after a Bonferroni correction) no significant intervention effect the procedure stops. Otherwise the type of intervention with the minimum p-value is chosen. In case of equal p-values preference is given to a level shift (i.e. \eqn{\delta=1}) and then to the type of intervention with the largest test statistic. The effect of the chosen intervention is removed from the time series. The time series cleaned from the intervention effect is tested for further interventions in a next step.
+This function performs an iterative procedure for detection of multiple intervention effects. In each step the function \code{\link[=interv_detect.tsglm]{interv_detect}} is applied for each of the possible intervention types provided in the argument \code{deltas}. If there is (after a Bonferroni correction) no significant intervention effect the procedure stops. Otherwise the type of intervention with the minimum p-value is chosen. In case of equal p-values preference is given to a level shift (i.e. \eqn{\delta=1}) and then to the type of intervention with the largest test statistic. The effect of the chosen intervention is removed from the time series. The time series cleaned from the intervention effect is tested for further interventions in a next step.
 
-For each time in \code{taus} the test statistic of a score test on an intervention effect occuring at that time is computed, see \code{\link[=interv_test.ingarch]{interv_test}}. The time with the maximum test statistic is considered as a candidate for a possible intervention effect at that time. The type of the intervention effect is specified by \code{delta} as described in \code{\link{interv_covariate}}. The intervention is included as an additional covariate according to the definition in \code{\link{tsglm}} and can have an internal (the default) or external \code{external=TRUE} effect.
+For each time in \code{taus} the test statistic of a score test on an intervention effect occuring at that time is computed, see \code{\link[=interv_test.tsglm]{interv_test}}. The time with the maximum test statistic is considered as a candidate for a possible intervention effect at that time. The type of the intervention effect is specified by \code{delta} as described in \code{\link{interv_covariate}}. The intervention is included as an additional covariate according to the definition in \code{\link{tsglm}} and can have an internal (the default) or external \code{external=TRUE} effect.
 
 Note that this bootstrap procedure is very time-consuming.
 }
@@ -100,11 +100,11 @@ Tobias Liboschik and Philipp Probst
 
 \examples{
 \dontrun{
-#Searching for potential intervention effects:
-#campy_fit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
-#campy_intervmultiple <- interv_multiple(fit=campy_fit, taus=80:120,
-#                              deltas=c(0,0.8,1), external=FALSE, B=500,
-#                              signif_level=0.05) #runs several hours!
-#campy_intervmultiple
-#plot(campy_intervmultiple)}
+#Searching for potential intervention effects (runs several hours!):
+campy_fit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
+campy_intervmultiple <- interv_multiple(fit=campy_fit, taus=80:120,
+                              deltas=c(0,0.8,1), B=500, signif_level=0.05)
+campy_intervmultiple
+plot(campy_intervmultiple)
+}
 }

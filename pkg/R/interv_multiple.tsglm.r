@@ -26,7 +26,7 @@ interv_multiple.tsglm <- function(fit, taus=2:length(ts), deltas=c(0,0.8,1), ext
   iteration <- 0
   repeat{
     iteration <- iteration + 1
-    if(iteration > 1) fit <- tsglm(ts=ts, model=model, link=fit$link, distr=fit$link, score=FALSE, info="none", ...) #fit the model to the cleaned time series under the null hypothesis of no (further) intervention from the second iteration on, the model fit for the original time series in the first iteration has been done before
+    if(iteration > 1) fit <- tsglm(ts=ts, model=model, link=fit$link, distr=fit$distr, score=FALSE, info="none", ...) #fit the model to the cleaned time series under the null hypothesis of no (further) intervention from the second iteration on, the model fit for the original time series in the first iteration has been done before
     testresult_single <- vector("list", L)
     for(l in 1:L){
       testresult_single[[l]] <- interv_detect(fit=fit, taus=taus, delta=deltas[l], external=external, B=B, init.control_bootstrap=init.control_bootstrap, final.control_bootstrap=final.control_bootstrap, inter.control_bootstrap=inter.control_bootstrap, parallel=parallel, est_interv=TRUE, ...)   

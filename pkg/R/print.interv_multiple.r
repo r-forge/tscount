@@ -3,15 +3,15 @@ print.interv_multiple <- function(x, ...){
     warning(x$error_message)
     cat("\n")
   }else{
-    cat("\nFound intervention(s): ", sep = "")
-    cat("\n")
-    print(x$interventions, ...)
-    cat("\n")
-    if(!is.null(x$fit_interv)){ 
-      print(x$fit_interv, ...)
+    cat("\n\tDetecting multiple intervention of unknown types at unknown times\n")
+    cat("\nDetected intervention(s):\n", sep = "")
+    if(nrow(x$interventions)==0){
+      cat("No interventions detected\n")
     }else{
-      cat("\n")
+      print(x$interventions, ...)
     }
+    cat("\nFitted model with all detected interventions:\n")
+    print(x$fit_interv, ...)
   invisible(x)
   }
 }

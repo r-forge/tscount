@@ -5,6 +5,7 @@ print.summary.tsglm <- function(x, ...){
     print(format.data.frame(as.data.frame(coef(x)), digits=3), print.gap=2, quote=FALSE)
     cat(
       "\nLink function: ", x$link,
+      "\nDistribution family: ", x$distr, if(x$distr=="nbinom"){" (with additional dispersion parameter 'size')"}else{NULL},
       "\nNumber of coefficients: ", x$number.coef,
       "\nLog-likelihood: ", x$logLik,
       "\nAIC: ", x$AIC,
