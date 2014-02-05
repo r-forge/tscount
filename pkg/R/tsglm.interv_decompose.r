@@ -63,7 +63,7 @@ tsglm.interv_decompose <- function(ts, model, link, paramvec, isolate){
   if(link == "log"){
     for(t in 1:n){
       mu[t+q_max] <- sum(param$past_obs*log(1+contamination[(t-model$past_obs)+p_max]/(cleaned[(t-model$past_obs)+p_max]+1))) + sum(param$past_mean*mu[(t-model$past_mean)+q_max]) + sum(param$xreg[elim]*X[t+q_max, elim]) - sum(param$past_mean*colSums(model$external[elim]*param$xreg[elim]*t(X[(t-model$past_mean)+q_max, elim, drop=FALSE])))
-      cleaned[t+p_max] <- round(z[t+p_max]/mu[t+q_max])
+      cleaned[t+p_max] <- round(z[t+p_max]/exp(mu[t+q_max]))
       contamination[t+p_max] <- z[t+p_max]-cleaned[t+p_max]
     }    
   }  

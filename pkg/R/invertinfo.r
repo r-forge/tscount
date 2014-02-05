@@ -15,6 +15,3 @@ invertinfo <- function(mat, silent=TRUE, stopOnError=FALSE){
   dimnames(result$vcov) <- dimnames(mat)
   return(result)
 }
-
-mat <- matrix(0, ncol=3,nrow=3)
-a=invertinfo(mat)

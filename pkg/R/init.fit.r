@@ -55,7 +55,7 @@ init.fit <- function(allobj, linkfunc){
         regressors <- if(!is.null(init.control$xreg)) init.control$xreg else rep(0, r)  
       }
       if(init.control$method %in% c("CSS", "ML", "CSS-ML")){ #least squares or maximum likelihood estimator via ARMA(k,k) representation
-        arma_fit <- as.numeric(suppressWarnings(arima(ts_init, order=c(k,0,k), xreg=model$xreg, transform.pars=TRUE, method=init.control$method, optim.method=init.control$optim.method, optim.control=init.control$optim.control)$coef)) #Supress warning messages, which occur quite frequently and are not very relevant to the user, as this is only an initial estimation. However, the interested user can find detailed information on this optimisation in the output.                     
+        arma_fit <- as.numeric(suppressWarnings(arima(ts_init, order=c(k,0,k), xreg=model$xreg[init_use,], transform.pars=TRUE, method=init.control$method, optim.method=init.control$optim.method, optim.control=init.control$optim.control)$coef)) #Supress warning messages, which occur quite frequently and are not very relevant to the user, as this is only an initial estimation. However, the interested user can find detailed information on this optimisation in the output.                     
         ma <- arma_fit[k+K]
         ar <- arma_fit[K]
         intercept <- arma_fit[k+k+1]

@@ -6,9 +6,13 @@ tsglm <- function(ts, model=list(past_obs=NULL, past_mean=NULL, xreg=NULL, exter
   #Estimating the mean structure:
   if(link=="identity") meanfit <- ingarch.fit(ts=ts, model=model, ...)
   if(link=="log") meanfit <- loglin.fit(ts=ts, model=model, ...)
+  if(length(meanfit$coefficients)==0){ #if no final estimation is done, then the function returns a list with less elemnts and without the class 'tsglm'
+    result <- list(init=meanfit$init, call=cl, n_obs=meanfit$n_obs, ts=meanfit$ts, model=meanfit$model, link=link)
+    return(result)
+  }
   #Estimating the distribution:
   disfit <- distr.fit(meanfit, distr=distr)
-  info.matrix_corrected <- if(is.null(meanfit$outerscoreprod)) NULL else apply((1/meanfit$fitted.values + disfit$sigmasq)*meanfit$outerscoreprod, c(2,3), sum)
+  info.matrix_corrected <- if(is.null(meanfit$outerscoreprod)) NULL else apply(as.numeric(1/meanfit$fitted.values + disfit$sigmasq)*meanfit$outerscoreprod, c(2,3), sum)
   if(distr=="poisson") loglik <- sum(dpois(ts, lambda=meanfit$fitted.values, log=TRUE))
   if(distr=="nbinom") loglik <- sum(dnbinom(ts, mu=meanfit$fitted.values, size=disfit$distrcoefs[["size"]], log=TRUE))
   result <- c(

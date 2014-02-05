@@ -37,8 +37,8 @@ ingarch.condmean <- function(paramvec, model, ts, derivatives=c("none", "first",
   ##############
   #Initialisation:    
     if(init == "marginal"){ #initialisation by stationary solution (and its partial derivatives)
-      denom <- 1-sum(param$past_obs)-sum(param$past_mean)    
-      kappa_stationary <- param$intercept/denom
+      denom <- (1-sum(param$past_obs)-sum(param$past_mean))[[1]]    
+      kappa_stationary <- (param$intercept/denom)[[1]]
       kappa <- c(rep(kappa_stationary, q_max), numeric(n))  
       z <- c(as.integer(rep(round(kappa_stationary), p_max)), ts)
       if(derivatives %in% c("first", "second")){

@@ -9,7 +9,6 @@ interv_multiple.tsglm <- function(fit, taus=2:length(ts), deltas=c(0,0.8,1), ext
   #taus: vector of times which should be considered for the interventions
   #B: Integer (>0). Number of bootstrap samples for estimation of the p-value.
 ##############################
-
   #Check and modify arguments:
   tsglm.check(fit)
   ts <- fit$ts

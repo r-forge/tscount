@@ -57,6 +57,8 @@ This function performs an iterative procedure for detection of multiple interven
 
 For each time in \code{taus} the test statistic of a score test on an intervention effect occuring at that time is computed, see \code{\link[=interv_test.tsglm]{interv_test}}. The time with the maximum test statistic is considered as a candidate for a possible intervention effect at that time. The type of the intervention effect is specified by \code{delta} as described in \code{\link{interv_covariate}}. The intervention is included as an additional covariate according to the definition in \code{\link{tsglm}} and can have an internal (the default) or external \code{external=TRUE} effect.
 
+All p-values given in the output are multiplied by the number of intervention types considered to account for the multiple testing in each step by a Bonferroni correction. However, this procedure does not guarantee to hold an overall significance level for all steps.
+
 Note that this bootstrap procedure is very time-consuming.
 }
 
@@ -64,7 +66,7 @@ Note that this bootstrap procedure is very time-consuming.
 An object of class \code{"interv_multiple"}, which is a list with the following components:
 
   \item{interventions}{
-  data.frame with variables \code{tau}, \code{delta}, \code{size}, \code{test_statistic} and \code{p-value} 
+  data frame giving the detected interventions, which has the variables \code{tau}, \code{delta}, \code{size}, \code{test_statistic} and \code{p-value}. 
 }
   \item{fit_H0}{
   object of class \code{"tsglm"} with the fitted model under the null hypothesis of no intervention, see \code{\link{tsglm}}.

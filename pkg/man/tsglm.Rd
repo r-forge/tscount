@@ -26,7 +26,7 @@ tsglm(ts, model = list(past_obs = NULL, past_mean = NULL,
 
 ingarch.fit(ts, model = list(past_obs = NULL, past_mean = NULL,
             xreg = NULL, external = NULL), score = TRUE,
-            info = c("score", "none", "hessian"),
+            info = c("score", "none", "hessian", "both"),
             init=c("marginal", "zero", "firstobs"),
             epsilon = 1e-06, slackvar = 1e-06, init.control = list(),
             final.control = list(), inter.control = NULL)
@@ -65,7 +65,7 @@ loglin.fit(ts, model = list(past_obs = NULL, past_mean = NULL,
     logical value indicating whether the score vector should be computed.
   }
   \item{info}{
-    character that determines if and how to compute the information matrix. Can be set to \code{"score"} (the default) for calculation via the outer product of the score vector or to \code{"hessian"} for calculation via the Hessian matrix of second derivatives. If set to \code{"none"} no information matrix is computed. For \code{link="log"} the alternative \code{"hessian"} is currently not available and will reult in an error.
+    character that determines if and how to compute the information matrix. Can be set to \code{"score"} (the default) for calculation via the outer product of the score vector or to \code{"hessian"} for calculation via the Hessian matrix of second derivatives. For \code{info="both"} the information matrix is estimated by a sandwich formula using both, the outer score product and the Hessian matrix. If set to \code{"none"} no information matrix is computed. For \code{link="log"} the alternatives \code{"hessian"} and \code{"both"} are currently not available and will result in an error. For \code{distr="nbinom"} one should use \code{info="score"}.
   }
   \item{init}{
     character that determines how the recursion of the conditional mean (and possibly of its derivatives) is initialised. If \code{init="marginal"} (the default) the marginal mean of a model without covariates and its derivatives are used. If \code{init="zero"} all values are initialised by zero, wheras for \code{init="firstobs"} the first obersvation is used. For \code{link="log"} this argument is currently ignored and initialisation is always done by zero.
@@ -92,7 +92,7 @@ loglin.fit(ts, model = list(past_obs = NULL, past_mean = NULL,
     }  
   }
   \item{final.control}{
-    named list with optional elements that determine how to make the final maximum likelihood estimation. If \code{final.control=NULL} only initial estimates are computed. Possible list elements are:
+    named list with optional elements that determine how to make the final maximum likelihood estimation. If \code{final.control=NULL} only initial estimates are computed and a list with fewer elements which has not the class \code{"tsglm"} is returned. Possible list elements of this argument are:
     \describe{  
       \item{\code{constrained}}{named list whose element are passed to function \code{\link{constrOptim}} with possible elements \code{mu}, \code{outer.iterations} and \code{outer.eps} (see \code{\link{constrOptim}} for details). If \code{constrained=NULL} an unconstrained optimisation is made with function \code{\link{optim}}. Note that this is likely to result in a fitted model which is non-stationary, which might cause further problems.}
       \item{\code{optim.method}}{character which is passed to functions \code{\link{constrOptim}} or \code{\link{optim}} as argument \code{method}.}

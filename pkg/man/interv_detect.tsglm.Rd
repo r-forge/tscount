@@ -107,11 +107,9 @@ S3 methods \code{print} and \code{\link[=plot.interv_detect]{plot}}.
 }
 
 \examples{
-\dontrun{
 #Searching for a potential intervention effect:
 campy_fit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
 campy_intervdetect <- interv_detect(fit=campy_fit, taus=80:120, delta=1)
 campy_intervdetect
 plot(campy_intervdetect)
-}
 }

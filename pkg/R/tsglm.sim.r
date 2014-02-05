@@ -89,7 +89,7 @@ tsglm.sim <- function(n, param=list(intercept=1, past_obs=NULL, past_mean=NULL, 
   #Check parameter restrictions:
   if(link=="identity"){
     ingarch.parametercheck(param)
-    kappa_stationary <- param$intercept/(1-sum(param$past_obs)+sum(param$past_mean))
+    kappa_stationary <- (param$intercept/(1-sum(param$past_obs)+sum(param$past_mean)))[[1]]
     if(kappa_stationary>1e+09) stop("Too large mean to simulate from Poisson distribution, sum of parameters for regression on past observations and on past conditional means might be too close to one and/or intercept is too large")
   }
   if(link=="log"){

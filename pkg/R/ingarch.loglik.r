@@ -1,6 +1,6 @@
-ingarch.loglik <- function(paramvec, model, ts, score=FALSE, info=c("none", "score", "hessian"), condmean=NULL, from=1, init=c("marginal", "zero", "firstobs")){
+ingarch.loglik <- function(paramvec, model, ts, score=FALSE, info=c("none", "score", "hessian", "both"), condmean=NULL, from=1, init=c("marginal", "zero", "firstobs")){
   #Conditional (quasi) log-likelihood function, score function and information matrix of a count time series following generalised linear models
-
+  
   ##############
   #Checks and preparations:
   init <- match.arg(init)
@@ -16,7 +16,7 @@ ingarch.loglik <- function(paramvec, model, ts, score=FALSE, info=c("none", "sco
     score <- TRUE
     warning("Information matrix cannot be calculated without score vector. Argument score is set to TRUE.")
   }
-  derivatives <- if(!score) "none" else if(info == "hessian") "second" else "first"
+  derivatives <- if(!score) "none" else if(info %in% c("hessian", "both")) "second" else "first"
   parameternames <- tsglm.parameternames(model)
   ##############
   
@@ -36,16 +36,19 @@ ingarch.loglik <- function(paramvec, model, ts, score=FALSE, info=c("none", "sco
   outerscoreprod <- NULL
   infomat <- NULL
   if(info != "none"){
-    if(info == "score"){
+    if(info %in% c("score", "both")){
       outerscoreprod <- array(NA, dim=c(n, 1+p+q+r, 1+p+q+r), dimnames=list(NULL, parameternames, parameternames))
       outerscoreprod[] <- if(p+q+r > 0) aperm(sapply(1:n, function(i) partial_kappa[i,]%*%t(partial_kappa[i,]), simplify="array"), c(3,1,2)) else array(partial_kappa[,1]^2, dim=c(n,1,1))
-      infomat <- apply(1/kappa*outerscoreprod, c(2,3), sum)
-      #infomat <- (1/t(replicate(1+p+q+r, kappa))*t(partial_kappa)) %*% partial_kappa
-    }else{
-      if(info == "hessian"){
-        hessian_t <- aperm((-z/kappa^2) * replicate(1+p+q+r, partial_kappa) * aperm(replicate(1+p+q+r, partial_kappa), perm=c(1,3,2)), perm=c(2,3,1)) + rep((z/kappa-1), each=(1+p+q+r)^2) * aperm(partial2_kappa, perm=c(2,3,1))
-        infomat <- -apply(hessian_t, c(1,2), sum)
-      }}
+      infomat <- infomat_score <- apply(1/kappa*outerscoreprod, c(2,3), sum)
+    }
+    if(info %in% c("hessian", "both")){
+      hessian_t <- aperm((-z/kappa^2) * replicate(1+p+q+r, partial_kappa) * aperm(replicate(1+p+q+r, partial_kappa), perm=c(1,3,2)), perm=c(2,3,1)) + rep((z/kappa-1), each=(1+p+q+r)^2) * aperm(partial2_kappa, perm=c(2,3,1))
+      infomat <- infomat_hessian <- -apply(hessian_t, c(1,2), sum)
+    }
+    if(info == "both"){
+      infomat <- infomat_hessian %*% invertinfo(infomat_score, stopOnError=TRUE)$vcov %*% infomat_hessian
+      outerscoreprod <- NULL
+    }
     dimnames(infomat) <- list(parameternames, parameternames) 
   }
   result <- list(loglik=loglik, score=scorevec, info=infomat, outerscoreprod=outerscoreprod, kappa=kappa)
