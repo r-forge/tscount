@@ -19,9 +19,9 @@ scoring.tsglm <- function(object){
     sigma <- sddistr(meanvalue=mu, distrcoefs=object$distrcoefs)
     p_y <- ddistr(y, meanvalue=mu, distrcoefs=object$distrcoefs)
     quadrat_p <- sum(ddistr(0:(1000+round(mu*10,0)), meanvalue=mu, distrcoefs=object$distrcoefs)^2)
-    logarithmic <- logarithmic - log(p_y)/n
-    quadratic <- quadratic - 2* p_y + quadrat_p
-    spherical <- spherical - p_y/quadrat_p
+    logarithmic <- logarithmic + (- log(p_y)/n)
+    quadratic <- quadratic + (- 2*p_y + quadrat_p)
+    spherical <- spherical + (- p_y/sqrt(quadrat_p))
     rankprob <- sum((pdistr(0:(1000+round(mu*10,0)), meanvalue=mu, distrcoefs=object$distrcoefs) - as.integer(y <= 0:(1000+round(mu*10,0))))^2)
     normsq <- normsq + ((y-mu)/sigma)^2 
     dawseb <- dawseb + ((y-mu)/sigma)^2 + 2*log(sigma)

@@ -17,6 +17,5 @@ pit.tsglm <- function(object, bins=10, ...){
     pit <- pit + punif(x, P_x_1, P_x)/n
   }
   hist_args <- modifyList(list(main="PIT Histogram", xlab="Probability Integral Transform", ylab="Relative Frequency"), list(...)) #the default arguments can be overriden by those provided in the ... argument
-  do.call(hist, args=c(list(pit, breaks=seq(0, 1, length=bins+1), freq=FALSE, include.lowest=TRUE), hist_args))
-  invisible()
+  do.call("hist", args=c(list(pit, breaks=seq(0, 1, length=bins+1), freq=FALSE, include.lowest=TRUE), hist_args))
 }

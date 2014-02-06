@@ -8,11 +8,14 @@ Predictive Model Assessment with a Marginal Calibration Plot for Time Series fol
 The function produces a marginal calibration plot.
 }
 \usage{
-\method{marcal}{tsglm}(object, ...)
+\method{marcal}{tsglm}(object, plot=TRUE, ...)
 }
 \arguments{
   \item{object}{
 an object of class \code{"tsglm"}.
+}
+  \item{plot}{
+  logical. If \code{plot=TRUE} (the default) the marginal calibration is plotted and the underlying data is returned invisibly only. 
 }
   \item{...}{
 additional arguments passed to \code{\link{plot}}.
@@ -22,7 +25,9 @@ additional arguments passed to \code{\link{plot}}.
 Marginal Calibration can be assessed by taking the difference between the average predictive cumulative distribution function (c.d.f.) and the empirical c.d.f. of the observations. Minor fluctuations about zero are expected if the marginal calibration hypothesis is true. For more information about marginal calibration see the refererences listed below.
 }
 \value{
-Returns a plot with the difference between the average predictive cumulative distribution function (c.d.f.) and the empirical c.d.f. of the observations for each value between the highest and lowest observation of the time series. 
+Produces a plot with the difference between the average predictive cumulative distribution function (c.d.f.) and the empirical c.d.f. of the observations for each value between the highest and lowest observation of the time series (only for \code{plot=TRUE}).
+
+Returns a list with elements \code{x} and \code{y}, where \code{x} are the threshold values and \code{y} the respective differences of predictive and empirical cumulative distribution function (invisibly for \code{plot=TRUE}).
 }
 
 \references{

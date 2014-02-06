@@ -1,6 +1,6 @@
 marcal <- function(object, ...) UseMethod("marcal")
 
-marcal.tsglm <- function(object, ...){
+marcal.tsglm <- function(object, plot=TRUE, ...){
   #Cumulative distribution function of the conditional distribution:
   if(object$distr=="poisson") pdistr <- function(q, meanvalue, distrcoefs) ppois(q, lambda=meanvalue)
   if(object$distr=="nbinom") pdistr <- function(q, meanvalue, distrcoefs) pnbinom(q, mu=meanvalue, size=distrcoefs)
@@ -14,8 +14,12 @@ marcal.tsglm <- function(object, ...){
     g_hat[i] <- sum(object$ts<=xvalues[i])/n
   }
   result <- list(x=xvalues, y=p_bar-g_hat)
-  plot_args <- modifyList(list(main="Marginal Calibration Plot", xlab="Threshold Value", ylab="Difference of predictive and empirical c.d.f"), list(...)) #the default arguments can be overriden by those provided in the ... argument
-  do.call(plot, args=c(list(result$x, result$y, type="l"), plot_args))
-  abline(h=0, lty=3)
-  invisible(result)
+  if(plot){
+    plot_args <- modifyList(list(main="Marginal Calibration Plot", xlab="Threshold Value", ylab="Difference of predictive and empirical c.d.f"), list(...)) #the default arguments can be overriden by those provided in the ... argument
+    do.call("plot", args=c(list(result$x, result$y, type="l"), plot_args))
+    abline(h=0, lty=3)
+    invisible(result)
+  }else{
+    return(result)
+  }
 }
