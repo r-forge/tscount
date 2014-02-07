@@ -1,6 +1,6 @@
-scoring <- function(object) UseMethod("scoring")
+scoring <- function(object, ...) UseMethod("scoring")
 
-scoring.tsglm <- function(object){
+scoring.tsglm <- function(object, cutoff=1000, ...){
   #Density functton of the conditional distribution:
   if(object$distr=="poisson") ddistr <- function(x, meanvalue, distrcoefs) dpois(x, lambda=meanvalue)
   if(object$distr=="nbinom") ddistr <- function(x, meanvalue, distrcoefs) dnbinom(x, mu=meanvalue, size=distrcoefs[["size"]])  
@@ -11,30 +11,31 @@ scoring.tsglm <- function(object){
   if(object$distr=="poisson") sddistr <- function(meanvalue, distrcoefs) sqrt(meanvalue)
   if(object$distr=="nbinom") sddistr <- function(meanvalue, distrcoefs) sqrt(meanvalue + meanvalue^2/distrcoefs[["size"]])
   n <- object$n_obs 
-  p_y <- quadrat_p <- 0 #auxiliary objects
-  logarithmic <- quadratic <- spherical <- rankprob <- dawseb <- normsq <- sqerror <- 0 #scores
+  logarithmic <- quadratic <- spherical <- rankprob <- dawseb <- normsq <- sqerror <- numeric(n) #scores
   for(t in 1:n){
-    y <- object$ts[t]
-    mu <- fitted(object)[t]
-    sigma <- sddistr(meanvalue=mu, distrcoefs=object$distrcoefs)
-    p_y <- ddistr(y, meanvalue=mu, distrcoefs=object$distrcoefs)
-    quadrat_p <- sum(ddistr(0:(1000+round(mu*10,0)), meanvalue=mu, distrcoefs=object$distrcoefs)^2)
-    logarithmic <- logarithmic + (- log(p_y)/n)
-    quadratic <- quadratic + (- 2*p_y + quadrat_p)
-    spherical <- spherical + (- p_y/sqrt(quadrat_p))
-    rankprob <- sum((pdistr(0:(1000+round(mu*10,0)), meanvalue=mu, distrcoefs=object$distrcoefs) - as.integer(y <= 0:(1000+round(mu*10,0))))^2)
-    normsq <- normsq + ((y-mu)/sigma)^2 
-    dawseb <- dawseb + ((y-mu)/sigma)^2 + 2*log(sigma)
-    sqerror <- sqerror + (y-mu)^2
+    #auxiliary objects, which are overwritten in each step:
+      y <- object$ts[t]
+      mu <- fitted(object)[t]
+      sigma <- sddistr(meanvalue=mu, distrcoefs=object$distrcoefs)
+      p_y <- ddistr(y, meanvalue=mu, distrcoefs=object$distrcoefs)
+      quadrat_p <- sum(ddistr(0:cutoff, meanvalue=mu, distrcoefs=object$distrcoefs)^2)
+    #computation of the scores:
+      logarithmic[t] <- - log(p_y)
+      quadratic[t] <- - 2*p_y + quadrat_p
+      spherical[t] <- - p_y/sqrt(quadrat_p)
+      rankprob[t] <- sum((pdistr(0:cutoff, meanvalue=mu, distrcoefs=object$distrcoefs) - as.integer(y <= 0:cutoff))^2)
+      sqerror[t] <- (y-mu)^2
+      normsq[t] <- sqerror[t]/sigma^2 
+      dawseb[t] <- normsq[t] + 2*log(sigma)
   }
   result <- c(
-    logarithmic=logarithmic,
-    quadratic=quadratic,
-    spherical=spherical,
-    rankprob=rankprob,
-    dawseb=dawseb,
-    normsq=normsq,
-    sqerror=sqerror
+    logarithmic=mean(logarithmic),
+    quadratic=mean(quadratic),
+    spherical=mean(spherical),
+    rankprob=mean(rankprob),
+    dawseb=mean(dawseb),
+    normsq=mean(normsq),
+    sqerror=mean(sqerror)
   )
   return(result)
 }

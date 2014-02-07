@@ -8,21 +8,27 @@ Predictive Model Assessment with Proper Scoring Rules for Time Series following 
 The function computes scoring rules for the assessment of sharpness.
 }
 \usage{
-\method{scoring}{tsglm}(object)
+\method{scoring}{tsglm}(object, cutoff=1000, ...)
 }
 \arguments{
   \item{object}{
 an object of class \code{"tsglm"}.
 }
+  \item{cutoff}{
+positive integer. Summation over the infinite sample space \{0,1,2,...\} of a distribution is cut off at this value. This affects the quadratic, spherical and ranked probability score.
+}
+  \item{...}{
+further arguments are currently ignored. Only for compatibility with generic function.
+}
 }
 
 \details{
-The scoring rules are penalties that should be minimized for a better forecast, so a smaller scoring value means better sharpness. 
+The scoring rules are penalties that should be minimised for a better forecast, so a smaller scoring value means better sharpness. 
 Different competing forecast models can be ranked via these scoring rules. 
 They are computed as follows:
 For each score \eqn{s} and observation \eqn{t} it is computed the value \eqn{s(P_{t},Y_{t})}{s(P[t],Y[t])}, where \eqn{P_t}{P[t]} is the predictive 
 c.d.f. and \eqn{Y_t}{Y[t]} is the observation at time \eqn{t}. To obtain the overall score for one model the average of the score of all observations
-\deqn{(1/n) \sum_{t=1}^{n}s(P_{t},Y_{t})}{(1/n) \sum s(P[t],Y[t])}
+\eqn{(1/n) \sum_{t=1}^{n}s(P_{t},Y_{t})}{(1/n) \sum s(P[t],Y[t])}
 is calculated. 
 
 For all \eqn{t \geq 1}, let \eqn{p_{y} = P(Y_{t}=y | {\cal{F}}_{t-1} )}{p[y]=P(Y[t]=y | F[t-1])} be the density function of the predictive distribution at \eqn{y} and 
