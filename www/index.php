@@ -43,9 +43,10 @@ echo $contents; } ?>
 
 <!-- end of project description -->
 
-<p> No content added. </p>
+<p> More information on the project and the information how to install our R package <tt>tscount</tt> you can find on the <a href="http://<?php echo $domain; ?>/projects/<?php echo $group_name; ?>/">project summary page</a> on the software development platform <a href="http://www.r-forge.r-project.org/">R-Forge</a>.</p>
 
-<p> The <strong>project summary page</strong> you can find <a href="http://<?php echo $domain; ?>/projects/<?php echo $group_name; ?>/"><strong>here</strong></a>. </p>
+<p> <strong>Maintainer:</strong>
+<a href="https://www.statistik.tu-dortmund.de/liboschik-en.html">Tobias Liboschik</a>, Department of Statistics, Technische Universit&auml;t Dortmund, Germany.</p>
 
 </body>
 </html>
