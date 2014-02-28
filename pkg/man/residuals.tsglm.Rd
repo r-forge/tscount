@@ -1,7 +1,7 @@
 \name{residuals.tsglm}
 \alias{residuals.tsglm}
 \title{
-Residuals of a GLM for time series of counts
+Residuals of a GLM for Time Series of Counts
 }
 \description{
 Returns the residuals of a fitted GLM-type model for time series of counts.

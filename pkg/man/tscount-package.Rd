@@ -2,7 +2,9 @@
 \alias{tscount-package}
 \alias{tscount}
 \docType{package}
-\title{Analysis of count data time series}
+\title{
+Analysis of Count Data Time Series
+}
 \description{
 Collection of R functions for analysis of count time series.
 }

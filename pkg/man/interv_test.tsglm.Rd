@@ -1,9 +1,8 @@
 \name{interv_test.tsglm}
 \alias{interv_test.tsglm}
 \alias{interv_test}
-
 \title{
-Testing for Interventions in Count Time Series following Generalised Linear Models
+Testing for Interventions in Count Time Series Following Generalised Linear Models
 }
 
 \description{

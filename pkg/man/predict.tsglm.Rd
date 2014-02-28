@@ -1,7 +1,7 @@
 \name{predict.tsglm}
 \alias{predict.tsglm}
 \title{
-Predict Method for Time Series of Counts following GLMs
+Predict Method for Time Series of Counts Following GLMs
 }
 \description{
 Predict future observations based on a fitted GLM-type model for time series of counts.

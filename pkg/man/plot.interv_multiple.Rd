@@ -1,10 +1,8 @@
 \name{plot.interv_multiple}
 \alias{plot.interv_multiple}
-
 \title{
 Plot for Iterative Intervention Detection Procedure for Count Time Series following Generalised Linear Models
 }
-
 \description{
 Provides a plot with the detected intervention effects and the time series cleaned by these intervention effects.
 }

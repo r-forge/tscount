@@ -1,7 +1,7 @@
 \name{tsgml.sim}
 \alias{tsglm.sim}
 \title{
-Simulate a time series following a generalised linear model
+Simulate a Time Series Following a Generalised Linear Model
 }
 \description{
 Generates a simulated time series from a GLM-type time series of counts model.

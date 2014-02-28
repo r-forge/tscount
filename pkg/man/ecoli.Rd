@@ -4,7 +4,7 @@
 E. coli Infections Time Series
 }
 \description{
-Weekly bumber of reported diseases caused by Escherichia coli in the state of North Rhine-Westphalia (Germany) from January 2001 to May 2013, excluding cases of EHEC and HUS. 
+Weekly number of reported disease cases caused by Escherichia coli in the state of North Rhine-Westphalia (Germany) from January 2001 to May 2013, excluding cases of EHEC and HUS. 
 }
 \usage{
 ecoli

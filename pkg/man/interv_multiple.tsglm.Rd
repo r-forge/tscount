@@ -3,7 +3,7 @@
 \alias{interv_multiple}
 
 \title{
-Detecting Multiple Interventions in Count Time Series following Generalised Linear Models
+Detecting Multiple Interventions in Count Time Series Following Generalised Linear Models
 }
 \description{
 Iterative detection procedure for multiple interventions of unknown types occuring at unknown times.

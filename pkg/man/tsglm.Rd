@@ -4,10 +4,9 @@
 \alias{logLik.tsglm}
 \alias{ingarch.fit}
 \alias{loglin.fit}
-
 \alias{vcov.tsglm}
 \title{
-Count Time Series following Generalised Linear Models
+Count Time Series Following Generalised Linear Models
 }
 \description{
 The function \code{tsglm} fits a generalised linear model (GLM) for time series of counts.

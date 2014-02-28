@@ -1,8 +1,7 @@
 \name{plot.tsglm}
 \alias{plot.tsglm}
-
 \title{
-Diagnostic Plots for a fitted GLM-type Model for Time Series of Counts
+Diagnostic Plots for a Fitted GLM-type Model for Time Series of Counts
 }
 \description{
 This S3 method provides several diagnostic plots to asses the model fit provided in an object of class \code{"tsglm"}.

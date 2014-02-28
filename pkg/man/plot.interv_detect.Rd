@@ -1,10 +1,8 @@
 \name{plot.interv_detect}
 \alias{plot.interv_detect}
-
 \title{
-Plot Test Statistic of Intervention Detection Procedure for Count Time Series following Generalised Linear Models
+Plot Test Statistic of Intervention Detection Procedure for Count Time Series Following Generalised Linear Models
 }
-
 \description{
 Provides a plot of the test statistics of a test on an intervention in GLM-type count time series (as returned by \code{interv_detect.tsglm}) against time.
 }

@@ -4,7 +4,7 @@
 Influenza Infections Time Series
 }
 \description{
-Weekly number of reported Influenza cases in the state of North Rhine-Westphalia (Germany) from January 2001 to May 2013. 
+Weekly number of reported influenza cases in the state of North Rhine-Westphalia (Germany) from January 2001 to May 2013. 
 }
 \usage{
 influenza

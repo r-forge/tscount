@@ -1,7 +1,7 @@
 \name{interv_covariate}
 \alias{interv_covariate}
 \title{
-Describing intervention effects for time series with deterministic covariates
+Describing Intervention Effects for Time Series with Deterministic Covariates
 }
 \description{
 This function generates covariates describing certain types of intervention effects.

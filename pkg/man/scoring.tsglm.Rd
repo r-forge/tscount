@@ -2,7 +2,7 @@
 \alias{scoring.tsglm}
 \alias{scoring}
 \title{
-Predictive Model Assessment with Proper Scoring Rules for Time Series following Generalised Linear Models
+Predictive Model Assessment with Proper Scoring Rules for Time Series Following Generalised Linear Models
 }
 \description{
 The function computes scoring rules for the assessment of sharpness.

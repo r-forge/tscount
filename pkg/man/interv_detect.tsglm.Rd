@@ -3,7 +3,7 @@
 \alias{interv_detect}
 
 \title{
-Detecting an Intervention in Count Time Series following Generalised Linear Models
+Detecting an Intervention in Count Time Series Following Generalised Linear Models
 }
 
 \description{

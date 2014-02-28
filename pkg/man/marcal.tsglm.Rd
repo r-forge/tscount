@@ -2,7 +2,7 @@
 \alias{marcal.tsglm}
 \alias{marcal}
 \title{
-Predictive Model Assessment with a Marginal Calibration Plot for Time Series following Generalised Linear Models
+Predictive Model Assessment with a Marginal Calibration Plot for Time Series Following Generalised Linear Models
 }
 \description{
 The function produces a marginal calibration plot.
