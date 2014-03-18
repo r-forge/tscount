@@ -7,7 +7,7 @@
 Analytical Mean, Variance and Autocorrelation of an INGARCH Process 
 }
 \description{
-Functions to calculate the analytical mean, variance and autocorrelation/partial autocorrelation/autocovariance function of an INGARCH process.
+Functions to calculate the analytical mean, variance and autocorrelation / partial autocorrelation / autocovariance function of an INGARCH process.
 }
 \usage{
 ingarch.mean(intercept, past_obs=NULL, past_mean=NULL)
@@ -21,13 +21,13 @@ ingarch.acf(intercept, past_obs=NULL, past_mean=NULL, lag.max=10,
   numeric positive value for the intercept \eqn{\beta_0}{\beta[0]}.
 }
   \item{past_obs}{
-  numeric non-negative vector containing the coefficients \eqn{\beta_1,\ ldots, \beta_p}{\beta[1], \ldots, \beta[p]} for regression on previous observations (see Details).
+  numeric non-negative vector containing the coefficients \eqn{\beta_1,\ldots, \beta_p}{\beta[1], \ldots, \beta[p]} for regression on previous observations (see Details).
 }
   \item{past_mean}{
-  numeric non-negative vector containing the coefficients \eqn{\alpha_1,\ ldots, \alpha_q}{\alpha[1], \ldots, \alpha[q]} for regression on previous conditional means (see Details).
+  numeric non-negative vector containing the coefficients \eqn{\alpha_1,\ldots, \alpha_q}{\alpha[1], \ldots, \alpha[q]} for regression on previous conditional means (see Details).
 }
   \item{lag.max}{
-  integer value indicating how many lags of the (partial) autocorrelation/autocovariance should be calculated.
+  integer value indicating how many lags of the (partial) autocorrelation / autocovariance function should be calculated.
 }
   \item{type}{
   character. If \code{type="acf"} (the default) the autocorrelation function is calculated, \code{"pacf"} gives the partial autocorrelation function and \code{"acvf"} the autocovariance function.
@@ -72,3 +72,5 @@ ingarch.acf(0.3, c(0.1,0.1,0.1), 0.1, type="acf", lag.max=15)}
 \keyword{mean}
 \keyword{variance}
 \keyword{autocorrelation}
+\keyword{partial autocorrelation}
+\keyword{autocovariance}

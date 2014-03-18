@@ -36,19 +36,19 @@ an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{t
   numeric value with \code{0 <= signif_level <= 1} giving a significance level for the procedure.
 }
   \item{init.control_bootstrap}{
-  named list that determines how to make initial estimation in the bootstrap, see argument \code{init.control} in \code{\link{tsglm}}. If missing the same settings as for the regular estimation are used.
+  named list that determines how to make initial estimation in the bootstrap, see argument \code{init.control} in \code{\link{tsglm}}. If missing, the same settings as for the regular estimation are used.
 }
   \item{final.control_bootstrap}{
-  named list that determines how to make final maximum likelihood estimation in the bootstrap, see argument \code{final.control} in \code{\link{tsglm}}. If missing the same settings as for the regular estimation are used.
+  named list that determines how to make final maximum likelihood estimation in the bootstrap, see argument \code{final.control} in \code{\link{tsglm}}. If missing, the same settings as for the regular estimation are used.
 }
   \item{inter.control_bootstrap}{
-  named list  determining how to maximise the log-likelihood function in an intermediate step, see argument \code{inter.control} in \code{\link{tsglm}}. If missing the same settings as for the regular estimation are used.
+  named list  determining how to maximise the log-likelihood function in an intermediate step, see argument \code{inter.control} in \code{\link{tsglm}}. If missing, the same settings as for the regular estimation are used.
 }
   \item{parallel}{
   logical value. If \code{parallel=TRUE}, the bootstrap is distributed to multiple cores parallely. Requires a computing cluster to be initialised by \code{\link[snowfall:sfInit]{sfInit}} from package \code{snowfall}. 
 }
   \item{...}{
-  additional arguments passed to the function for detection of single intervention effects \code{\link[=interv_detect.tsglm]{interv_detect}} and via this function some of the arguments are passed to the fitting function \code{\link{tsglm}}.
+  additional arguments passed to be passed to the function for detection of single intervention effects \code{\link[=interv_detect.tsglm]{interv_detect}} and via this function some of the arguments are passed to the fitting function \code{\link{tsglm}}.
 }
 }
 

@@ -2,7 +2,7 @@
 \alias{se.tsglm}
 \alias{se}
 \title{
-Standard Errors of a Fitted GLM for Time Series of Counts
+Standard Errors of a Fitted Generalised Linear Model for Time Series of Counts
 }
 \description{
 Computes the standard errors for the parameters of a fitted GLM-type model for time series of counts.
@@ -21,7 +21,7 @@ positive integer value giving the number of bootstrap samples to use for estimat
   logical value. If \code{parallel=TRUE}, the bootstrap is distributed to multiple cores parallely. Requires a computing cluster to be initialised by \code{\link[snowfall:sfInit]{sfInit}} from package \code{snowfall}. 
 }
   \item{...}{
-  additional arguments passed to the fitting function \code{\link{tsglm}}. Only made use of if the standard errors are computed by the bootstrap procedure.
+  additional arguments to be passed to the fitting function \code{\link{tsglm}}. Only made use of if the standard errors are computed by a bootstrap procedure.
 }
 }
 
@@ -36,9 +36,9 @@ A list with the following components:
 
 \item{est}{a vector of the maximum likelihood estimated coefficients.}
 
-\item{se}{a vector with the standard error of each estimated coefficient.}
+\item{se}{a vector of the standard errors of each estimated coefficient.}
 
-\item{type}{a character value \code{"normapprox"} or \code{"bootstrap"} saying how the standard errors are computed.}
+\item{type}{a character value \code{"normapprox"} or \code{"bootstrap"} giving how the standard errors are computed.}
 
 If the standard errors are computed by a parametric bootstrap procedure, the following component is additionally returned:
 

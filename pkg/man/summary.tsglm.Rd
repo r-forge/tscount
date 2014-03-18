@@ -2,7 +2,7 @@
 \alias{summary.tsglm}
 \alias{print.summary.tsglm}
 \title{
-Summarising Fits of Count Time Series following GLMs
+Summarising Fits of Count Time Series following Generalised Linear Models
 }
 \description{
 \code{summary} method for class \code{"tsglm"}.
@@ -44,11 +44,11 @@ A named list with the following elements:
   
   \item{logLik}{value of the maximised log-likelihood function.}
 
-  \item{AIC}{Akaike's information criteria (AIC).}
+  \item{AIC}{Akaike's information criterion (AIC).}
 
   \item{corrected.AIC}{AIC corrected for finite sample size.}
 
-  \item{BIC}{Bayesian information criteria (BIC).}  
+  \item{BIC}{Bayesian information criterion (BIC).}  
 
   \item{pearson.resid}{Pearson residuals, see \code{\link{residuals.tsglm}}.}
 }

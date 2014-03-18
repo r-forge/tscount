@@ -22,10 +22,10 @@ numeric vector with constants specifying the type of intervention (see Details).
 }
 \details{
 The intervention effect occuring at time \eqn{\tau} is described by the covariate
-\deqn{X_t = \delta^{t-\tau} I_{[\tau,\infty)}(tau),}{X_t = \delta^(t-\tau) I(t>=\tau),}
-where \eqn{I_{[\tau,\infty)}(tau)}{I(t>=\tau)} is the indicator function which is 0 for \eqn{t < \tau} and 1 for \eqn{t \geq \tau}{t >= \tau}. The constant \eqn{\delta} with \eqn{0 \leq \delta \leq 1}{0 <= \delta <= 1} specifies the type of intervention. For \eqn{\delta = 0} the intervention has an effect only at the time of its occurence, for \eqn{0 < \delta < 1} the effect decays exponentially and for \eqn{\delta = 1} there is a constant effect of the intervention after its occurence.
+\deqn{X_t = \delta^{t-\tau} I_{[\tau,\infty)}(t),}{X_t = \delta^(t-\tau) I(t>=\tau),}
+where \eqn{I_{[\tau,\infty)}(t)}{I(t>=\tau)} is the indicator function which is 0 for \eqn{t < \tau} and 1 for \eqn{t \geq \tau}{t >= \tau}. The constant \eqn{\delta} with \eqn{0 \leq \delta \leq 1}{0 <= \delta <= 1} specifies the type of intervention. For \eqn{\delta = 0} the intervention has an effect only at the time of its occurence, for \eqn{0 < \delta < 1} the effect decays exponentially and for \eqn{\delta = 1} there is a constant effect of the intervention after its occurence.
 
-If \code{tau} and \code{delta} are vectors, one covariate is generated with \code{tau[1]} as \eqn{\tau} and \code{delta[1]} as \eqn{\delta}, another one for the second elements and so on.
+If \code{tau} and \code{delta} are vectors, one covariate is generated with \code{tau[1]} as \eqn{\tau} and \code{delta[1]} as \eqn{\delta}, another covariate for the second elements and so on.
 }
 \value{
 A matrix with \code{n} rows and \code{length(tau)} columns. The generated covariates describing the interventions are the columns of the matrix.

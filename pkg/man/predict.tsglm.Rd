@@ -1,7 +1,7 @@
 \name{predict.tsglm}
 \alias{predict.tsglm}
 \title{
-Predict Method for Time Series of Counts Following GLMs
+Predict Method for Time Series of Counts Following Generalised Linear Models
 }
 \description{
 Predict future observations based on a fitted GLM-type model for time series of counts.
@@ -14,13 +14,13 @@ Predict future observations based on a fitted GLM-type model for time series of 
 an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{tsglm}}.
 }
   \item{n.ahead}{
-positive integer value giving number of steps ahead for which prediction is required.
+positive integer value giving the number of steps ahead for which prediction is required.
 }
   \item{newobs}{
-integer vector of known future observations of the time series. An observation from this vector is only used to predict observations further in the future and not used for prediction of the observation itself or previous values. If \code{newobs} is omitted and \code{n.ahead} is greater than 1, then unknown future observations which are needed for prediction of observations further in the future will be replaced by their prediction.
+integer vector of known future observations of the time series. This argument is only relevant if more than one observation ahead is to be predicted (\code{n.ahead} greater than 1). The \eqn{h}-step-ahead prediction for \eqn{h>1} is computed as a 1-step-ahead prediction given all previous values, which can be observations of the original time series or new observations provided in this argument. Previous observations which are not available are replaced by their respective 1-step-ahead prediction.
 }
   \item{newxreg}{
-matrix or vector containing new values for the covariates to be used for prediction. If \code{newxreg} is omitted or it contains less rows than the value of \code{n.ahead}, the last known values of the covariates are used for prediction.
+matrix or vector containing new values for the covariates to be used for prediction. If \code{newxreg} is omitted or contains less rows than the value of \code{n.ahead}, the last known values of the covariates are used for prediction.
 }
   \item{...}{
 further arguments are currently ignored. Only for compatibility with generic function.

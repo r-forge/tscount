@@ -12,7 +12,7 @@ Authors@R: c(
 Description: Collection of R functions for analysis of count time series. 
 Suggests: snowfall, ltsa, MASS, Matrix
 License: GPL-2 | GPL-3
-URL: https://r-forge.r-project.org/projects/tscount/ 
+URL: http://tscount.r-forge.r-project.org
 ByteCompile: true
 LazyData: true
 Encoding: UTF-8

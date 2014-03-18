@@ -26,16 +26,16 @@ further arguments are currently ignored. Only for compatibility with generic fun
 The scoring rules are penalties that should be minimised for a better forecast, so a smaller scoring value means better sharpness. 
 Different competing forecast models can be ranked via these scoring rules. 
 They are computed as follows:
-For each score \eqn{s} and observation \eqn{t} it is computed the value \eqn{s(P_{t},Y_{t})}{s(P[t],Y[t])}, where \eqn{P_t}{P[t]} is the predictive 
+For each score \eqn{s} and observation \eqn{t} the value \eqn{s(P_{t},Y_{t})}{s(P[t],Y[t])} is computed, where \eqn{P_t}{P[t]} is the predictive 
 c.d.f. and \eqn{Y_t}{Y[t]} is the observation at time \eqn{t}. To obtain the overall score for one model the average of the score of all observations
 \eqn{(1/n) \sum_{t=1}^{n}s(P_{t},Y_{t})}{(1/n) \sum s(P[t],Y[t])}
 is calculated. 
 
 For all \eqn{t \geq 1}, let \eqn{p_{y} = P(Y_{t}=y | {\cal{F}}_{t-1} )}{p[y]=P(Y[t]=y | F[t-1])} be the density function of the predictive distribution at \eqn{y} and 
-\eqn{||p||^2=\sum_{y=0}^{\infty} p_y^2}{||p||^2= \sum p[y]^2} a quadratic sum over the whole sample space \eqn{y=0,1,2,...} of the predictive distribution.
+\eqn{||p||^2=\sum_{y=0}^{\infty} p_y^2}{||p||^2= \sum p[y]^2} be a quadratic sum over the whole sample space \eqn{y=0,1,2,...} of the predictive distribution.
 \eqn{\mu_{P_t}}{\mu_P[t]} and \eqn{\sigma_{P_t}}{\sigma_P[t]} are the mean and the standard deviation of the predictive distribution, respectively.
 
-Then the scores in particular are defined as follows:
+Then the scores are defined as follows:
 
 Logarithmic score: \eqn{logs(P_{t},Y_{t})= -log p_{y}}{logs(P[t],Y[t])= -log p[y] }
 
@@ -56,7 +56,7 @@ For more information on the scoring rules see the references listed below.
 }
 
 \value{ 
-Returns a named vector with the following scoring rules:
+Returns a named vector of the following scoring rules:
 
 \item{logarithmic}{Logarithmic score}
 

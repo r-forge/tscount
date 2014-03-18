@@ -2,7 +2,7 @@
 \alias{pit.tsglm}
 \alias{pit}
 \title{
-Predictive Model Assessment with a Probability Integral Transform Histogram for Time Series Following Generalised Linear Models Models
+Predictive Model Assessment with a Probability Integral Transform Histogram for Time Series Following Generalised Linear Models
 }
 \description{
 The function allows a probabilistic calibration check with a Probability Integral Transform (PIT) histogram.

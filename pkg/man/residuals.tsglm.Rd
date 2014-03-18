@@ -1,7 +1,7 @@
 \name{residuals.tsglm}
 \alias{residuals.tsglm}
 \title{
-Residuals of a GLM for Time Series of Counts
+Residuals of a Generalised Linear Model for Time Series of Counts
 }
 \description{
 Returns the residuals of a fitted GLM-type model for time series of counts.
@@ -26,7 +26,7 @@ Computes a vector with the respective residuals of the INGARCH fit given in argu
 }
 
 \value{
-Numerical vector with the residuals.
+Numerical vector of the residuals.
 }
 
 \author{

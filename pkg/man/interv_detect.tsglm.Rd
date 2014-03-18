@@ -29,7 +29,7 @@ an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{t
   numeric value that determines the type of intervention (see Details).
 }
   \item{external}{
-  logical value specifying wether the interventions effect is external or not (see Details).
+  logical value specifying wether the intervention's effect is external or not (see Details).
 } 
   \item{B}{
   positive integer value giving the number of bootstrap samples for estimation of the p-value. For \code{B=NULL} (the default) no p-value is returned.
@@ -38,13 +38,13 @@ an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{t
   character value that determines how to calculate the information matrix, see \code{\link{tsglm}}.
 }
   \item{init.control_bootstrap}{
-  named list that determines how to make initial estimation in the bootstrap, see argument \code{init.control} in \code{\link{tsglm}}. If missing the same settings as for the regular estimation are used.
+  named list that determines how to make initial estimation in the bootstrap, see argument \code{init.control} in \code{\link{tsglm}}. If missing, the same settings as for the regular estimation are used.
 }
   \item{final.control_bootstrap}{
-  named list that determines how to make final maximum likelihood estimation in the bootstrap, see argument \code{final.control} in \code{\link{tsglm}}. If missing the same settings as for the regular estimation are used.
+  named list that determines how to make final maximum likelihood estimation in the bootstrap, see argument \code{final.control} in \code{\link{tsglm}}. If missing, the same settings as for the regular estimation are used.
 }
   \item{inter.control_bootstrap}{
-  named list  determining how to maximise the log-likelihood function in an intermediate step, see argument \code{inter.control} in \code{\link{tsglm}}. If missing the same settings as for the regular estimation are used.
+  named list  determining how to maximise the log-likelihood function in an intermediate step, see argument \code{inter.control} in \code{\link{tsglm}}. If missing, the same settings as for the regular estimation are used.
 }
   \item{parallel}{
   logical value. If \code{parallel=TRUE}, the bootstrap is distributed to multiple cores parallely. Requires a computing cluster to be initialised by \code{\link[snowfall:sfInit]{sfInit}} from package \code{snowfall}. 
@@ -53,7 +53,7 @@ an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{t
   logical value. If \code{est_interv=TRUE} a fit for the model with the intervention effect with the largest test statistic is computed and additionally returned.
 }
   \item{...}{
-  additional arguments passed to the fitting function \code{\link{tsglm}}.
+  additional arguments passed to be passed to the fitting function \code{\link{tsglm}}.
 }
 }
  

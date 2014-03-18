@@ -4,7 +4,7 @@
 Campylobacter Infections Time Series
 }
 \description{
-Time series with the number of cases of campylobacter infections in the north of the province Quebec (Canada) in four week intervals from January 1990 to the end of October 2000. This are 13 observations per year and 140 observations in total.
+Time series with the number of cases of campylobacter infections in the north of the province Quebec (Canada) in four week intervals from January 1990 to the end of October 2000. It has 13 observations per year and 140 observations in total.
 Campylobacterosis is an acute bacterial infectious disease attacking the digestive system.
 }
 
@@ -13,7 +13,7 @@ campy
 }
 
 \format{
-a time series.
+A time series of class \code{"ts"}.
 }
 
 \source{

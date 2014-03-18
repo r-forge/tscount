@@ -34,14 +34,14 @@ an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{t
   logical value. If \code{est_interv=TRUE} a fit for the model with all specified interventions is computed and additionally returned.
 }
   \item{...}{
-  additional arguments passed to the fitting function \code{\link{tsglm}}.
+  additional arguments passed to be passed to the fitting function \code{\link{tsglm}}.
 }
 }
  
 \details{
 A score test on the null hypothesis of no interventions is done. The null hypothesis is that the data are generated from the model specified in the argument \code{model}, see definition in \code{\link{tsglm}}. Under the alternative there are one or more intervention effects occuring at times \code{tau}. The types of the intervention effects are specified by \code{delta} as defined in \code{\link{interv_covariate}}. The interventions are included as additional covariates according to the definition in \code{\link{tsglm}} and can have an internal (the default) or external \code{external=TRUE} effect.
 
-Under the null hypothesis the test statistic asymptotically has a chi-square distribution with \code{length(tau)} degrees of freedom. The returned p-value is based on this and approximately valid for \code{length(ts)} large.
+Under the null hypothesis the test statistic has asymptotically a chi-square distribution with \code{length(tau)} degrees of freedom. The returned p-value is based on this and approximately valid for \code{length(ts)} large.
 }
 
 \value{

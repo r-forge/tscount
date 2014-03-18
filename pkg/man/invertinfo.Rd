@@ -14,11 +14,11 @@ invertinfo(mat, silent=TRUE, stopOnError=FALSE)
   a Fisher Information Matrix.
 }
   \item{silent}{
-  logical value. If set to \code{FALSE} errors in the computation of the inverse while using the Cholesky decomposition algorithm are printed.
-  If set to \code{TRUE} errors can be seen only in the value \code{error_message}.
+  logical value. If \code{FALSE}, errors in the computation of the inverse while using the Cholesky decomposition algorithm are printed.
+  If \code{TRUE}, errors can be seen only in the value \code{error_message}.
 }
   \item{stopOnError}{
-  logical value. If set to \code{TRUE} in case of error only an error message is printed. 
+  logical value. If \code{TRUE} only an error message is printed in case of error. 
 }
 }
 

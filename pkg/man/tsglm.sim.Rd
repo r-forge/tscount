@@ -19,14 +19,14 @@ tsglm.sim(n, param=list(intercept=1, past_obs=NULL, past_mean=NULL, xreg=NULL),
   \item{param}{
   a named list giving the parameters for the linear predictor of the model, which has the following elements: 
     \describe{
-      \item{intercept}{numeric positive value for the intercept \eqn{\beta_0}{\beta[0]}.}
-      \item{past_obs}{numeric non-negative vector containing the coefficients \eqn{\beta_1,\ ldots, \beta_p}{\beta[1], \ldots, \beta[p]} for regression on previous observations (see Details).}
-      \item{past_mean}{numeric non-negative vector containing the coefficients \eqn{\alpha_1,\ ldots, \alpha_q}{\alpha[1], \ldots, \alpha[q]} for regression on previous conditional means (see Details).}
-      \item{xreg}{numeric non-negative vector specifying the size \eqn{\nu_1,\ ldots, \nu_r}{\nu[1], \ldots, \nu[r]} of each intervention}   
+      \item{\code{intercept}}{numeric positive value for the intercept \eqn{\beta_0}{\beta[0]}.}
+      \item{\code{past_obs}}{numeric non-negative vector containing the coefficients \eqn{\beta_1,\ldots, \beta_p}{\beta[1], \ldots, \beta[p]} for regression on previous observations (see Details).}
+      \item{\code{past_mean}}{numeric non-negative vector containing the coefficients \eqn{\alpha_1,\ldots, \alpha_q}{\alpha[1], \ldots, \alpha[q]} for regression on previous conditional means (see Details).}
+      \item{\code{xreg}}{numeric non-negative vector specifying the size \eqn{\nu_1,\ldots, \nu_r}{\nu[1], \ldots, \nu[r]} of each intervention}   
   }
 }
   \item{model}{
-  a named list specifying the model for the linear predictor, which has the elements \code{past_obs}, \code{past_mean}, \code{xreg} and \code{external} (see function \code{\link{tsglm}} for details). This model specification must be in accordance to the parameters given in argument \code{param} (see Details).
+  a named list specifying the model for the linear predictor, which has the elements \code{past_obs}, \code{past_mean}, \code{xreg} and \code{external} (see function \code{\link{tsglm}} for details). This model specification must be in accordance to the parameters given in argument \code{param} (see \code{\link{tsglm}} for details).
 }
   \item{link}{
     character giving the link function. Default is \code{"identity"}, simulating from a so-called INGARCH model. Another possible choice is \code{"log"}, simulating from a log-linear model.
@@ -35,10 +35,10 @@ tsglm.sim(n, param=list(intercept=1, past_obs=NULL, past_mean=NULL, xreg=NULL),
   character giving the conditional distribution. Default is a Poisson distribution. Currently the only alternative is the negative binomial distribution.
 }
   \item{distrcoefs}{
-  numeric vector of additional coefficients specifying the conditional distribution. For \code{distr="poisson"} no additional parameters need to be provided. 
+  numeric vector of additional coefficients specifying the conditional distribution. For \code{distr="poisson"} no additional parameters need to be provided. For \code{distr="nbinom"} the additional parameter \code{size} needs to be specified (i.e. by \code{distrcoefs=2}), see \code{\link{tsglm}} for details.
 }
   \item{fit}{
-  an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{tsglm}}. If argument \code{fit} is not missing, the specification of the linear predictor, the link function and the estimated parameters from this argument are used instead of those in arguments \code{model}, \code{link} and \code{param}. The length of the simulated time seriesis only taken from argument \code{fit}, if no argument \code{n} is provided.  The same holds for arguments \code{distr} and \code{distrcoefs}, which are also prefered over the respective information provided in argument \code{fit} if both are provided.
+  an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{tsglm}}. If argument \code{fit} is not missing, the specification of the linear predictor, the link function and the estimated parameters from this argument are used instead of those in arguments \code{model}, \code{link} and \code{param}. The length of the simulated time series is only taken from argument \code{fit}, if no argument \code{n} is provided.  The same holds for arguments \code{distr} and \code{distrcoefs}, which are also prefered over the respective information provided in argument \code{fit} if both are provided.
 }
   \item{n_start}{
   number of observations used as a burn-in.
