@@ -114,6 +114,8 @@ ingarch.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, xreg=NULL,
   paramvec_inter <- as.numeric(inter_optim$par)
   paramvec_final <- as.numeric(final_optim$par)
   if(p+q+r>0 && all(abs((paramvec_final-paramvec_init)/paramvec_final) < 0.01)) warning("Final estimation is still very close to initial estimation. This might indicate a problem with the optimisation but could also have happended by chance. Please check results carefully.")
+  if(mean(paramvec_final[c(1+P,1+p+Q)]) < 1e-04) warning("There is almost no serial dependence estimated in the data. This might be appropriate but could just as likely indicate a problem with the optimisation. Please check results carefully.")
+  if(paramvec_final[1] < 0.1) warning("Estimated intercept is very small (< 0.1). This might indicate a problem with the optimisation unless the observed marginal mean is very low or the observed serial dependence is very strong. Please check results carefully.")
   ##############  
   
   ##############
