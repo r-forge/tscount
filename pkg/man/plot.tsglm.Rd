@@ -21,7 +21,7 @@ further arguments are currently ignored. Only for compatibility with generic fun
 }
 }
 \details{
-Produces plots of the acf and the histogram of the Pearson residuals, the Pearson residuals plotted against time and a cumulative periodogramm of the Pearson residuals. The cumulative periodogramm is plotted with the function \code{\link{cpgram}} from package \code{MASS} and is omitted if this package is not available.
+Produces plots of the acf of the Pearson residuals, the Pearson residuals plotted against time, a cumulative periodogramm of the Pearson residuals, a probability integral transform (PIT) histogram (see function \code{\link{pit}}) and a marginal calibration plo (see function \code{\link{marcal}}). The cumulative periodogramm is plotted with the function \code{\link{cpgram}} from package \code{MASS} and is omitted if this package is not available.
 }
 \author{
 Tobias Liboschik and Philipp Probst

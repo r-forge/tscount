@@ -15,14 +15,14 @@ Returns the residuals of a fitted GLM-type model for time series of counts.
 an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{tsglm}}.
 }
   \item{type}{
-character value giving the type of residuals which should be returned. Choose \code{type="response"} for raw residuals, \code{type="pearson"} for Pearson residuals and \code{type="anscombe"} for Anscombe residuals, which are symmetric.
+character value giving the type of residuals which should be returned. Choose \code{type="response"} for raw residuals, \code{type="pearson"} for Pearson residuals and \code{type="anscombe"} for Anscombe residuals.
 }
   \item{...}{
 further arguments are currently ignored. Only for compatibility with generic function.
 }
 }
 \details{
-Computes a vector with the respective residuals of the INGARCH fit given in argument \code{object}.
+Computes a vector with the respective residuals of the fit given in argument \code{object}.
 }
 
 \value{
