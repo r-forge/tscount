@@ -57,7 +57,7 @@ loglin.condmean <- function(paramvec, model, ts, derivatives=c("none", "first"),
   # # # # # # #
   
   # # # # # # #
-  #Conditional mean:    
+  #First derivatives:    
   if(derivatives == "first"){
     for(t in times){
       partial_kappa[t+q_max, 1] <- 1 + sum(param$past_mean*partial_kappa[(t-model$past_mean)+q_max, 1]) #intercept

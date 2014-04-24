@@ -15,7 +15,7 @@ marcal.tsglm <- function(object, plot=TRUE, ...){
   }
   result <- list(x=xvalues, y=p_bar-g_hat)
   if(plot){
-    plot_args <- modifyList(list(main="Marginal calibration plot", xlab="Threshold value", ylab="Difference of predictive and empirical c.d.f"), list(...)) #the default arguments can be overriden by those provided in the ... argument
+    plot_args <- modifyList(list(main="Marginal calibration plot", xlab="Threshold value", ylab="Diff. of pred. and emp. c.d.f"), list(...)) #the default arguments can be overriden by those provided in the ... argument
     do.call("plot", args=c(list(result$x, result$y, type="l"), plot_args))
     abline(h=0, lty=3)
     invisible(result)

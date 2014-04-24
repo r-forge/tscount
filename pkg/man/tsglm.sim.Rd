@@ -1,4 +1,4 @@
-\name{tsgml.sim}
+\name{tsglm.sim}
 \alias{tsglm.sim}
 \title{
 Simulate a Time Series Following a Generalised Linear Model
