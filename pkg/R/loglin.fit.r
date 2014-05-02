@@ -1,9 +1,25 @@
-loglin.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, xreg=NULL, external=NULL), score=TRUE, info=c("score", "none"), epsilon=1e-06, slackvar=1e-06, init.control=list(), final.control=list(), inter.control=NULL){
+loglin.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, xreg=NULL, external=NULL), score=TRUE, info=c("score", "none"), init=c("marginal", "iid", "firstobs"), epsilon=1e-06, slackvar=1e-06, init.control=list(), final.control=list(), inter.control=NULL){
   ##############
   #Checks and preparations: 
   cl <- match.call()
   durations <- c(init=NA, inter=NA, final=NA, total=NA)
-  begin_total <- proc.time()["elapsed"]  
+  begin_total <- proc.time()["elapsed"]
+  model_names <- c("past_obs", "past_mean", "xreg", "external")
+  stopifnot( #Are the arguments valid?
+    all(names(model) %in% model_names)
+  )
+  model <- model[model_names]
+  names(model) <- model_names
+  if(is.null(model$xreg)) model$xreg <- matrix(0, nrow=length(ts), ncol=0) else model$xreg <- as.matrix(model$xreg)
+  if(length(model$external)==0) model$external <- rep(FALSE, ncol(model$xreg)) else model$external <- as.logical(model$external) #the default value for model$external is FALSE (i.e. an internal covariate effect)
+  if(length(model$external)==1) model$external <-  rep(model$external, ncol(model$xreg)) else model$external <- as.logical(model$external) #if only one value for model$external is provided, this is used for all covariates
+  if(any(is.na(ts)) || any(is.na(model$xreg))) stop("Cannot make estimation with missing values in time series or covariates")
+  stopifnot( #Are the arguments valid?
+    model$past_obs%%1==0,
+    model$past_mean%%1==0,
+    length(ts)==nrow(model$xreg),    
+    length(model$external)==ncol(model$xreg)
+  )    
   stopifnot( #Are the arguments valid?
     is.list(init.control),
     is.null(final.control) || is.list(final.control)
@@ -100,7 +116,7 @@ loglin.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, xreg=NULL, 
   ##############
   #Score vector and information matrix:
   #If score==FALSE and info=="none" the computation in the following two lines would not be necessary. However, the extra time needed to re-calculate the log-likelihood function which is already available in final_optim$value is negligable in comparison to the total duration of the function. This avoids some additional if-statements and the code is more readable.
-  condmean <- loglin.condmean(paramvec=paramvec_final, model=model, ts=ts, derivatives={if(!score & info=="none") "none" else "first"})
+  condmean <- loglin.condmean(paramvec=paramvec_final, model=model, ts=ts, derivatives={if(!score & info=="none") "none" else "first"}, init=init)
   loglik <- loglin.loglik(paramvec=paramvec_final, model=model, ts=ts, score=score, info=info, condmean=condmean, from=Inf) #because of argument from=Inf no re-calculation of the recursion is done, instead the calculations from object condmean are used
   if(is.ts(ts)) loglik$kappa <- ts(loglik$kappa, start=start(ts), frequency=frequency(ts)) #give the linear predictors the same time series structure as the input time series
   ##############

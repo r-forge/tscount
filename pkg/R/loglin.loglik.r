@@ -1,4 +1,4 @@
-loglin.loglik <- function(paramvec, model, ts, score=FALSE, info=c("none", "score"), condmean=NULL, from=1){
+loglin.loglik <- function(paramvec, model, ts, score=FALSE, info=c("none", "score"), condmean=NULL, from=1, init=c("marginal", "iid", "firstobs")){
   #Conditional (quasi) log-likelihood function, score function and information matrix of a count time series following generalised linear models
 
   ##############
@@ -19,7 +19,7 @@ loglin.loglik <- function(paramvec, model, ts, score=FALSE, info=c("none", "scor
   parameternames <- tsglm.parameternames(model)
   ##############
   
-  condmean <- loglin.condmean(paramvec=paramvec, model=model, ts=ts, derivatives=derivatives, condmean=condmean, from=from)
+  condmean <- loglin.condmean(paramvec=paramvec, model=model, ts=ts, derivatives=derivatives, condmean=condmean, from=from, init=init)
   #Load objects and remove initialisation if necessary:
   z <- condmean$z[p_max+(1:n)]
   kappa <- condmean$kappa[q_max+(1:n)]

@@ -26,14 +26,15 @@ tsglm(ts, model = list(past_obs = NULL, past_mean = NULL,
 ingarch.fit(ts, model = list(past_obs = NULL, past_mean = NULL,
             xreg = NULL, external = NULL), score = TRUE,
             info = c("score", "none", "hessian", "both"),
-            init=c("marginal", "zero", "firstobs"),
+            init=c("marginal", "iid", "firstobs"),
             epsilon = 1e-06, slackvar = 1e-06, init.control = list(),
             final.control = list(), inter.control = NULL)
 
 loglin.fit(ts, model = list(past_obs = NULL, past_mean = NULL,
             xreg = NULL, external = NULL), score = TRUE,
-            info = c("score", "none"), epsilon = 1e-06,
-            slackvar = 1e-06, init.control = list(),
+            info = c("score", "none"),
+            init=c("marginal", "iid", "firstobs"),
+            epsilon = 1e-06,  slackvar = 1e-06, init.control = list(),
             final.control = list(), inter.control = NULL) 
 }
 
@@ -55,7 +56,7 @@ loglin.fit(ts, model = list(past_obs = NULL, past_mean = NULL,
     character giving the link function. Default is \code{"identity"}, fitting an INGARCH model. Another possible choice is \code{"log"}, fitting a log-linear model.
   }
   \item{distr}{
-    character giving the conditional distribution. Default is \code{"poisson"}, i.e. a Poisson distribution. The option \code{"nbinom"} is currently available for \code{link="identity"} only and will otherwise result in an error. 
+    character giving the conditional distribution. Default is \code{"poisson"}, i.e. a Poisson distribution.
   }
   \item{...}{
     additional arguments to be passed to the lower level fitting functions \code{ingarch.fit} or \code{loglin.fit}. See below.  
@@ -67,7 +68,7 @@ loglin.fit(ts, model = list(past_obs = NULL, past_mean = NULL,
     character that determines if and how to compute the information matrix. Can be set to \code{"score"} (the default) for calculation via the outer product of the score vector or to \code{"hessian"} for calculation via the Hessian matrix of second derivatives. For \code{info="both"} the information matrix is estimated by a sandwich formula using both the outer score product and the Hessian matrix. If set to \code{"none"}, no information matrix is computed. For \code{link="log"} the alternatives \code{"hessian"} and \code{"both"} are currently not available and will result in an error. For \code{distr="nbinom"} one should use \code{info="score"}.
   }
   \item{init}{
-    character that determines how the recursion of the conditional mean (and possibly of its derivatives) is initialised. If \code{init="marginal"} (the default) the marginal mean of a model without covariates and its derivatives are used. If \code{init="zero"} all values are initialised by zero, wheras for \code{init="firstobs"} the first obersvation is used. For \code{link="log"} this argument is currently ignored and initialisation is always done by zero.
+    character that determines how the recursion of the conditional mean (and possibly of its derivatives) is initialised. If \code{init="marginal"} (the default) the marginal mean of a model without covariates and its derivatives are used. If \code{init="iid"} all values are initialised the marginal mean under the assumption of iid data, which depends on the intercept only. If \code{init="firstobs"} the first obersvation is used.
   }
   \item{epsilon}{
     numeric positive but small value determining how close the parameters may come to the limits of the parameter space.

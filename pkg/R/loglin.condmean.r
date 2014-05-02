@@ -1,4 +1,4 @@
-loglin.condmean <- function(paramvec, model, ts, derivatives=c("none", "first"), condmean=NULL, from=1){
+loglin.condmean <- function(paramvec, model, ts, derivatives=c("none", "first"), condmean=NULL, from=1, init=c("marginal", "iid", "firstobs")){
   #Recursion for the linear predictor (which is the conditional mean for the identity link) and its derivatives of a count time series following generalised linear models
  
   ##############
@@ -15,6 +15,7 @@ loglin.condmean <- function(paramvec, model, ts, derivatives=c("none", "first"),
   R <- seq(along=numeric(r)) #sequence 1:r if r>0 and NULL otherwise
   parameternames <- tsglm.parameternames(model)
   derivatives <- match.arg(derivatives)
+  init <- match.arg(init)
   param <- list( #transform parameter vector to a list
     intercept=paramvec[1],
     past_obs=paramvec[1+P],
@@ -33,13 +34,50 @@ loglin.condmean <- function(paramvec, model, ts, derivatives=c("none", "first"),
   ##############
 
   ##############
-  #Initialisation:   
-    #Initialisation by arbritary zero:
-    kappa <- c(rep(0, q_max), numeric(n))
-    z <- c(as.integer(rep(0, p_max)), ts)
-    if(derivatives == "first"){
-      partial_kappa <- matrix(0, nrow=n+q_max, ncol=1+p+q+r)
-    }   
+  #Initialisation:    
+    if(init == "marginal"){ #initialisation by stationary solution (and its partial derivatives)
+      denom <- (1-sum(param$past_obs)-sum(param$past_mean))[[1]]    
+      kappa_stationary <- (param$intercept/denom)[[1]]
+      kappa <- c(rep(kappa_stationary, q_max), numeric(n))  
+      z <- c(as.integer(rep(exp(kappa_stationary)-1, p_max)), ts)
+      if(derivatives %in% c("first", "second")){
+        #Vector of first partial derivatives of kappa with respect to the parameters:
+        partial_kappa <- matrix(0, nrow=n+q_max, ncol=1+p+q+r)
+        partial_kappa[Q_max, 1] <- 1/denom #intercept
+        partial_kappa[Q_max, 1+P] <- param$intercept/denom^2 #past_obs
+        partial_kappa[Q_max, 1+p+Q] <- param$intercept/denom^2 #past_mean
+        #derivatives with respect to the regressor coefficients are zero (which is the default)
+#        if(derivatives == "second"){
+#          #Matrix of second partial derivatives of kappa with respect to the parameters:
+#          partial2_kappa <- array(0, dim=c(n+q_max, 1+p+q+r, 1+p+q+r))  
+#          partial2_kappa[Q_max, 1, 1+c(P,p+Q)] <- partial2_kappa[Q_max, 1+c(P,p+Q), 1] <- 1/denom^2
+#          partial2_kappa[Q_max, 1+c(P,p+Q), 1+c(P,p+Q)] <- 2*param$intercept/denom^3
+#          #derivatives with respect to the regressor coefficients are zero
+#        }
+      }
+    }
+    if(init == "iid"){ #initialisation under iid assumption:
+      kappa <- c(rep(param$intercept, q_max), numeric(n))  
+      z <- c(as.integer(rep(exp(param$intercept)-1, p_max)), ts)
+      if(derivatives %in% c("first", "second")){
+        partial_kappa <- matrix(0, nrow=n+q_max, ncol=1+p+q+r)
+        partial_kappa[Q_max, 1] <- 1 #intercept
+#        if(derivatives == "second"){
+#          partial2_kappa <- array(0, dim=c(n+q_max, 1+p+q+r, 1+p+q+r))  
+#        }
+      }
+    }
+    if(init == "firstobs"){ #initialisation by the first observation:
+      firstobs <- ts[1]
+      kappa <- c(rep(log(firstobs+1), q_max), numeric(n))  
+      z <- c(as.integer(rep(firstobs, p_max)), ts)
+      if(derivatives %in% c("first", "second")){
+        partial_kappa <- matrix(0, nrow=n+q_max, ncol=1+p+q+r)
+#        if(derivatives == "second"){
+#          partial2_kappa <- array(0, dim=c(n+q_max, 1+p+q+r, 1+p+q+r))  
+#        }
+      }      
+    } 
   }
   X <- matrix(0, nrow=q_max+n, ncol=r)
   X[q_max+(1:n), ] <- model$xreg
