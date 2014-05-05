@@ -7,11 +7,6 @@ predict.tsglm <- function(object, n.ahead=1, newobs=NULL, newxreg=NULL, ...){
   )
   n <- object$n_obs
   model <- object$model
-#  if(ncol(model$xreg)==0){
-#    model$xreg <- cbind(model$xreg, rep(0, n))
-#    model$external <- TRUE
-#    object$coefficients <- c(coef(object), 0)
-#  }
   p <- length(model$past_obs)
   q <- length(model$past_mean)
   r <- ncol(model$xreg)
@@ -26,7 +21,7 @@ predict.tsglm <- function(object, n.ahead=1, newobs=NULL, newxreg=NULL, ...){
   if(is.ts(object$ts)) kappa <- ts(kappa, start=start(object$ts), frequency=frequency(object$ts))
   for(t in n+(1:n.ahead)){
     if(nrow(xreg)<t) xreg <- rbind(xreg, xreg[t-1,]) #if no current values of the covariates are given, then the values of the preceeding time point are used
-    kappa[t] <- sum(coef(object)*c(1, ts[t-model$past_obs], kappa[t-model$past_mean]-(as.numeric(model$external)*coef(object)[1+p+q+R])%*%t(xreg[t-model$past_mean,]), xreg[t,]))
+    kappa[t] <- sum(coef(object)*c(1, ts[t-model$past_obs], kappa[t-model$past_mean]-if(r>0){(as.numeric(model$external)*coef(object)[1+p+q+R])%*%t(xreg[t-model$past_mean,])}else{0}, xreg[t,])) 
     if(is.na(ts[t])) ts[t] <- kappa[t]
     }
   if(is.ts(object$ts)){

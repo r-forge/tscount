@@ -103,7 +103,7 @@ loglin.condmean <- function(paramvec, model, ts, derivatives=c("none", "first"),
       if(q>0) partial_kappa[t+q_max, 1+p+Q] <- kappa[t-model$past_mean+q_max] + t(param$past_mean) %*% partial_kappa[(t-model$past_mean)+q_max, 1+p+Q, drop=FALSE] - (if(r>0){param$past_mean*colSums(model$external*param$xreg*t(X[(t-model$past_mean)+q_max, , drop=FALSE]))}else{numeric(q)}) #past_mean
       if(r>0) partial_kappa[t+q_max, 1+p+q+R] <- (if(q>0){colSums(param$past_mean*partial_kappa[(t-model$past_mean)+q_max, 1+p+q+R, drop=FALSE]) - model$external*colSums(param$past_mean*X[(t-model$past_mean)+q_max, , drop=FALSE])}else{numeric(r)}) + X[t+q_max, ] #covariates
     }
-    dimnames(partial_kappa)[[2]] <- if(p==0 & q==0) list(parameternames) else parameternames
+    dimnames(partial_kappa)[[2]] <- if(p==0 & q==0 & r==0) list(parameternames) else parameternames
     result <- c(result, list(partial_kappa=partial_kappa))
   }
   # # # # # # #
