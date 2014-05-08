@@ -4,7 +4,7 @@
 Compute a Covariance Matrix from a Fisher Information Matrix
 }
 \description{
-Stable function for computing a covariance matrix from a given Fisher Information Matrix by inversion.
+Stable function for computing a covariance matrix from a given Fisher information matrix by inversion.
 }
 \usage{
 invertinfo(mat, silent=TRUE, stopOnError=FALSE)
@@ -23,14 +23,14 @@ invertinfo(mat, silent=TRUE, stopOnError=FALSE)
 }
 
 \details{
-A Cholesky decomposition is used to obtain the covariance matrix. This can be done because the Fisher Information Matrix is symmetrical and positive definite.
+A Cholesky decomposition is used to obtain the covariance matrix. This can be done because the Fisher information matrix is symmetric and positive definite.
 }
 
 \value{
 A list containing the following components:
 
 \item{vcov}{the covariance matrix.}
-\item{error_message}{possible error messages that occured while inverting the Fisher Information Matrix.}
+\item{error_message}{possible error messages that occured when inverting the Fisher information matrix.}
 }
 
 \author{

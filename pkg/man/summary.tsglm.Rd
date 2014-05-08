@@ -31,25 +31,23 @@ Computes and returns a list of summary statistics of the fitted model given in a
 A named list with the following elements:
 
   \item{call}{see \code{\link{tsglm}}.}
-  
+ 
   \item{link}{see \code{\link{tsglm}}.}
   
   \item{distr}{see \code{\link{tsglm}}.}
-  
+ 
   \item{residuals}{see \code{\link{tsglm}}.}
-  
+ 
   \item{coefficients}{data frame with estimated parameters and their standard errors (based on a normal approximation, see \code{\link[=se.tsglm]{se}}).}
-
+ 
   \item{number.coef}{number of coefficients.}
   
   \item{logLik}{value of the maximised log-likelihood function.}
-
+ 
   \item{AIC}{Akaike's information criterion (AIC).}
-
-  \item{corrected.AIC}{AIC corrected for finite sample size.}
-
+ 
   \item{BIC}{Bayesian information criterion (BIC).}  
-
+ 
   \item{pearson.resid}{Pearson residuals, see \code{\link{residuals.tsglm}}.}
 }
 
@@ -69,7 +67,6 @@ seatbelts_fit <- tsglm(ts=Seatbelts[, "DriversKilled"],
 summary(seatbelts_fit)
 }
 
-\keyword{INGARCH}
-\keyword{GLM}
-\keyword{standard errors}
-
+\keyword{Generalised linear model}
+\keyword{Model assessment}
+\keyword{Inference}

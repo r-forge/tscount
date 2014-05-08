@@ -8,7 +8,7 @@ interv_test.tsglm <- function(fit, tau, delta, external, info=c("score", "hessia
   tsglm.check(fit)
   info <- match.arg(info)
   if(info=="hessian" && fit$link=="link") stop("For a model with logarithmic link argument 'info' needs to be set to \"score\"")
-  r <- length(tau)
+  r <- length(tau) #number of additional parameters
   if(missing(external) || length(external)==0) external <- rep(FALSE, r) else external <- as.logical(external) #the default value for external is FALSE (i.e. an internal intervention effect)
   if(length(external)==1) external <-  rep(external, r) else external <- as.logical(external) #if only one value for external is provided, this is used for all interventions
   
@@ -20,8 +20,7 @@ interv_test.tsglm <- function(fit, tau, delta, external, info=c("score", "hessia
     model_extended$external <- c(fit$model$external, external) 
     loglik <- tsglm.loglik(link=fit$link, paramvec=param_H0_extended, model=model_extended, ts=fit$ts, score=TRUE, info=info)   
   infomat_corrected <- apply((1/loglik$kappa + fit$sigmasq)*loglik$outerscoreprod, c(2,3), sum)
-  vcov <- vcov.tsglm(list(info.matrix=loglik$info, info.matrix_corrected=infomat_corrected))
-  test_statistic <- (t(loglik$score) %*% vcov %*% loglik$score)[1,1]
+  test_statistic <- scoretest(Score=loglik$score, G=loglik$info, G1=infomat_corrected, r=r, stopOnError=TRUE)$test_statistic    
   p_value <- 1-pchisq(test_statistic, df=r)
   result <- list(
     test_statistic=test_statistic,

@@ -63,7 +63,5 @@ se(seatbelts_fit, B=10) #by bootstrap
 }
 }
 
-\keyword{INGARCH}
-\keyword{GLM}
-\keyword{standard error}
-\keyword{standard deviation}
+\keyword{Generalised linear model}
+\keyword{Inference}

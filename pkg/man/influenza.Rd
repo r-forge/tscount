@@ -23,3 +23,5 @@ The data are provided with kind permission of the Robert Koch Institute. Further
 \seealso{
 \code{\link{campy}}, \code{\link{ecoli}}, \code{\link{ehec}}, \code{\link{measles}} in this package, \code{\link[gamlss.data]{polio}} in package \code{gamlss.data}
 }
+
+\keyword{Data}

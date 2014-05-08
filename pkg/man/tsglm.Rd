@@ -11,8 +11,8 @@ Count Time Series Following Generalised Linear Models
 \description{
 The function \code{tsglm} fits a generalised linear model (GLM) for time series of counts.
 The specification of the linear predictor allows for regressing on past observations, past values of the linear predictor and covariates as defined in the Details section.
-There is a so-called INGARCH model with the identity link (see for example Ferland et al., 2006, Fokianos et al., 2009) and another model with the logarithmic link (see for example Fokianos and Tjostheim, 2011), which also differ in the specification of the linear predictor.
-The conditional distribution can be chosen to be either Poisson or negative binomial, the latter currently for the identity link only.
+There is the so-called INGARCH model with the identity link (see for example Ferland et al., 2006, Fokianos et al., 2009) and another model with the logarithmic link (see for example Fokianos and Tjostheim, 2011), which also differ in the specification of the linear predictor.
+The conditional distribution can be chosen to be either Poisson or negative binomial.
 
 Estimation is done by conditional maximum likelihood for the Poisson distribution or by a conditional quasi-likelihood approach based on the Poisson likelihood function for the negative binomial distribution.
 
@@ -25,7 +25,7 @@ tsglm(ts, model = list(past_obs = NULL, past_mean = NULL,
 
 ingarch.fit(ts, model = list(past_obs = NULL, past_mean = NULL,
             xreg = NULL, external = NULL), score = TRUE,
-            info = c("score", "none", "hessian", "both"),
+            info = c("score", "none", "hessian", "sandwich"),
             init=c("marginal", "iid", "firstobs"),
             epsilon = 1e-06, slackvar = 1e-06, init.control = list(),
             final.control = list(), inter.control = NULL)
@@ -65,7 +65,7 @@ loglin.fit(ts, model = list(past_obs = NULL, past_mean = NULL,
     logical value indicating whether the score vector should be computed.
   }
   \item{info}{
-    character that determines if and how to compute the information matrix. Can be set to \code{"score"} (the default) for calculation via the outer product of the score vector or to \code{"hessian"} for calculation via the Hessian matrix of second derivatives. For \code{info="both"} the information matrix is estimated by a sandwich formula using both the outer score product and the Hessian matrix. If set to \code{"none"}, no information matrix is computed. For \code{link="log"} the alternatives \code{"hessian"} and \code{"both"} are currently not available and will result in an error. For \code{distr="nbinom"} one should use \code{info="score"}.
+    character that determines if and how to compute the information matrix. Can be set to \code{"score"} (the default) for calculation via the outer product of the score vector or to \code{"hessian"} for calculation via the Hessian matrix of second derivatives. For \code{info="sandwich"} the information matrix is estimated by a sandwich formula using both the outer score product and the Hessian matrix. If set to \code{"none"}, no information matrix is computed. For \code{link="log"} the alternatives \code{"hessian"} and \code{"sandwich"} are currently not available and will result in an error. For \code{distr="nbinom"} one should use \code{info="score"}.
   }
   \item{init}{
     character that determines how the recursion of the conditional mean (and possibly of its derivatives) is initialised. If \code{init="marginal"} (the default) the marginal mean of a model without covariates and its derivatives are used. If \code{init="iid"} all values are initialised the marginal mean under the assumption of iid data, which depends on the intercept only. If \code{init="firstobs"} the first obersvation is used.
@@ -108,7 +108,7 @@ loglin.fit(ts, model = list(past_obs = NULL, past_mean = NULL,
 The INGARCH model (argument \code{link="identity"}) used here follows the definition
     \deqn{Z_{t}|{\cal{F}}_{t-1} \sim \mathrm{Poi}(\kappa_{t}) \quad \mathrm{or} \quad Z_{t}|{\cal{F}}_{t-1} \sim \mathrm{NegBin}(\kappa_{t}, \nu),}{
     Z[t]|F[t-1] ~ Poi(\kappa[t]) or  Z[t]|F[t-1] ~ NegBin(\kappa[t], \nu),}
-where \eqn{{\cal{F}}_{t-1}}{F[t-1]} is the \eqn{\sigma}-field containing the information about the past of the process up to time \eqn{t-1}.
+where \eqn{{\cal{F}}_{t-1}}{F[t-1]} denotes the history of the process up to time \eqn{t-1}, \eqn{\mathrm{Poi}}{Poi} and \eqn{\mathrm{NegBin}}{NegBin} is the Poisson respectively the negative binomial distribution with the parametrisation as specified below.
 For the model with covariates having an internal effect (the default) the linear predictor of the INGARCH model (which is identical to the conditional mean for the identity link) is given by
     \deqn{\kappa_t = \beta_0 + \beta_1 Z_{t-i_1} + \ldots + \beta_p Z_{t-i_p}
     + \alpha_1 \kappa_{t-j_1} + \ldots  + \alpha_q \kappa_{t-j_q}
@@ -134,21 +134,20 @@ The Poisson distribution is parametrised by the mean \code{lambda} according to 
 The negative binomial distribution is parametrised by the mean \code{mu} with an additional dispersion parameter \code{size} according to the definition in \code{\link{NegBinomial}}. In the notation above its mean parameter \code{mu} is \eqn{\kappa_{t}}{\kappa[t]} and its dispersion parameter \code{size} is \eqn{\nu}.
 
 This function allows to include covariates in two different ways. A covariate can have a so-called internal effect as defined above, where its effect propagates via the regression on past values of the linear predictor and on past observations. Alternatively, it can have a so-called external effect, where its effect does not directly propagates via the feedback on past values of the linear predictor, but only via past observations.
-For the model with external effects of the covariates, the linear predictor is given by
+For external effects of the covariates, the linear predictor for the model with identity link is given by
     \deqn{\kappa_t = \mu_t + \eta_1 X_{t,1} + \ldots + \eta_r X_{t,r},}{
     \kappa[t] = \mu[t] + \eta[1] X[t,1] + \ldots + \eta[r] X[t,r],}
     \deqn{\mu_t = \beta_0 + \beta_1 Z_{t-i_1} + \ldots + \beta_p Z_{t-i_p}
     + \alpha_1 \lambda_{t-j_1} + \ldots  + \alpha_q \lambda_{t-j_q},}{
     \mu[t] = \beta[0] + \beta[1] Z[t-i[1]] + \ldots + \beta[p] Z[t-i[p]
     + \alpha[1] \lambda[t-j[1]] + \ldots  + \alpha[q] \lambda[t-j[q]],} 
-for the model with identity link and analoguesly by
+and analoguesly for the model with logarithmic link by
     \deqn{\kappa_t = \mu_t + \eta_1 X_{t,1} + \ldots + \eta_r X_{t,r},}{
     \kappa[t] = \mu[t] + \eta[1] X[t,1] + \ldots + \eta[r] X[t,r],}
     \deqn{\mu_t = \beta_0 + \beta_1 \log(Z_{t-i_1}+1) + \ldots + \beta_p \log(Z_{t-i_p}+1)
-    + \alpha_1 \lambda_{t-j_1} + \ldots  + \alpha_q \lambda_{t-j_q},}{
+    + \alpha_1 \lambda_{t-j_1} + \ldots  + \alpha_q \lambda_{t-j_q}.}{
     \mu[t] = \beta[0] + \beta[1] \log(Z[t-i[1]]+1) + \ldots + \beta[p] \log(Z[t-i[p]+1)
-    + \alpha[1] \lambda[t-j[1]] + \ldots  + \alpha[q] \lambda[t-j[q]],}
-for the model with logarithmic link. 
+    + \alpha[1] \lambda[t-j[1]] + \ldots  + \alpha[q] \lambda[t-j[q]].} 
 It is also possible to model a combination of external and internal covariates, which can be defined straightforwardly by adding each covariate either to the linear predictor \eqn{\kappa_t}{\kappa[t]} itself (for an internal effect) or to \eqn{\mu_t}{\mu[t]} defined above (for an external effect).
 
 }
@@ -200,6 +199,10 @@ The functions \code{ingarch.fit} and \code{loglin.fit} have the same output exce
 
 }
 
+\author{
+Tobias Liboschik, Philipp Probst, Konstantinos Fokianos and Roland Fried
+}
+
 \references{
 Christou, V. and Fokianos, K. (2013) Quasi-likelihood inference for negative binomial time series models. \emph{Journal of Time Series Analysis} (published online), \url{http://dx.doi.org/10.1002/jtsa.12050}.
 
@@ -207,15 +210,13 @@ Ferland, R., Latour, A. and Oraichi, D. (2006) Integer-valued GARCH process. \em
 
 Fokianos, K. and Fried, R. (2010) Interventions in INGARCH processes. \emph{Journal of Time Series Analysis} \bold{31(3)}, 210--225, \url{http://dx.doi.org/10.1111/j.1467-9892.2010.00657.x}.
 
-Fokianos, K. and Tjostheim, D. (2011) Log-linear Poisson autoregression. \emph{Journal of Multivariate Analysis} \bold{102(}, 563--578, \url{http://dx.doi.org/10.1016/j.jmva.2010.11.002}.
+Fokianos, K., and Fried, R. (2012) Interventions in log-linear Poisson autoregression. \emph{Statistical Modelling} \bold{12(4)}, 299--322. \url{http://dx.doi.org/10.1177/1471082X1201200401}.
 
 Fokianos, K., Rahbek, A. and Tjostheim, D. (2009) Poisson autoregression. \emph{Journal of the American Statistical Association} \bold{104(488)}, 1430--1439, \url{http://dx.doi.org/10.1198/jasa.2009.tm08270}.
 
-Liboschik, T., Kerschke, P., Fokianos, K. and Fried, R. (2013) Modelling interventions in INGARCH processes. \emph{SFB 823 Discussion Paper} \bold{03/13}, \url{http://hdl.handle.net/2003/29878}.
-}
+Fokianos, K. and Tjostheim, D. (2011) Log-linear Poisson autoregression. \emph{Journal of Multivariate Analysis} \bold{102(}, 563--578, \url{http://dx.doi.org/10.1016/j.jmva.2010.11.002}.
 
-\author{
-Tobias Liboschik and Philipp Probst
+Liboschik, T., Kerschke, P., Fokianos, K. and Fried, R. (2013) Modelling interventions in INGARCH processes. \emph{SFB 823 Discussion Paper} \bold{03/13}, \url{http://hdl.handle.net/2003/29878}.
 }
 
 \seealso{
@@ -245,10 +246,4 @@ seatbelts_fit <- tsglm(ts=Seatbelts[, "DriversKilled"],
 seatbelts_fit
 }
 
-\keyword{INGARCH}
-\keyword{log-linear}
-\keyword{GLM}
-\keyword{fit}
-\keyword{model}
-\keyword{time series}
-\keyword{count data}
+\keyword{Generalised linear model}

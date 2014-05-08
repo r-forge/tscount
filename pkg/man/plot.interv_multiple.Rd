@@ -34,10 +34,8 @@ campy_fit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
 campy_intervmultiple <- interv_multiple(fit=campy_fit, taus=80:120,
                               deltas=c(0,0.8,1), external=FALSE, B=2,
                               signif_level=0.05) #runs several hours!
-plot(campy_intervmultiple)
-}
+plot(campy_intervmultiple)}
 }
 
-\keyword{INGARCH}
-\keyword{intervention}
-\keyword{plot}
+\keyword{Generalised linear model}
+\keyword{Intervention detection}

@@ -4,7 +4,7 @@
 Diagnostic Plots for a Fitted GLM-type Model for Time Series of Counts
 }
 \description{
-This S3 method provides several diagnostic plots to asses the model fit provided in an object of class \code{"tsglm"}.
+Produces several diagnostic plots to asses the fit of a GLM-type model for time series of counts.
 }
 \usage{
 \method{plot}{tsglm}(x, ask = TRUE, ...)
@@ -21,7 +21,7 @@ further arguments are currently ignored. Only for compatibility with generic fun
 }
 }
 \details{
-Produces plots of the acf of the Pearson residuals, the Pearson residuals plotted against time, a cumulative periodogramm of the Pearson residuals, a probability integral transform (PIT) histogram (see function \code{\link{pit}}) and a marginal calibration plo (see function \code{\link{marcal}}). The cumulative periodogramm is plotted with the function \code{\link{cpgram}} from package \code{MASS} and is omitted if this package is not available.
+Produces plots of the acf of the Pearson residuals, the Pearson residuals plotted against time, a cumulative periodogramm of the Pearson residuals, a probability integral transform (PIT) histogram (see function \code{\link{pit}}) and a marginal calibration plot (see function \code{\link{marcal}}). The cumulative periodogramm is plotted with the function \code{\link{cpgram}} from package \code{MASS} and is omitted if this package is not available.
 }
 \author{
 Tobias Liboschik and Philipp Probst
@@ -40,12 +40,5 @@ plot(seatbelts_fit, ask=FALSE)
 par(op)
 }
 
-\keyword{INGARCH}
-\keyword{log-linear}
-\keyword{GLM}
-\keyword{fit}
-\keyword{model}
-\keyword{time series}
-\keyword{count data}
-\keyword{plot}
-
+\keyword{Generalised linear model}
+\keyword{Model assessment}

@@ -31,10 +31,8 @@ Tobias Liboschik and Philipp Probst
 campy_fit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
 campy_intervdetect <- interv_detect(fit=campy_fit, taus=80:120,
                         delta=1, external=FALSE)
-plot(campy_intervdetect)
-}
+plot(campy_intervdetect)}
 }
 
-\keyword{INGARCH}
-\keyword{intervention}
-\keyword{plot}
+\keyword{Generalised linear model}
+\keyword{Intervention detection}

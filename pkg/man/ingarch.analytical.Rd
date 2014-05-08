@@ -7,7 +7,7 @@
 Analytical Mean, Variance and Autocorrelation of an INGARCH Process 
 }
 \description{
-Functions to calculate the analytical mean, variance and autocorrelation / partial autocorrelation / autocovariance function of an INGARCH process.
+Functions to calculate the analytical mean, variance and autocorrelation / partial autocorrelation / autocovariance function of an integer-valued generalised autoregressive conditional heteroscedasticity (INGARCH) process.
 }
 \usage{
 ingarch.mean(intercept, past_obs=NULL, past_mean=NULL)
@@ -41,11 +41,11 @@ ingarch.acf(intercept, past_obs=NULL, past_mean=NULL, lag.max=10,
 }
 
 \details{
-  The INGARCH(\eqn{p},\eqn{q}) model used here follows the definition
-    \deqn{Z_{t}|{\cal{F}}_{t-1} \sim Poi(\kappa_{t}),}{
+  The INGARCH model of order \eqn{p} and \eqn{q} used here follows the definition
+    \deqn{Z_{t}|{\cal{F}}_{t-1} \sim \mathrm{Poi}(\kappa_{t}),}{
     Z[t]|F[t-1] ~ Poi(\kappa[t]),}
-  where \eqn{{\cal{F}}_{t-1}}{F[t-1]} is the \eqn{\sigma}-field containing the information about the past of the process up to time \eqn{t-1}.
-  The conditional mean is given by
+  where \eqn{{\cal{F}}_{t-1}}{F[t-1]} is the history of the process up to time \eqn{t-1} and \eqn{\mathrm{Poi}}{Poi} is the Poisson distribution parametrised by its mean.
+  The conditional mean \eqn{\kappa_t}{\kappa[t]} is given by
     \deqn{\kappa_t = \beta_0 + \beta_1 Z_{t-1} + \ldots + \beta_p Z_{t-p}
     + \alpha_1 \kappa_{t-1} + \ldots  + \alpha_q \kappa_{t-q}.}{
     \kappa[t] = \beta[0] + \beta[1] Z[t-1] + \ldots + \beta[p] Z[t-p]
@@ -57,8 +57,12 @@ ingarch.acf(intercept, past_obs=NULL, past_mean=NULL, lag.max=10,
 Tobias Liboschik and Philipp Probst
 }
 
+\references{
+Ferland, R., Latour, A. and Oraichi, D. (2006) Integer-valued GARCH process. \emph{Journal of Time Series Analysis} \bold{27(6)}, 923--942, \url{http://dx.doi.org/10.1111/j.1467-9892.2006.00496.x}.
+}
+
 \seealso{
-\code{\link{tsglm}} for fitting a more general INGARCH model with covariates and \code{\link{tsglm.sim}} for simulation from such a model.
+\code{\link{tsglm}} for fitting a more genereal GLM for time series of counts of which this INGARCH model is a special case. \code{\link{tsglm.sim}} for simulation from such a model.
 }
 
 \examples{
@@ -68,9 +72,4 @@ ingarch.var(0.3, c(0.1,0.1), 0.1)
 ingarch.acf(0.3, c(0.1,0.1,0.1), 0.1, type="acf", lag.max=15)}
 }
 
-\keyword{INGARCH}
-\keyword{mean}
-\keyword{variance}
-\keyword{autocorrelation}
-\keyword{partial autocorrelation}
-\keyword{autocovariance}
+\keyword{Generalised linear model}

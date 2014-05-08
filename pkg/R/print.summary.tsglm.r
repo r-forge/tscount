@@ -10,7 +10,6 @@ print.summary.tsglm <- function(x, ...){
       "\nLog-likelihood: ", x$logLik,
       "\nAIC: ", x$AIC,
       "\nBIC: ", x$BIC,
-      "\ncorrected AIC: ", x$AICc,
     sep = "")
     cat("\n\n")
   }else{ 

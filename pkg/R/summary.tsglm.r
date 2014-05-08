@@ -23,7 +23,6 @@ summary.tsglm <- function(object, B, parallel=FALSE, ...){
       number.coef=nrow(coefs),             
       logLik=logLik(object),             
       AIC=AIC(object), #Akaike's Information Criterion
-      AICc= -2*ll + 2*k + 2*k*(k+1)/(n-k-1), #AIC corrected for finite sample sizes
       BIC=BIC(object), #Bayesian Information Criterion
       pearson.resid=residuals(object, type="pearson") #Pearson's residuals
     )  

@@ -1,6 +1,6 @@
 pit <- function(object, ...) UseMethod("pit")
 
-pit.tsglm <- function(object, bins=10, ci=0.95, ci.col="blue", ...){
+pit.tsglm <- function(object, bins=10, ...){
   #Cumulative distribution function of the conditional distribution (cf. marcal.tsglm):
   if(object$distr=="poisson") pdistr <- function(q, meanvalue, distrcoefs) ppois(q, lambda=meanvalue)
   if(object$distr=="nbinom") pdistr <- function(q, meanvalue, distrcoefs) pnbinom(q, mu=meanvalue, size=distrcoefs)
@@ -18,8 +18,8 @@ pit.tsglm <- function(object, bins=10, ci=0.95, ci.col="blue", ...){
   }
   histo <- list(breaks=u, counts=diff(pit)*n, density=diff(pit)*bins, mids=(u[-(bins+1)]+u[-1])/2, xname="PIT", equidits=TRUE)
   class(histo) <- "histogram"
-  simconfint <- if(ci>0 && ci<1) (n/bins+c(-1,+1)*qnorm(1-(1-ci)/bins/2)*sqrt(n*(1/bins)*(1-1/bins)))/(n/bins) else NULL #simultaneous confidence band of level ci (normal approximation) for the histogram bars under the assumption of iid U(0,1) PIT values 
-  plot_args <- modifyList(list(main="Non-randomized PIT histogram", xlab="Probability integral transform", ylab="Density", freq=FALSE, ylim=range(0, simconfint, histo$density)), list(...)) #the default arguments can be overriden by those provided in the ... argument
+  #simconfint <- if(ci>0 && ci<1) (n/bins+c(-1,+1)*qnorm(1-(1-ci)/bins/2)*sqrt(n*(1/bins)*(1-1/bins)))/(n/bins) else NULL #simultaneous confidence band of level ci (normal approximation) for the histogram bars under the assumption of iid U(0,1) PIT values 
+  plot_args <- modifyList(list(main="Non-randomized PIT histogram", xlab="Probability integral transform", ylab="Density", freq=FALSE, ylim=range(0, histo$density)), list(...)) #the default arguments can be overriden by those provided in the ... argument
   do.call("plot", args=c(list(x=histo), plot_args))
-  if(ci>0 && ci<1) abline(h=simconfint, lty="dashed", col=ci.col)
+  #if(ci>0 && ci<1) abline(h=simconfint, lty="dashed", col=ci.col)
 }

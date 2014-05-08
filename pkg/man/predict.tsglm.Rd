@@ -1,7 +1,7 @@
 \name{predict.tsglm}
 \alias{predict.tsglm}
 \title{
-Predict Method for Time Series of Counts Following Generalised Linear Models
+Predicts Method for Time Series of Counts Following Generalised Linear Models
 }
 \description{
 Predict future observations based on a fitted GLM-type model for time series of counts.
@@ -47,6 +47,5 @@ campy_fit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)),
 predict(campy_fit, n.ahead=5)
 }
 
-\keyword{GLM}
-\keyword{INGARCH}
-\keyword{predict}
+\keyword{Generalised linear model}
+\keyword{Prediction}

@@ -37,7 +37,5 @@ Tobias Liboschik and Philipp Probst
 \code{\link{tsglm}} for fitting a GLM for time series of counts.
 }
 
-\keyword{INGARCH}
-\keyword{residuals}
-\keyword{Pearson}
-\keyword{Anscombe}
+\keyword{Generalised linear model}
+\keyword{Model assessment}

@@ -8,7 +8,8 @@ Predictive Model Assessment with a Probability Integral Transform Histogram for 
 The function allows a probabilistic calibration check with a Probability Integral Transform (PIT) histogram.
 }
 \usage{
-\method{pit}{tsglm}(object, bins=10, ci=0.95, ci.col="blue", ...)
+\method{pit}{tsglm}(object, bins=10, ...)
+%\method{pit}{tsglm}(object, bins=10, ci=0.95, ci.col="blue", ...)
 }
 \arguments{
   \item{object}{
@@ -17,12 +18,12 @@ an object of class \code{"tsglm"}.
   \item{bins}{
 number of bins in the histogram. Default value is 10.
 }
-  \item{ci}{
-coverage probability for confidence band. Plotting of the confidence interval is suppressed if \code{ci} is not between zero and one.
-}
-  \item{ci.col}{
-colour to plot the confidence band lines.
-}
+%  \item{ci}{
+%coverage probability for confidence band. Plotting of the confidence interval is suppressed if \code{ci} is not between zero and one.
+%}
+%  \item{ci.col}{
+%colour to plot the confidence band lines.
+%}
   \item{...}{
 additional arguments passed to \code{\link{plot}}.
 }
@@ -30,7 +31,7 @@ additional arguments passed to \code{\link{plot}}.
 \details{
 A PIT histogram is a tool for evaluating the statistical consistency between the probabilistic forecast and the observation. The predictive distributions of the observations are compared with the actual observations. If the predictive distribution is ideal the result should be a flat PIT histogram with no bin having an extraordinary high or low level. For more information about PIT histograms see the references listed below.
 
-The condidence band plotted is based on the assumption of an ideal forecaster, under which the PIT values are independently and identically uniformly distributed on \eqn{[0,1]}{[0,1]}. It holds the given coverage probability for all bars simultaneously.
+%The condidence band plotted is based on the assumption of an ideal forecaster, under which the PIT values are independently and identically uniformly distributed on \eqn{[0,1]}{[0,1]}. It holds the given coverage probability for all bars simultaneously.
 }
 
 \references{
@@ -56,5 +57,5 @@ campy_fit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
 pit(campy_fit)
 }
 
-\keyword{INGARCH}
-\keyword{PIT}
+\keyword{Generalised linear model}
+\keyword{Model assessment}

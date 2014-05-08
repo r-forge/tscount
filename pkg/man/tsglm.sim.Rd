@@ -4,7 +4,7 @@
 Simulate a Time Series Following a Generalised Linear Model
 }
 \description{
-Generates a simulated time series from a GLM-type time series of counts model.
+Generates a simulated time series from a GLM-type model for time series of counts.
 }
 \usage{
 tsglm.sim(n, param=list(intercept=1, past_obs=NULL, past_mean=NULL, xreg=NULL), 
@@ -63,6 +63,10 @@ The definition of the model used here is like in function \code{\link{tsglm}}.
 }
 }
 
+\author{
+Tobias Liboschik and Philipp Probst
+}
+
 \references{
 Christou, V. and Fokianos, K. (2013) Quasi-likelihood inference for negative binomial time series models. \emph{Journal of Time Series Analysis} (published online), \url{http://dx.doi.org/10.1002/jtsa.12050}.
 
@@ -70,13 +74,11 @@ Ferland, R., Latour, A. and Oraichi, D. (2006) Integer-valued GARCH process. \em
 
 Fokianos, K. and Fried, R. (2010) Interventions in INGARCH processes. \emph{Journal of Time Series Analysis} \bold{31(3)}, 210--225, \url{http://dx.doi.org/10.1111/j.1467-9892.2010.00657.x}.
 
+Fokianos, K., and Fried, R. (2012) Interventions in log-linear Poisson autoregression. \emph{Statistical Modelling} \bold{12(4)}, 299--322. \url{http://dx.doi.org/10.1177/1471082X1201200401}.
+
 Fokianos, K., Rahbek, A. and Tjostheim, D. (2009) Poisson autoregression. \emph{Journal of the American Statistical Association} \bold{104(488)}, 1430--1439, \url{http://dx.doi.org/10.1198/jasa.2009.tm08270}.
 
 Liboschik, T., Kerschke, P., Fokianos, K. and Fried, R. (2013) Modelling interventions in INGARCH processes. \emph{SFB 823 Discussion Paper} \bold{03/13}, \url{http://hdl.handle.net/2003/29878}.
-}
-
-\author{
-Tobias Liboschik and Philipp Probst
 }
 
 \seealso{
@@ -92,11 +94,5 @@ tsglm.sim(n=200, param=param, model=model, link="identity",
           distr="nbinom", distrcoefs=c(size=1))
 }
 
-\keyword{INGARCH}
-\keyword{log-linear}
-\keyword{GLM}
-\keyword{fit}
-\keyword{model}
-\keyword{time series}
-\keyword{count data}
-\keyword{simulation} 
+\keyword{Generalised linear model}
+\keyword{Simulation}

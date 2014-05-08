@@ -13,7 +13,7 @@ interv_detect.tsglm <- function(fit, taus=2:length(ts), delta, external=FALSE, B
   taus <- sort(unique(taus)) #ensure, that vector of considered time points is sorted and does not include any duplicates
   
   #Function to compute the test statistic:
-  compute_test_statistic <- function(model, ts, link, distr, fit_H0=NULL, taus, delta, external, est_interv=FALSE, ...){
+  compute_test_statistic <- function(model, ts, link, distr, fit_H0=NULL, taus, delta, external, est_interv=FALSE, stopOnError=FALSE, ...){
     n <- length(ts)
     if(all(ts==0)) return(list(error_message="Time series is constantly zero"))
     if(is.null(fit_H0)){ #do not estimate the parameter under the null hypothesis of no intervention if it is given in the argument fit_H0
@@ -36,11 +36,11 @@ interv_detect.tsglm <- function(fit, taus=2:length(ts), delta, external=FALSE, B
       model_extended$xreg <- cbind(model$xreg, interv_covariate(n=n, tau=taus[j], delta=delta)) #is overwritten for each tau
       loglik <- tsglm.loglik(link=link, paramvec=param_H0_extended, model=model_extended, ts=ts, score=TRUE, info=info, condmean=condmean_H0, from=taus[j])
       infomat_corrected <- apply((1/loglik$kappa + fit$sigmasq)*loglik$outerscoreprod, c(2,3), sum)
-      vcov <- try(vcov.tsglm(list(info.matrix=loglik$info, info.matrix_corrected=infomat_corrected)) )
-      if(class(vcov)=="try-error"){
-        return(list(error_message=paste("Error in invertinfo(mat) : \n", vcov[[1]], sep="")))
+      test_statistic_temp <- scoretest(Score=loglik$score, G=loglik$info, G1=infomat_corrected, r=1, stopOnError=stopOnError, silent=TRUE)
+      if(!is.null(test_statistic_temp$error_message)){
+        return(list(error_message=test_statistic_temp$error_message))
       }
-      test_statistic_tau[j] <- (t(loglik$score) %*% vcov %*% loglik$score)[1,1]
+      test_statistic_tau[j] <- test_statistic_temp$test_statistic
     }
     index_tau_max <- which.max(test_statistic_tau)
     tau_max <- taus[index_tau_max]
@@ -61,7 +61,7 @@ interv_detect.tsglm <- function(fit, taus=2:length(ts), delta, external=FALSE, B
     return(result)
   }
   
-  result <- compute_test_statistic(model=fit$model, ts=fit$ts, link=fit$link, distr=fit$distr, fit_H0=fit, taus=taus, delta=delta, external=external, est_interv=est_interv, ...)
+  result <- compute_test_statistic(model=fit$model, ts=fit$ts, link=fit$link, distr=fit$distr, fit_H0=fit, taus=taus, delta=delta, external=external, est_interv=est_interv, stopOnError=TRUE, ...)
   
   #Bootstrap to compute p-value:
   if(!is.null(B)){

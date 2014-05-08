@@ -6,7 +6,7 @@ Testing for Interventions in Count Time Series Following Generalised Linear Mode
 }
 
 \description{
-Test on one or more interventions of given type at given time.
+Test on one or more interventions of given type at given time as given by Fokianos and Fried (2010, 2012).
 }
 
 \usage{
@@ -39,7 +39,7 @@ an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{t
 }
  
 \details{
-A score test on the null hypothesis of no interventions is done. The null hypothesis is that the data are generated from the model specified in the argument \code{model}, see definition in \code{\link{tsglm}}. Under the alternative there are one or more intervention effects occuring at times \code{tau}. The types of the intervention effects are specified by \code{delta} as defined in \code{\link{interv_covariate}}. The interventions are included as additional covariates according to the definition in \code{\link{tsglm}} and can have an internal (the default) or external \code{external=TRUE} effect.
+A score test on the null hypothesis of no interventions is done. The null hypothesis is that the data are generated from the model specified in the argument \code{model}, see definition in \code{\link{tsglm}}. Under the alternative there are one or more intervention effects occuring at times \code{tau}. The types of the intervention effects are specified by \code{delta} as defined in \code{\link{interv_covariate}}. The interventions are included as additional covariates according to the definition in \code{\link{tsglm}} and can have an internal (the default) or external (\code{external=TRUE}) effect.
 
 Under the null hypothesis the test statistic has asymptotically a chi-square distribution with \code{length(tau)} degrees of freedom. The returned p-value is based on this and approximately valid for \code{length(ts)} large.
 }
@@ -73,15 +73,17 @@ If argument \code{est_interv=TRUE}, the following component is additionally retu
 \references{
 Fokianos, K. and Fried, R. (2010) Interventions in INGARCH processes. \emph{Journal of Time Series Analysis} \bold{31(3)}, 210--225, \url{http://dx.doi.org/10.1111/j.1467-9892.2010.00657.x}.
 
+Fokianos, K., and Fried, R. (2012) Interventions in log-linear Poisson autoregression. \emph{Statistical Modelling} \bold{12(4)}, 299--322. \url{http://dx.doi.org/10.1177/1471082X1201200401}.
+
 Liboschik, T., Kerschke, P., Fokianos, K. and Fried, R. (2013) Modelling interventions in INGARCH processes. \emph{SFB 823 Discussion Paper} \bold{03/13}, \url{http://hdl.handle.net/2003/29878}.
 }
 
 \author{
-Tobias Liboschik and Philipp Probst
+Tobias Liboschik, Philipp Probst, Konstantinos Fokianos and Roland Fried
 }
 
 \seealso{
-S3 method \code{print}.
+S3 method \code{\link{print}}.
 
 \code{\link{tsglm}} for fitting a GLM for time series of counts.
 \code{\link[=interv_detect.tsglm]{interv_detect}} for detection of single interventions of given type and \code{\link[=interv_multiple.tsglm]{interv_multiple}} for iterative detection of multiple interventions of unknown types. \code{\link{interv_covariate}} for generation of deterministic covariates describing intervention effects.
@@ -93,3 +95,6 @@ campy_fit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
 campy_intervtest <- interv_test(fit=campy_fit, tau=c(84,100), delta=c(1,0))
 campy_intervtest
 }
+
+\keyword{Generalised linear model}
+\keyword{Intervention detection}

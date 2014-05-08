@@ -7,7 +7,7 @@ Detecting an Intervention in Count Time Series Following Generalised Linear Mode
 }
 
 \description{
-Detection procedure for an intervention of given type occuring at unknown time.
+Detection procedure for an intervention of given type occuring at unknown time as proposed by Fokianos and Fried (2010, 2012).
 }
 
 \usage{
@@ -58,7 +58,7 @@ an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{t
 }
  
 \details{
-For each time in \code{taus} the test statistic of a score test on an intervention effect occuring at that time is computed, see \code{\link[=interv_test.tsglm]{interv_test}}. The time with the maximum test statistic is considered as a candidate for a possible intervention effect at that time. The type of the intervention effect is specified by \code{delta} as described in \code{\link{interv_covariate}}.  The intervention is included as an additional covariate according to the definition in \code{\link{tsglm}} and can have an internal (the default) or external \code{external=TRUE} effect.
+For each time in \code{taus} the score test statistic for an intervention effect occuring at that time is computed, see \code{\link[=interv_test.tsglm]{interv_test}}. The time with the maximum test statistic is considered as a candidate for a possible intervention effect at that time. The type of the intervention effect is specified by \code{delta} as described in \code{\link{interv_covariate}}.  The intervention is included as an additional covariate according to the definition in \code{\link{tsglm}} and can have an internal (the default) or external \code{external=TRUE} effect.
 
 If argument \code{B} is not \code{NULL}, the null hypothesis that there is no intervention effect at any time is tested. Test statistic for this test is the maximum test statistic of the score test (see above). The p-value is computed by a parametric bootstrap with \code{B} bootstrap samples. It is recommended to use at least several hundred bootstrap samples. Note that this bootstrap procedure is very time-consuming.
 }
@@ -92,17 +92,19 @@ If argument \code{est_interv=TRUE} (the default), the following component is add
 \references{
 Fokianos, K. and Fried, R. (2010) Interventions in INGARCH processes. \emph{Journal of Time Series Analysis} \bold{31(3)}, 210--225, \url{http://dx.doi.org/10.1111/j.1467-9892.2010.00657.x}.
 
+Fokianos, K., and Fried, R. (2012) Interventions in log-linear Poisson autoregression. \emph{Statistical Modelling} \bold{12(4)}, 299--322. \url{http://dx.doi.org/10.1177/1471082X1201200401}.
+
 Liboschik, T., Kerschke, P., Fokianos, K. and Fried, R. (2013) Modelling interventions in INGARCH processes. \emph{SFB 823 Discussion Paper} \bold{03/13}, \url{http://hdl.handle.net/2003/29878}.
 }
 
 \author{
-Tobias Liboschik and Philipp Probst
+Tobias Liboschik, Philipp Probst, Konstantinos Fokianos and Roland Fried
 }
 
 \seealso{
-S3 methods \code{print} and \code{\link[=plot.interv_detect]{plot}}.
+S3 methods \code{\link{print}} and \code{\link[=plot.interv_detect]{plot}}.
 
-\code{\link{tsglm}} for fitting an INGARCH model.
+\code{\link{tsglm}} for fitting a GLM for time series of counts.
 \code{\link[=interv_test.tsglm]{interv_test}} for testing on intervention effects and \code{\link[=interv_multiple.tsglm]{interv_multiple}} for iterative detection of multiple interventions of unknown types. \code{\link{interv_covariate}} for generation of deterministic covariates describing intervention effects.
 }
 
@@ -113,3 +115,6 @@ campy_intervdetect <- interv_detect(fit=campy_fit, taus=80:120, delta=1)
 campy_intervdetect
 plot(campy_intervdetect)
 }
+
+\keyword{Generalised linear model}
+\keyword{Intervention detection}

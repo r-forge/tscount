@@ -6,7 +6,7 @@
 Detecting Multiple Interventions in Count Time Series Following Generalised Linear Models
 }
 \description{
-Iterative detection procedure for multiple interventions of unknown types occuring at unknown times.
+Iterative detection procedure for multiple interventions of unknown types occuring at unknown times as proposed by Fokianos and Fried (2010, 2012).
 }
 \usage{
 \method{interv_multiple}{tsglm}(fit, taus=2:length(ts), deltas=c(0,0.8,1),
@@ -88,16 +88,20 @@ An object of class \code{"interv_multiple"}, which is a list with the following 
 \references{
 Fokianos, K. and Fried, R. (2010) Interventions in INGARCH processes. \emph{Journal of Time Series Analysis} \bold{31(3)}, 210--225, \url{http://dx.doi.org/10.1111/j.1467-9892.2010.00657.x}.
 
+Fokianos, K., and Fried, R. (2012) Interventions in log-linear Poisson autoregression. \emph{Statistical Modelling} \bold{12(4)}, 299--322. \url{http://dx.doi.org/10.1177/1471082X1201200401}.
+
 Liboschik, T., Kerschke, P., Fokianos, K. and Fried, R. (2013) Modelling interventions in INGARCH processes. \emph{SFB 823 Discussion Paper} \bold{03/13}, \url{http://hdl.handle.net/2003/29878}.
 }
 
 \author{
-Tobias Liboschik and Philipp Probst
+Tobias Liboschik, Philipp Probst, Konstantinos Fokianos and Roland Fried
 }
 
 \seealso{
+S3 methods \code{\link{print}} and \code{\link[=plot.interv_multiple]{plot}}.
+
 \code{\link{tsglm}} for fitting a GLM for time series of counts.
-\code{\link{plot.interv_multiple}} for plotting, \code{\link[=interv_test.tsglm]{interv_test}} and \code{\link[=interv_detect.tsglm]{interv_detect}} for other intervention tests.
+\code{\link[=interv_test.tsglm]{interv_test}} for testing on intervention effects and \code{\link[=interv_detect.tsglm]{interv_detect}} for detection of single interventions of given type. \code{\link{interv_covariate}} for generation of deterministic covariates describing intervention effects.
 }
 
 \examples{
@@ -110,3 +114,6 @@ campy_intervmultiple
 plot(campy_intervmultiple)
 }
 }
+
+\keyword{Generalised linear model}
+\keyword{Intervention detection}

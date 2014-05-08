@@ -5,7 +5,7 @@
 Predictive Model Assessment with Proper Scoring Rules for Time Series Following Generalised Linear Models
 }
 \description{
-The function computes scoring rules for the assessment of sharpness.
+Computes scoring rules for the assessment of sharpness of a fitted GLM-type model for time series of counts.
 }
 \usage{
 \method{scoring}{tsglm}(object, cutoff=1000, ...)
@@ -96,6 +96,5 @@ campy_fit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
 scoring(campy_fit)
 }
 
-\keyword{INGARCH}
-\keyword{scoring}
-\keyword{score}
+\keyword{Generalised linear model}
+\keyword{Model assessment}

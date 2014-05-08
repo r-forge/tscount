@@ -32,3 +32,5 @@ campy_fit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
 summary(campy_fit)
 plot(campy_fit)
 }
+
+\keyword{Data}
