@@ -1,6 +1,6 @@
 predict.tsglm <- function(object, n.ahead=1, newobs=NULL, newxreg=NULL, ...){
   tsglm.check(object)
-  newxreg <- if(is.null(newxreg)) matrix(0, nrow=n.ahead, ncol=0) else as.matrix(newxreg)
+  newxreg <- if(is.null(newxreg)) matrix(0, nrow=n.ahead, ncol=ncol(object$model$xreg)) else as.matrix(newxreg)
   stopifnot(n.ahead>0,
             n.ahead%%1==0,
             ncol(newxreg)==ncol(object$model$xreg)

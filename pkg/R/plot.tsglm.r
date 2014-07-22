@@ -1,5 +1,5 @@
 plot.tsglm <- function(x, ask=TRUE, ...){
-  op <- par(ask=ask)
+  devAskNewPage(ask=ask)
   residu <- residuals(x, type="pearson")
   acf(residu, main="ACF of Pearson residuals")
   #hist(residu, main="Histogram of Pearson residuals", xlab="Residuals")
@@ -12,6 +12,5 @@ plot.tsglm <- function(x, ask=TRUE, ...){
   }
   pit(x)
   marcal(x)
-  par(op)
   invisible()
 }

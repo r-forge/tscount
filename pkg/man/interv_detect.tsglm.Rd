@@ -12,7 +12,7 @@ Detection procedure for an intervention of given type occuring at unknown time a
 
 \usage{
 \method{interv_detect}{tsglm}(fit, taus=2:length(ts), delta, external=FALSE, 
-              B=NULL, info=c("score", "hessian"), init.control_bootstrap, 
+              B=NULL, info=c("score"), init.control_bootstrap, 
               final.control_bootstrap, inter.control_bootstrap, 
               parallel=FALSE, est_interv=TRUE, ...)
 }
@@ -35,7 +35,7 @@ an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{t
   positive integer value giving the number of bootstrap samples for estimation of the p-value. For \code{B=NULL} (the default) no p-value is returned.
 }
   \item{info}{
-  character value that determines how to calculate the information matrix, see \code{\link{tsglm}}.
+  character value that determines how to calculate the information matrix, see \code{\link{tsglm}}. Currently \code{"score"} is the only possible choice.
 }
   \item{init.control_bootstrap}{
   named list that determines how to make initial estimation in the bootstrap, see argument \code{init.control} in \code{\link{tsglm}}. If missing, the same settings as for the regular estimation are used.

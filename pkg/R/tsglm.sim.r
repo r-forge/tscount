@@ -55,6 +55,7 @@ tsglm.sim <- function(n, param=list(intercept=1, past_obs=NULL, past_mean=NULL, 
   q_max <- max(model$past_mean, 0)
   r <- max(ncol(model$xreg), 0)
   R <- seq(along=numeric(r)) #sequence 1:r if r>0 and NULL otherwise
+  if(p==0 & q>0) warning("Without dependence on past observations the dependence on past values of the linear predictor has no effect. Choose the model wisely.")
   stopifnot(
     nrow(model$xreg)==n,
     length(model$external)%in%c(r,1,0)

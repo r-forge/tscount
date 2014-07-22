@@ -40,7 +40,7 @@ ingarch.condmean <- function(paramvec, model, ts, derivatives=c("none", "first",
       denom <- (1-sum(param$past_obs)-sum(param$past_mean))[[1]]    
       kappa_stationary <- (param$intercept/denom)[[1]]
       kappa <- c(rep(kappa_stationary, q_max), numeric(n))  
-      z <- c(as.integer(rep(kappa_stationary, p_max)), ts)
+      z <- c(rep(round(kappa_stationary), p_max), ts)
       if(derivatives %in% c("first", "second")){
         #Vector of first partial derivatives of kappa with respect to the parameters:
         partial_kappa <- matrix(0, nrow=n+q_max, ncol=1+p+q+r)
@@ -59,7 +59,7 @@ ingarch.condmean <- function(paramvec, model, ts, derivatives=c("none", "first",
     }
     if(init == "iid"){ #initialisation under iid assumption:
       kappa <- c(rep(param$intercept, q_max), numeric(n))  
-      z <- c(as.integer(rep(param$intercept, p_max)), ts)
+      z <- c(rep(round(param$intercept), p_max), ts)
       if(derivatives %in% c("first", "second")){
         partial_kappa <- matrix(0, nrow=n+q_max, ncol=1+p+q+r)
         partial_kappa[Q_max, 1] <- 1 #intercept
@@ -71,7 +71,7 @@ ingarch.condmean <- function(paramvec, model, ts, derivatives=c("none", "first",
     if(init == "firstobs"){ #initialisation by the first observation:
       firstobs <- ts[1]
       kappa <- c(rep(firstobs, q_max), numeric(n))  
-      z <- c(as.integer(rep(firstobs, p_max)), ts)
+      z <- c(rep(firstobs, p_max), ts)
       if(derivatives %in% c("first", "second")){
         partial_kappa <- matrix(0, nrow=n+q_max, ncol=1+p+q+r)
         if(derivatives == "second"){

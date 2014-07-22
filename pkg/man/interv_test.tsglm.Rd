@@ -11,7 +11,7 @@ Test on one or more interventions of given type at given time as given by Fokian
 
 \usage{
 \method{interv_test}{tsglm}(fit, tau, delta, external, 
-            info=c("score", "hessian"), est_interv=FALSE, ...)
+            info=c("score"), est_interv=FALSE, ...)
 }
 
 \arguments{
@@ -28,7 +28,7 @@ an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{t
   logical vector of length \code{length(tau)} specifying for each intervention wether its effect is external or not (see Details). If this is only a scalar this choice will be used for all interventions. If this is only a scalar this choice will be used for all interventions. If omitted all interventions will have an internal effect (i.e. \code{external=FALSE}).
 } 
   \item{info}{
-  character value that determines how to calculate the information matrix, see \code{\link{tsglm}}.
+  character value that determines how to calculate the information matrix, see \code{\link{tsglm}}. Currently \code{"score"} is the only possible choice.
 }
   \item{est_interv}{
   logical value. If \code{est_interv=TRUE} a fit for the model with all specified interventions is computed and additionally returned.

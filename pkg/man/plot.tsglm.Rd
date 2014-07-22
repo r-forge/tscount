@@ -14,7 +14,7 @@ Produces several diagnostic plots to asses the fit of a GLM-type model for time 
 an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{tsglm}}.
 }
   \item{ask}{
-logical value. If \code{TRUE} (and the R session is interactive) the user is asked for input, before a new figure is drawn (see \code{\link{par}}).
+logical value. If \code{TRUE} (and the R session is interactive) the user is asked for input, before a new figure is drawn (see \code{\link{devAskNewPage}}).
 }
   \item{...}{
 further arguments are currently ignored. Only for compatibility with generic function.

@@ -13,6 +13,7 @@ ingarch.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, xreg=NULL,
   if(is.null(model$xreg)) model$xreg <- matrix(0, nrow=length(ts), ncol=0) else model$xreg <- as.matrix(model$xreg)
   if(length(model$external)==0) model$external <- rep(FALSE, ncol(model$xreg)) else model$external <- as.logical(model$external) #the default value for model$external is FALSE (i.e. an internal covariate effect)
   if(length(model$external)==1) model$external <-  rep(model$external, ncol(model$xreg)) else model$external <- as.logical(model$external) #if only one value for model$external is provided, this is used for all covariates
+  if(is.list(ts)) stop("Argument 'ts' has to be a vector") 
   if(any(is.na(ts)) || any(is.na(model$xreg))) stop("Cannot make estimation with missing values in time series or covariates")
   stopifnot( #Are the arguments valid?
     model$past_obs%%1==0,
@@ -35,6 +36,7 @@ ingarch.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, xreg=NULL,
   q_max <- max(model$past_mean, 0)
   r <- ncol(model$xreg)
   R <- seq(along=numeric(r)) #sequence 1:r if r>0 and NULL otherwise
+  if(p==0 & q>0) warning("Without dependence on past observations the dependence on past values of the linear predictor has no effect. Choose the model wisely.")
   parameternames <- tsglm.parameternames(model)
   init_default <- list(method="CSS", use=Inf, optim.method="BFGS", optim.control=list(maxit=25))
   if(!all(names(init.control) %in% c(names(init_default), "intercept", "past_obs", "past_mean", "xreg"))) stop("There are unknown list elements in argument 'init'")

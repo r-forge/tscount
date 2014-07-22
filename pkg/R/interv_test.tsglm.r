@@ -1,6 +1,6 @@
 interv_test <- function(...) UseMethod("interv_test")
 
-interv_test.tsglm <- function(fit, tau, delta, external, info=c("score", "hessian"), est_interv=FALSE, ...){
+interv_test.tsglm <- function(fit, tau, delta, external, info=c("score"), est_interv=FALSE, ...){
 #Test on one or several interventions of known types at known points in time
 ##############################
 
@@ -17,7 +17,7 @@ interv_test.tsglm <- function(fit, tau, delta, external, info=c("score", "hessia
     model_extended <- fit$model
     covariate <- interv_covariate(n=length(fit$ts), tau=tau, delta=delta)
     model_extended$xreg <- cbind(fit$model$xreg, covariate)
-    model_extended$external <- c(fit$model$external, external) 
+    model_extended$external <- c(fit$model$external, external)
     loglik <- tsglm.loglik(link=fit$link, paramvec=param_H0_extended, model=model_extended, ts=fit$ts, score=TRUE, info=info)   
   infomat_corrected <- apply((1/loglik$kappa + fit$sigmasq)*loglik$outerscoreprod, c(2,3), sum)
   test_statistic <- scoretest(Score=loglik$score, G=loglik$info, G1=infomat_corrected, r=r, stopOnError=TRUE)$test_statistic    

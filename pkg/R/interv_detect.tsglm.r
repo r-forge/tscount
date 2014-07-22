@@ -1,6 +1,6 @@
 interv_detect <- function(...) UseMethod("interv_detect")
 
-interv_detect.tsglm <- function(fit, taus=2:length(ts), delta, external=FALSE, B=NULL, info=c("score", "hessian"), init.control_bootstrap, final.control_bootstrap, inter.control_bootstrap, parallel=FALSE, est_interv=TRUE, ...){
+interv_detect.tsglm <- function(fit, taus=2:length(ts), delta, external=FALSE, B=NULL, info=c("score"), init.control_bootstrap, final.control_bootstrap, inter.control_bootstrap, parallel=FALSE, est_interv=TRUE, ...){
   #Test on a single intervention of known type at a UNknown point in time
   #B: Integer (>0). Number of bootstrap samples for erstimation of the p-value, for B=NULL no p-value is returned.
   #taus: Integer vector (>=0). Times which should be considered for an intervention.
