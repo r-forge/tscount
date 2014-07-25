@@ -80,9 +80,10 @@ loglin.fit(ts, model = list(past_obs = NULL, past_mean = NULL,
     named list with optional elements that determine how to make the initial estimation. Possible list elements are:
     \describe{  
       \item{\code{use}}{integer vector of length one or two giving the number of observations from the beginning (if of length one) or the range of observations (if of length two) used for initial estimation. For \code{use = Inf} all observations are used, which is the default.}
-      \item{\code{method}}{character specifying how initial estimators should be estimated. Possible values are \code{"CSS"}, \code{"CSS-ML"}, \code{"ML"}, \code{"MM"}, \code{"GLM"} and \code{"fixed"}. 
-  If \code{method} is \code{"CSS"}, \code{"CSS-ML"} or \code{"ML"}, the initial estimate is based on an ARMA fit using the function \code{\link{arima}}, and list element \code{method} is passed to its argument of the same name.  
+      \item{\code{method}}{character specifying how initial estimators should be estimated. Possible values are \code{"iid"}, \code{"CSS"}, \code{"CSS-ML"}, \code{"ML"}, \code{"MM"}, \code{"GLM"} and \code{"fixed"}. 
+  If \code{method} is \code{"iid"} (the default) a moment estimator assuming an iid model without covariates is used.
   If \code{method="MM"}, the initial estimate is an ARMA(1,1) fit by moment estimators and parameters of higher order than one are set to zero. For this method the initial parameter values for the covariates are zero by default and can be set by the list element \code{xreg}.
+  If \code{method} is \code{"CSS"}, \code{"CSS-ML"} or \code{"ML"}, the initial estimate is based on an ARMA fit using the function \code{\link{arima}}, and list element \code{method} is passed to its argument of the same name.  
   If \code{method="GLM"}, the estimated parameters of a generalised linear model with regression on the specified past observations and covariates, but not on past conditional means, are used as initial estimates. Initial estimates for the coefficients of past conditional means are set to zero.
   If \code{method="fixed"}, parameters given in further named list elements of \code{init.control} are used when available, else the predefined values given in the following are used.}
       \item{\code{intercept}}{numeric value with the initial value for the intercept parameter. Default value is 1.}
@@ -165,7 +166,7 @@ An object of class \code{"tsglm"}, which is a list with at least the following e
 
   \item{linear.predictors}{the linear fit on link scale.}
 
-  \item{loglik}{the log-likelihood of the fitted model, which can be extracted by the \code{\link{logLik}} method.}
+  \item{logLik}{the log-likelihood of the fitted model, which can be extracted by the \code{\link{logLik}} method.}
 
   \item{score}{the score vector at the maximum likelihood estimation.}
 

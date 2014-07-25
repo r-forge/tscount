@@ -38,7 +38,8 @@ ingarch.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, xreg=NULL,
   R <- seq(along=numeric(r)) #sequence 1:r if r>0 and NULL otherwise
   if(p==0 & q>0) warning("Without dependence on past observations the dependence on past values of the linear predictor has no effect. Choose the model wisely.")
   parameternames <- tsglm.parameternames(model)
-  init_default <- list(method="CSS", use=Inf, optim.method="BFGS", optim.control=list(maxit=25))
+  #init_default <- list(method="CSS", use=Inf, optim.method="BFGS", optim.control=list(maxit=25))
+  init_default <- list(method="iid", use=Inf)
   if(!all(names(init.control) %in% c(names(init_default), "intercept", "past_obs", "past_mean", "xreg"))) stop("There are unknown list elements in argument 'init'")
   init_default[names(init.control)] <- init.control #options given by user override the default
   init.control <- init_default #use these options in the following

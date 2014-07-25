@@ -28,6 +28,12 @@ init.fit <- function(allobj, linkfunc){
       ts_init <- ts[init_use]
       # # # # # # #
     }
+    if(init.control$method == "iid"){
+      param_init$intercept <- intercept <- trafo(mean(ts_init))
+      param_init$past_obs <- rep(0, p) 
+      param_init$past_mean <- rep(0, q)
+      param_init$xreg <- rep(0, r)
+    }
     if(init.control$method == "GLM"){
       delayed_ts <- function(x, timser) c(rep(0,x), timser[(x:length(timser))-x])
       dataset <- data.frame(timser=ts_init, trafo(sapply(model$past_obs, delayed_ts, timser=ts_init)), model$xreg[init_use,])

@@ -38,7 +38,7 @@ loglin.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, xreg=NULL, 
   R <- seq(along=numeric(r)) #sequence 1:r if r>0 and NULL otherwise
   if(p==0 & q>0) warning("Without dependence on past observations the dependence on past values of the linear predictor has no effect. Choose the model wisely.")
   parameternames <- tsglm.parameternames(model)
-  init_default <- list(method="GLM", use=Inf)
+  init_default <- list(method="iid", use=Inf)
   if(!all(names(init.control)%in%c(names(init_default), "intercept", "past_obs", "past_mean", "xreg"))) stop("There are unknown list elements in argument 'init'")
   init_default[names(init.control)] <- init.control #options given by user override the default
   init.control <- init_default #use these options in the following
@@ -59,7 +59,6 @@ loglin.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, xreg=NULL, 
   #Initial estimation:
   begin_init <- proc.time()["elapsed"]
   param_init <- do.call(init.fit, args=list(allobj=mget(ls()), linkfunc="log"))
-  
   # # # # # # #
   #Transformation to a stationary solution of a autoregressive log-linear process process:
   total <- sum(abs(param_init$past_obs))+sum(abs(param_init$past_mean))
@@ -70,8 +69,6 @@ loglin.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, xreg=NULL, 
 #########correct the initial estimation of the intercept for this possible shrinkage?
   }
   # # # # # # #
-  
-  
   paramvec_init <- unlist(param_init)
   names(paramvec_init) <- parameternames
   # # # # # # #
