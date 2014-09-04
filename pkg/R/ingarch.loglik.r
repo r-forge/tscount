@@ -1,4 +1,4 @@
-ingarch.loglik <- function(paramvec, model, ts, score=FALSE, info=c("none", "score", "hessian", "sandwich"), condmean=NULL, from=1, init=c("marginal", "iid", "firstobs")){
+ingarch.loglik <- function(paramvec, model, ts, score=FALSE, info=c("none", "score", "hessian", "sandwich"), condmean=NULL, from=1, init=c("marginal", "iid", "firstobs", "zero")){
   #Conditional (quasi) log-likelihood function, score function and information matrix of a count time series following generalised linear models
   
   ##############                  

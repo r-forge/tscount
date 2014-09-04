@@ -1,4 +1,4 @@
-loglin.condmean <- function(paramvec, model, ts, derivatives=c("none", "first"), condmean=NULL, from=1, init=c("marginal", "iid", "firstobs")){
+loglin.condmean <- function(paramvec, model, ts, derivatives=c("none", "first"), condmean=NULL, from=1, init=c("marginal", "iid", "firstobs", "zero")){
   #Recursion for the linear predictor (which is the conditional mean for the identity link) and its derivatives of a count time series following generalised linear models
   ##############
   #Checks and preparations:
@@ -76,6 +76,16 @@ loglin.condmean <- function(paramvec, model, ts, derivatives=c("none", "first"),
 #          partial2_kappa <- array(0, dim=c(n+q_max, 1+p+q+r, 1+p+q+r))  
 #        }
       }      
+    }
+    if(init == "zero"){ #initialisation under iid assumption:
+      kappa <- c(rep(0, q_max), numeric(n))  
+      z <- c(rep(0, p_max), ts)
+      if(derivatives %in% c("first", "second")){
+        partial_kappa <- matrix(0, nrow=n+q_max, ncol=1+p+q+r)
+#        if(derivatives == "second"){
+#          partial2_kappa <- array(0, dim=c(n+q_max, 1+p+q+r, 1+p+q+r))  
+#        }
+      }
     } 
   }
   X <- matrix(0, nrow=q_max+n, ncol=r)

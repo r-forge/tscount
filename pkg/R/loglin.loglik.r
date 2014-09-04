@@ -1,4 +1,4 @@
-loglin.loglik <- function(paramvec, model, ts, score=FALSE, info=c("none", "score"), condmean=NULL, from=1, init=c("marginal", "iid", "firstobs")){
+loglin.loglik <- function(paramvec, model, ts, score=FALSE, info=c("none", "score"), condmean=NULL, from=1, init=c("marginal", "iid", "firstobs", "zero")){
   #Conditional (quasi) log-likelihood function, score function and information matrix of a count time series following generalised linear models
 
   ##############

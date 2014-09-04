@@ -1,4 +1,4 @@
-loglin.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, xreg=NULL, external=NULL), score=TRUE, info=c("score", "none"), init=c("marginal", "iid", "firstobs"), epsilon=1e-06, slackvar=1e-06, init.control=list(), final.control=list(), inter.control=NULL){
+loglin.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, xreg=NULL, external=NULL), score=TRUE, info=c("score", "none"), init=c("marginal", "iid", "firstobs", "zero"), epsilon=1e-06, slackvar=1e-06, init.control=list(), final.control=list(), inter.control=NULL){
   ##############
   #Checks and preparations: 
   cl <- match.call()
