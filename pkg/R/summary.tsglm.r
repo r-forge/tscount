@@ -8,23 +8,32 @@ summary.tsglm <- function(object, B, parallel=FALSE, ...){
     try(infer <- se(object, B=B, parallel=parallel))  
     if(is.null(object$info.matrix_corrected) | is.null(infer)){
       coefs <- data.frame(Estimate=c(coef(object), object$distrcoefs))
+      se_info <- NULL
     }else{
       coefs <- data.frame(
         infer$est,
         infer$se
       )
       names(coefs) <- c("Estimate", "Std. Error")
+      se_info <- list(se.type=infer$type)
+      if(infer$type=="bootstrap") se_info <- c(se_info, list(se.bootstrapsamples=infer$B))
     }
-    result <- list(call=cl,
-      link=object$link,
-      distr=object$distr,
-      residuals=residuals(object, type="response"),
-      coefficients=coefs,
-      number.coef=nrow(coefs),             
-      logLik=logLik(object),             
-      AIC=AIC(object), #Akaike's Information Criterion
-      BIC=BIC(object), #Bayesian Information Criterion
-      pearson.resid=residuals(object, type="pearson") #Pearson's residuals
+    result <- c(
+      list(
+        call=cl,
+        link=object$link,
+        distr=object$distr,
+        residuals=residuals(object, type="response"),
+        coefficients=coefs,
+        number.coef=nrow(coefs)
+      ),
+      se_info,            
+      list(
+        logLik=logLik(object),             
+        AIC=AIC(object), #Akaike's Information Criterion
+        BIC=BIC(object), #Bayesian Information Criterion
+        pearson.resid=residuals(object, type="pearson") #Pearson's residuals
+      )
     )  
   }else{ 
     result <- list(call=cl, init=object$init)

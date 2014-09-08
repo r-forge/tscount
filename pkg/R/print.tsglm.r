@@ -15,7 +15,7 @@ print.tsglm <- function(x, digits=max(3, getOption("digits") - 3), ...){
   }
   cat("\n")
   if(x$distr=="nbinom"){
-    cat("Additional dispersion parameter 'size' of the negative binomial distribution\nwas estimated to be ", x$distrcoefs[["size"]], ".\n\n", sep="")
+    cat("Dispersion parameter 'size' of the negative binomial distribution\nwas estimated to be ", x$distrcoefs[["size"]], ".\n\n", sep="")
   }
   invisible(x)
 }
