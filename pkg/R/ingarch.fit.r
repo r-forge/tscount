@@ -1,28 +1,28 @@
-ingarch.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, xreg=NULL, external=NULL), score=TRUE, info=c("score", "none", "hessian", "sandwich"), init=c("marginal", "iid", "firstobs", "zero"), epsilon=1e-06, slackvar=1e-06, init.control=list(), final.control=list(), inter.control=NULL){
+ingarch.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, external=NULL), xreg=NULL, score=TRUE, info=c("score", "none", "hessian", "sandwich"), init.method=c("marginal", "iid", "firstobs", "zero"), init.drop=FALSE, epsilon=1e-06, slackvar=1e-06, start.control=list(), final.control=list(), inter.control=NULL){
   ##############
   #Checks and preparations: 
   cl <- match.call()
-  durations <- c(init=NA, inter=NA, final=NA, total=NA)
+  durations <- c(start=NA, inter=NA, final=NA, total=NA)
   begin_total <- proc.time()["elapsed"]
-  model_names <- c("past_obs", "past_mean", "xreg", "external")
+  model_names <- c("past_obs", "past_mean", "external")
   stopifnot( #Are the arguments valid?
     all(names(model) %in% model_names)
   )
   model <- model[model_names]
   names(model) <- model_names
-  if(is.null(model$xreg)) model$xreg <- matrix(0, nrow=length(ts), ncol=0) else model$xreg <- as.matrix(model$xreg)
-  if(length(model$external)==0) model$external <- rep(FALSE, ncol(model$xreg)) else model$external <- as.logical(model$external) #the default value for model$external is FALSE (i.e. an internal covariate effect)
-  if(length(model$external)==1) model$external <-  rep(model$external, ncol(model$xreg)) else model$external <- as.logical(model$external) #if only one value for model$external is provided, this is used for all covariates
+  if(is.null(xreg)) xreg <- matrix(0, nrow=length(ts), ncol=0) else xreg <- as.matrix(xreg)
+  if(length(model$external)==0) model$external <- rep(FALSE, ncol(xreg)) else model$external <- as.logical(model$external) #the default value for model$external is FALSE (i.e. an internal covariate effect)
+  if(length(model$external)==1) model$external <-  rep(model$external, ncol(xreg)) else model$external <- as.logical(model$external) #if only one value for model$external is provided, this is used for all covariates
   if(is.list(ts)) stop("Argument 'ts' has to be a vector") 
-  if(any(is.na(ts)) || any(is.na(model$xreg))) stop("Cannot make estimation with missing values in time series or covariates")
+  if(any(is.na(ts)) || any(is.na(xreg))) stop("Cannot make estimation with missing values in time series or covariates")
   stopifnot( #Are the arguments valid?
     model$past_obs%%1==0,
     model$past_mean%%1==0,
-    length(ts)==nrow(model$xreg),    
-    length(model$external)==ncol(model$xreg)
+    length(ts)==nrow(xreg),    
+    length(model$external)==ncol(xreg)
   )   
   stopifnot( #Are the arguments valid?
-    is.list(init.control),
+    is.list(start.control),
     is.null(final.control) || is.list(final.control)
   )  
   info <- match.arg(info)
@@ -34,15 +34,15 @@ ingarch.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, xreg=NULL,
   q <- length(model$past_mean)
   Q <- seq(along=numeric(q)) #sequence 1:q if q>0 and NULL otherwise
   q_max <- max(model$past_mean, 0)
-  r <- ncol(model$xreg)
+  r <- ncol(xreg)
   R <- seq(along=numeric(r)) #sequence 1:r if r>0 and NULL otherwise
   if(p==0 & q>0) warning("Without dependence on past observations the dependence on past values of the linear predictor has no effect. Choose the model wisely.")
-  parameternames <- tsglm.parameternames(model)
-  #init_default <- list(method="CSS", use=Inf, optim.method="BFGS", optim.control=list(maxit=25))
-  init_default <- list(method="iid", use=Inf)
-  if(!all(names(init.control) %in% c(names(init_default), "intercept", "past_obs", "past_mean", "xreg"))) stop("There are unknown list elements in argument 'init'")
-  init_default[names(init.control)] <- init.control #options given by user override the default
-  init.control <- init_default #use these options in the following
+  parameternames <- tsglm.parameternames(model=model, xreg=xreg)
+  #start_default <- list(method="CSS", use=Inf, optim.method="BFGS", optim.control=list(maxit=25))
+  start_default <- list(method="iid", use=Inf)
+  if(!all(names(start.control) %in% c(names(start_default), "intercept", "past_obs", "past_mean", "xreg"))) stop("There are unknown list elements in argument 'start.control'")
+  start_default[names(start.control)] <- start.control #options given by user override the default
+  start.control <- start_default #use these options in the following
   if(!is.null(final.control)){
     final_default <- list(constrained=list(outer.iterations=100, outer.eps=1e-05), optim.method="BFGS", optim.control=list(maxit=100, reltol=1e-11))
     final_default[names(final.control)] <- final.control  
@@ -59,33 +59,33 @@ ingarch.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, xreg=NULL,
 
   ##############
   #Initial estimation:
-  begin_init <- proc.time()["elapsed"]
-  param_init <- do.call(init.fit, args=list(allobj=mget(ls()), linkfunc="identity"))
+  begin_start <- proc.time()["elapsed"]
+  param_start <- do.call(start.fit, args=list(allobj=mget(ls()), linkfunc="identity"))
 
   # # # # # # #
   #Transformation to a stationary solution of an INGARCH process:
-  marginalmean <- param_init$intercept/(1-sum(param_init$past_obs)-sum(param_init$past_mean))
-  param_init$past_mean <- pmax(param_init$past_mean, rep(epsilon, q)) #alpha_i in [0+epsilon,Inf)
-  param_init$past_obs <- pmax(param_init$past_obs, rep(epsilon, p)) #beta_i in [0+epsilon,Inf)
-  total <- sum(param_init$past_obs)+sum(param_init$past_mean)
+  marginalmean <- param_start$intercept/(1-sum(param_start$past_obs)-sum(param_start$past_mean))
+  param_start$past_mean <- pmax(param_start$past_mean, rep(epsilon, q)) #alpha_i in [0+epsilon,Inf)
+  param_start$past_obs <- pmax(param_start$past_obs, rep(epsilon, p)) #beta_i in [0+epsilon,Inf)
+  total <- sum(param_start$past_obs)+sum(param_start$past_mean)
   if(total > 1-epsilon-slackvar){ #Shrink the parameters to fulfill the stationarity condition if necessary:
     shrinkage_factor <- (1-slackvar-epsilon)/total #chosen, such that total_new = 1-slackvar-epsilon for total_new the sum of the alpha's and beta's after shrinkage
-    param_init$past_mean <- param_init$past_mean*shrinkage_factor
-    param_init$past_obs <- param_init$past_obs*shrinkage_factor
+    param_start$past_mean <- param_start$past_mean*shrinkage_factor
+    param_start$past_obs <- param_start$past_obs*shrinkage_factor
     #Note: This way former negative values, which have been set to epsilon before, become lower than epsilon!
   }
-  if(init.control$method %in% c("MM", "CSS", "ML", "CSS-ML", "GLM")) param_init$intercept <- marginalmean*(1-sum(param_init$past_obs)-sum(param_init$past_mean)) #replaces the previous value of the intercept by one which results, together with the corrected dependence parameters, to the same marginal mean as before the correction step
-  param_init$intercept <- max(param_init$intercept, slackvar+epsilon)
-  param_init$xreg <- pmax(param_init$xreg, epsilon)
+  if(start.control$method %in% c("MM", "CSS", "ML", "CSS-ML", "GLM")) param_start$intercept <- marginalmean*(1-sum(param_start$past_obs)-sum(param_start$past_mean)) #replaces the previous value of the intercept by one which results, together with the corrected dependence parameters, to the same marginal mean as before the correction step
+  param_start$intercept <- max(param_start$intercept, slackvar+epsilon)
+  param_start$xreg <- pmax(param_start$xreg, epsilon)
   # # # # # # #
     
-  paramvec_init <- unlist(param_init)
-  names(paramvec_init) <- parameternames
+  paramvec_start <- unlist(param_start)
+  names(paramvec_start) <- parameternames
   # # # # # # #
-  durations["init"] <- proc.time()["elapsed"] - begin_init
+  durations["start"] <- proc.time()["elapsed"] - begin_start
   if(is.null(final.control)){
       durations["total"] <- proc.time()["elapsed"] - begin_total
-      result <- list(init=paramvec_init, call=cl, n_obs=n, durations=durations, ts=ts, model=model) 
+      result <- list(start=paramvec_start, call=cl, n_obs=n, durations=durations, ts=ts, model=model, xreg=xreg) 
   return(result)      
   }
   ##############
@@ -95,15 +95,15 @@ ingarch.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, xreg=NULL,
   
   # # # # # # #
   #Create some functions as wrappers:
-    f <- function(paramvec, model) ingarch.loglik(paramvec=paramvec, model=model, ts=ts, score=FALSE, info="none", init=init)$loglik    
-    grad <- function(paramvec, model) ingarch.loglik(paramvec=paramvec, model=model, ts=ts, score=TRUE, info="none", init=init)$score
-    optimisation <- function(starting_value, model, arguments){  
+    f <- function(paramvec, model, xreg) ingarch.loglik(paramvec=paramvec, model=model, ts=ts, xreg=xreg, score=FALSE, info="none", init.method=init.method, init.drop=init.drop)$loglik    
+    grad <- function(paramvec, model, xreg) ingarch.loglik(paramvec=paramvec, model=model, ts=ts, xreg=xreg, score=TRUE, info="none", init.method=init.method, init.drop=init.drop)$score
+    optimisation <- function(starting_value, model, xreg, arguments){  
       if(!is.null(arguments$constrained)){
         ui <- rbind(diag(1+p+q+r), c(0,rep(-1,p+q),rep(0, r)))
         ci <- c(slackvar, rep(0, p+q+r), -1+slackvar) 
-        optim_result <- do.call(constrOptim, args=c(list(theta=starting_value, f=f, grad=grad, ui=ui, ci=ci, method=arguments$optim.method, control=c(list(fnscale=-1), arguments$optim.control), model=model), arguments$constrained))
+        optim_result <- do.call(constrOptim, args=c(list(theta=starting_value, f=f, grad=grad, ui=ui, ci=ci, method=arguments$optim.method, control=c(list(fnscale=-1), arguments$optim.control), model=model, xreg=xreg), arguments$constrained))
       }else{
-        optim_result <- optim(par=starting_value, fn=f, gr=grad, model=model, method=arguments$optim.method, control=c(list(fnscale=-1), arguments$optim.control))
+        optim_result <- optim(par=starting_value, fn=f, gr=grad, model=model, xreg=xreg, method=arguments$optim.method, control=c(list(fnscale=-1), arguments$optim.control))
       }
       return(optim_result)
     }
@@ -111,14 +111,14 @@ ingarch.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, xreg=NULL,
   
   if(is.null(inter.control)){ #no additional optimisation step is done
     inter_optim <- NULL
-    durations["final"] <- system.time(final_optim <- optimisation(starting_value=paramvec_init, model=model, arguments=final.control))["elapsed"]
-  }else{ #an additional optimisation step between initial estimation and final optimisation is introduced
-    durations["inter"] <- system.time(inter_optim <- optimisation(starting_value=paramvec_init, model=model, arguments=inter.control))["elapsed"]
-    durations["final"] <- system.time(final_optim <- optimisation(starting_value=inter_optim$par, model=model, arguments=final.control))["elapsed"]
+    durations["final"] <- system.time(final_optim <- optimisation(starting_value=paramvec_start, model=model, xreg=xreg, arguments=final.control))["elapsed"]
+  }else{ #an additional optimisation step between start estimation and final optimisation is introduced
+    durations["inter"] <- system.time(inter_optim <- optimisation(starting_value=paramvec_start, model=model, xreg=xreg, arguments=inter.control))["elapsed"]
+    durations["final"] <- system.time(final_optim <- optimisation(starting_value=inter_optim$par, model=model, xreg=xreg, arguments=final.control))["elapsed"]
   }
   paramvec_inter <- as.numeric(inter_optim$par)
   paramvec_final <- as.numeric(final_optim$par)
-  if(p+q+r>0 && all(abs((paramvec_final-paramvec_init)/paramvec_final) < 0.01)) warning("Final estimation is still very close to initial estimation. This might indicate a problem with the optimisation but could also have happended by chance. Please check results carefully.")
+  if(p+q+r>0 && all(abs((paramvec_final-paramvec_start)/paramvec_final) < 0.01)) warning("Final estimation is still very close to start estimation. This might indicate a problem with the optimisation but could also have happended by chance. Please check results carefully.")
   if(p+q>0 && mean(paramvec_final[c(1+P,1+p+Q)]) < 1e-04) warning("There is almost no serial dependence estimated in the data. This might be appropriate but could just as likely indicate a problem with the optimisation. Please check results carefully.")
   if(paramvec_final[1] < 0.1) warning("Estimated intercept is very small (< 0.1). This might indicate a problem with the optimisation unless the observed marginal mean is very low or the observed serial dependence is very strong. Please check results carefully.")
   ##############  
@@ -126,12 +126,12 @@ ingarch.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, xreg=NULL,
   ##############
   #Score vector and information matrix:
   #If score==FALSE and info=="none" the computation in the following two lines would not be necessary. However, the extra time needed to re-calculate the log-likelihood function which is already available in final_optim$value is negligable in comparison to the total duration of the function. This avoids some additional if-statements and the code is more readable.
-  condmean <- ingarch.condmean(paramvec=paramvec_final, model=model, ts=ts, derivatives={if(!score & info=="none") "none" else if(info %in% c("hessian", "sandwich")) "second" else "first"}, init=init)
-  loglik <- ingarch.loglik(paramvec=paramvec_final, model=model, ts=ts, score=score, info=info, condmean=condmean, from=Inf) #because of argument from=Inf no re-calculation of the recursion is done, instead the calculations from object condmean are used
+  condmean <- ingarch.condmean(paramvec=paramvec_final, model=model, ts=ts, xreg=xreg, derivatives={if(!score & info=="none") "none" else if(info %in% c("hessian", "sandwich")) "second" else "first"}, init.method=init.method)
+  loglik <- ingarch.loglik(paramvec=paramvec_final, model=model, ts=ts, xreg=xreg, score=score, info=info, condmean=condmean, from=Inf, init.drop=init.drop) #because of argument from=Inf no re-calculation of the recursion is done, instead the calculations from object condmean are used
   if(is.ts(ts)) loglik$kappa <- ts(loglik$kappa, start=start(ts), frequency=frequency(ts)) #give the linear predictors the same time series structure as the input time series
   ##############
   
   durations["total"] <- proc.time()["elapsed"] - begin_total 
-  result <- c(list(coefficients=final_optim$par, init=paramvec_init, inter=inter_optim, final=final_optim, residuals=ts-loglik$kappa, fitted.values=loglik$kappa, linear.predictors=loglik$kappa, logLik=loglik$loglik, score=loglik$score, info.matrix=loglik$info, outerscoreprod=loglik$outerscoreprod, call=cl, n_obs=n, durations=durations, ts=ts, model=model))
+  result <- c(list(coefficients=final_optim$par, start=paramvec_start, inter=inter_optim, final=final_optim, residuals=ts-loglik$kappa, fitted.values=loglik$kappa, linear.predictors=loglik$kappa, logLik=loglik$loglik, score=loglik$score, info.matrix=loglik$info, outerscoreprod=loglik$outerscoreprod, call=cl, n_obs=n, durations=durations, ts=ts, model=model, xreg=xreg))
   return(result)
 }

@@ -75,7 +75,7 @@ Fokianos, K. and Fried, R. (2010) Interventions in INGARCH processes. \emph{Jour
 
 Fokianos, K., and Fried, R. (2012) Interventions in log-linear Poisson autoregression. \emph{Statistical Modelling} \bold{12(4)}, 299--322. \url{http://dx.doi.org/10.1177/1471082X1201200401}.
 
-Liboschik, T., Kerschke, P., Fokianos, K. and Fried, R. (2013) Modelling interventions in INGARCH processes. \emph{SFB 823 Discussion Paper} \bold{03/13}, \url{http://hdl.handle.net/2003/29878}.
+Liboschik, T., Kerschke, P., Fokianos, K. and Fried, R. (2014) Modelling interventions in INGARCH processes. \emph{International Journal of Computer Mathematics} (published online), \url{http://dx.doi.org/10.1080/00207160.2014.949250}.
 }
 
 \author{
@@ -90,7 +90,7 @@ S3 method \code{\link{print}}.
 }
 
 \examples{
-#Test for the intervention effects found in Fokianos und Fried (2010):
+#Test for the intervention effects which were found in Fokianos und Fried (2010):
 campy_fit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
 campy_intervtest <- interv_test(fit=campy_fit, tau=c(84,100), delta=c(1,0))
 campy_intervtest

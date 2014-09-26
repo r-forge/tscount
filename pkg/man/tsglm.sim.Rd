@@ -4,13 +4,13 @@
 Simulate a Time Series Following a Generalised Linear Model
 }
 \description{
-Generates a simulated time series from a GLM-type model for time series of counts.
+Generates a simulated time series from a GLM-type model for time series of counts (see \code{\link{tsglm}} for details).
 }
 \usage{
-tsglm.sim(n, param=list(intercept=1, past_obs=NULL, past_mean=NULL, xreg=NULL), 
-            model=list(past_obs=NULL, past_mean=NULL, xreg=NULL, external=FALSE),
-            link=c("identity", "log"), distr=c("poisson", "nbinom"), distrcoefs,
-            fit, n_start=50)
+tsglm.sim(n, param = list(intercept = 1, past_obs = NULL, past_mean = NULL, xreg = NULL), 
+            model = list(past_obs = NULL, past_mean = NULL, external = FALSE), xreg = NULL,
+            link = c("identity", "log"), distr = c("poisson", "nbinom"), distrcoefs,
+            fit, n_start = 50)
 }
 \arguments{
   \item{n}{
@@ -26,19 +26,22 @@ tsglm.sim(n, param=list(intercept=1, past_obs=NULL, past_mean=NULL, xreg=NULL),
   }
 }
   \item{model}{
-  a named list specifying the model for the linear predictor, which has the elements \code{past_obs}, \code{past_mean}, \code{xreg} and \code{external} (see function \code{\link{tsglm}} for details). This model specification must be in accordance to the parameters given in argument \code{param} (see \code{\link{tsglm}} for details).
+  a named list specifying the model for the linear predictor, which has the elements \code{past_obs}, \code{past_mean} and \code{external} (see function \code{\link{tsglm}} for details). This model specification must be in accordance to the parameters given in argument \code{param}.
+}
+  \item{xreg}{
+  matrix with covariates in the columns (see \code{\link{tsglm}} for details). If this matrix has less than \code{n.ahead} rows, the values of the covariates at the last time point where they are available are used for all future time points.
 }
   \item{link}{
     character giving the link function. Default is \code{"identity"}, simulating from a so-called INGARCH model. Another possible choice is \code{"log"}, simulating from a log-linear model.
-  }
+}
   \item{distr}{
-  character giving the conditional distribution. Default is a Poisson distribution. Currently the only alternative is the negative binomial distribution.
+    character giving the conditional distribution. Default is \code{"poisson"}, i.e. a Poisson distribution.
 }
   \item{distrcoefs}{
   numeric vector of additional coefficients specifying the conditional distribution. For \code{distr="poisson"} no additional parameters need to be provided. For \code{distr="nbinom"} the additional parameter \code{size} needs to be specified (i.e. by \code{distrcoefs=2}), see \code{\link{tsglm}} for details.
 }
   \item{fit}{
-  an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{tsglm}}. If argument \code{fit} is not missing, the specification of the linear predictor, the link function and the estimated parameters from this argument are used instead of those in arguments \code{model}, \code{link} and \code{param}. The length of the simulated time series is only taken from argument \code{fit}, if no argument \code{n} is provided.  The same holds for arguments \code{distr} and \code{distrcoefs}, which are also prefered over the respective information provided in argument \code{fit} if both are provided.
+  an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{tsglm}}. If argument \code{fit} is not missing, the specification of the linear predictor, the link function and the estimated parameters from this argument are used instead of those in arguments \code{model}, \code{link} and \code{param}. The length of the simulated time series is only taken from argument \code{fit}, if no argument \code{n} is provided. The same holds for arguments \code{xreg}, \code{distr} and \code{distrcoefs}, which are also prefered over the respective information provided in argument \code{fit} if both are provided.
 }
   \item{n_start}{
   number of observations used as a burn-in.
@@ -47,6 +50,10 @@ tsglm.sim(n, param=list(intercept=1, past_obs=NULL, past_mean=NULL, xreg=NULL),
 
 \details{
 The definition of the model used here is like in function \code{\link{tsglm}}.
+
+Note that during the burn-in period covariates are set to zero.
+
+If a previous model fit is given in argument \code{fit} and the length of the burn-in period \code{n_start} is set to zero, then the a continuation of the original time series is simulated.
 }
 
 \value{
@@ -67,20 +74,6 @@ The definition of the model used here is like in function \code{\link{tsglm}}.
 Tobias Liboschik and Philipp Probst
 }
 
-\references{
-Christou, V. and Fokianos, K. (2013) Quasi-likelihood inference for negative binomial time series models. \emph{Journal of Time Series Analysis} (published online), \url{http://dx.doi.org/10.1002/jtsa.12050}.
-
-Ferland, R., Latour, A. and Oraichi, D. (2006) Integer-valued GARCH process. \emph{Journal of Time Series Analysis} \bold{27(6)}, 923--942, \url{http://dx.doi.org/10.1111/j.1467-9892.2006.00496.x}.
-
-Fokianos, K. and Fried, R. (2010) Interventions in INGARCH processes. \emph{Journal of Time Series Analysis} \bold{31(3)}, 210--225, \url{http://dx.doi.org/10.1111/j.1467-9892.2010.00657.x}.
-
-Fokianos, K., and Fried, R. (2012) Interventions in log-linear Poisson autoregression. \emph{Statistical Modelling} \bold{12(4)}, 299--322. \url{http://dx.doi.org/10.1177/1471082X1201200401}.
-
-Fokianos, K., Rahbek, A. and Tjostheim, D. (2009) Poisson autoregression. \emph{Journal of the American Statistical Association} \bold{104(488)}, 1430--1439, \url{http://dx.doi.org/10.1198/jasa.2009.tm08270}.
-
-Liboschik, T., Kerschke, P., Fokianos, K. and Fried, R. (2013) Modelling interventions in INGARCH processes. \emph{SFB 823 Discussion Paper} \bold{03/13}, \url{http://hdl.handle.net/2003/29878}.
-}
-
 \seealso{
 \code{\link{tsglm}} for fitting a GLM for time series of counts.
 }
@@ -88,9 +81,9 @@ Liboschik, T., Kerschke, P., Fokianos, K. and Fried, R. (2013) Modelling interve
 \examples{
 #Simulate from an INGARCH model with two interventions:
 interventions <- interv_covariate(n=200, tau=c(50, 150), delta=c(1, 0.8))
-model <- list(past_obs=1, past_mean=c(1, 7), xreg=interventions, external=FALSE)
+model <- list(past_obs=1, past_mean=c(1, 7), external=FALSE)
 param <- list(intercept=2, past_obs=0.3, past_mean=c(0.2, 0.1), xreg=c(3, 10))
-tsglm.sim(n=200, param=param, model=model, link="identity",
+tsglm.sim(n=200, param=param, model=model, xreg=interventions, link="identity",
           distr="nbinom", distrcoefs=c(size=1))
 }
 

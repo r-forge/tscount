@@ -15,10 +15,11 @@ interv_test.tsglm <- function(fit, tau, delta, external, info=c("score"), est_in
   #Add information about intervention effects:
     param_H0_extended <- c(fit$coefficients, numeric(r))
     model_extended <- fit$model
+    xreg_extended <- fit$xreg
     covariate <- interv_covariate(n=length(fit$ts), tau=tau, delta=delta)
-    model_extended$xreg <- cbind(fit$model$xreg, covariate)
+    xreg_extended <- cbind(fit$xreg, covariate)
     model_extended$external <- c(fit$model$external, external)
-    loglik <- tsglm.loglik(link=fit$link, paramvec=param_H0_extended, model=model_extended, ts=fit$ts, score=TRUE, info=info)   
+    loglik <- tsglm.loglik(link=fit$link, paramvec=param_H0_extended, model=model_extended, ts=fit$ts, xreg=xreg_extended, score=TRUE, info=info)   
   infomat_corrected <- apply((1/loglik$kappa + fit$sigmasq)*loglik$outerscoreprod, c(2,3), sum)
   test_statistic <- scoretest(Score=loglik$score, G=loglik$info, G1=infomat_corrected, r=r, stopOnError=TRUE)$test_statistic    
   p_value <- 1-pchisq(test_statistic, df=r)
@@ -27,10 +28,11 @@ interv_test.tsglm <- function(fit, tau, delta, external, info=c("score"), est_in
     df=r,
     p_value=p_value,
     fit_H0=fit,
-    model_interv=model_extended
+    model_interv=model_extended,
+    xreg_interv=xreg_extended
   )
   if(est_interv){ #ML estimation for the model with intervention
-      fit_interv <- tsglm(ts=fit$ts, model=model_extended, link=fit$link, distr=fit$distr, ...)
+      fit_interv <- tsglm(ts=fit$ts, model=model_extended, xreg=xreg_extended, link=fit$link, distr=fit$distr, ...)
       result <- c(result, list(fit_interv=fit_interv))  
   }
   class(result) <- "interv_test"

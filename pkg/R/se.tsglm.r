@@ -13,7 +13,7 @@ se.tsglm <- function(object, B, parallel=FALSE, ...){
     simfit <- function(seed, fit, ...){
       set.seed(seed)
       ts_sim <- tsglm.sim(fit=fit)$ts
-      fit_sim <- tsglm(ts=ts_sim, model=fit$model, link=fit$link, distr=fit$distr, score=FALSE, info="none", ...)
+      fit_sim <- tsglm(ts=ts_sim, model=fit$model, xreg=fit$xreg, link=fit$link, distr=fit$distr, score=FALSE, info="none", ...)
       result <- c(coef(fit_sim), fit_sim$distrcoefs)
       return(result)
     }

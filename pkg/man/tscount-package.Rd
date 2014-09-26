@@ -15,7 +15,7 @@ See the main function \code{\link{tsglm}} for more details on the usage of the p
 Tobias Liboschik <liboschik@statistik.tu-dortmund.de>
 }
 \references{
-Christou, V. and Fokianos, K. (2013) Quasi-likelihood inference for negative binomial time series models. \emph{Journal of Time Series Analysis} (published online), \url{http://dx.doi.org/10.1002/jtsa.12050}.
+Christou, V. and Fokianos, K. (2014) Quasi-likelihood inference for negative binomial time series models. \emph{Journal of Time Series Analysis} \bold{35(1)}, 55--78, \url{http://dx.doi.org/10.1002/jtsa.12050}.
 
 Ferland, R., Latour, A. and Oraichi, D. (2006) Integer-valued GARCH process. \emph{Journal of Time Series Analysis} \bold{27(6)}, 923--942, \url{http://dx.doi.org/10.1111/j.1467-9892.2006.00496.x}.
 
@@ -27,7 +27,7 @@ Fokianos, K., Rahbek, A. and Tjostheim, D. (2009) Poisson autoregression. \emph{
 
 Fokianos, K. and Tjostheim, D. (2011) Log-linear Poisson autoregression. \emph{Journal of Multivariate Analysis} \bold{102(}, 563--578, \url{http://dx.doi.org/10.1016/j.jmva.2010.11.002}.
 
-Liboschik, T., Kerschke, P., Fokianos, K. and Fried, R. (2013) Modelling interventions in INGARCH processes. \emph{SFB 823 Discussion Paper} \bold{03/13}, \url{http://hdl.handle.net/2003/29878}.
+Liboschik, T., Kerschke, P., Fokianos, K. and Fried, R. (2014) Modelling interventions in INGARCH processes. \emph{International Journal of Computer Mathematics} (published online), \url{http://dx.doi.org/10.1080/00207160.2014.949250}.
 }
 
 \keyword{Generalised linear model}

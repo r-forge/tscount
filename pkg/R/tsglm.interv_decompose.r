@@ -1,4 +1,4 @@
-tsglm.interv_decompose <- function(ts, model, link, paramvec, isolate){
+tsglm.interv_decompose <- function(ts, model, xreg, link, paramvec, isolate){
 #Decomposes a time series in the effect of one or several covariates and an INGARCH model with the remaining covariates
   #isolate: Integer vector. Giving the indices of the covariates whose effect should be separated from the time series.
 ##############################
@@ -13,7 +13,7 @@ tsglm.interv_decompose <- function(ts, model, link, paramvec, isolate){
   Q <- seq(along=numeric(q)) #sequence 1:q if q>0 and NULL otherwise
   q_max <- max(model$past_mean, 0)
   Q_max <- seq(along=numeric(q_max))
-  r <- max(ncol(model$xreg), 0)
+  r <- max(ncol(xreg), 0)
   R <- seq(along=numeric(r)) #sequence 1:r if r>0 and NULL otherwise
   param <- list( #transform parameter vector to a list
     intercept=paramvec[1],
@@ -47,7 +47,7 @@ tsglm.interv_decompose <- function(ts, model, link, paramvec, isolate){
   contamination <- integer(p_max+n)
   cleaned <- z
   X <- matrix(0, nrow=q_max+n, ncol=r) #regressors are initalised by zero
-  X[q_max+(1:n), ] <- model$xreg  
+  X[q_max+(1:n), ] <- xreg  
   ##############  
   
   ##############

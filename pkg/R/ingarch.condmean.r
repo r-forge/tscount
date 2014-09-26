@@ -1,4 +1,4 @@
-ingarch.condmean <- function(paramvec, model, ts, derivatives=c("none", "first", "second"), condmean=NULL, from=1, init=c("marginal", "iid", "firstobs", "zero")){
+ingarch.condmean <- function(paramvec, model, ts, xreg, derivatives=c("none", "first", "second"), condmean=NULL, from=1, init.method=c("marginal", "iid", "firstobs", "zero")){
   #Recursion for the linear predictor (which is the conditional mean for the identity link) and its derivatives of a count time series following generalised linear models
  
   ##############
@@ -11,11 +11,11 @@ ingarch.condmean <- function(paramvec, model, ts, derivatives=c("none", "first",
   Q <- seq(along=numeric(q)) #sequence 1:q if q>0 and NULL otherwise
   q_max <- max(model$past_mean, 0)
   Q_max <- seq(along=numeric(q_max))
-  r <- max(ncol(model$xreg), 0)
+  r <- max(ncol(xreg), 0)
   R <- seq(along=numeric(r)) #sequence 1:r if r>0 and NULL otherwise
-  parameternames <- tsglm.parameternames(model)
+  parameternames <- tsglm.parameternames(model=model, xreg=xreg)
   derivatives <- match.arg(derivatives)
-  init <- match.arg(init)
+  init.method <- match.arg(init.method)
   param <- list( #transform parameter vector to a list
     intercept=paramvec[1],
     past_obs=paramvec[1+P],
@@ -36,7 +36,7 @@ ingarch.condmean <- function(paramvec, model, ts, derivatives=c("none", "first",
 
   ##############
   #Initialisation:    
-    if(init == "marginal"){ #initialisation by stationary solution (and its partial derivatives)
+    if(init.method == "marginal"){ #initialisation by stationary solution (and its partial derivatives)
       denom <- (1-sum(param$past_obs)-sum(param$past_mean))[[1]]    
       kappa_stationary <- (param$intercept/denom)[[1]]
       kappa <- c(rep(kappa_stationary, q_max), numeric(n))  
@@ -57,7 +57,7 @@ ingarch.condmean <- function(paramvec, model, ts, derivatives=c("none", "first",
         }
       }
     }
-    if(init == "iid"){ #initialisation under iid assumption:
+    if(init.method == "iid"){ #initialisation under iid assumption:
       kappa <- c(rep(param$intercept, q_max), numeric(n))  
       z <- c(rep(round(param$intercept), p_max), ts)
       if(derivatives %in% c("first", "second")){
@@ -68,7 +68,7 @@ ingarch.condmean <- function(paramvec, model, ts, derivatives=c("none", "first",
         }
       }
     }
-    if(init == "firstobs"){ #initialisation by the first observation:
+    if(init.method == "firstobs"){ #initialisation by the first observation:
       firstobs <- ts[1]
       kappa <- c(rep(firstobs, q_max), numeric(n))  
       z <- c(rep(firstobs, p_max), ts)
@@ -79,7 +79,7 @@ ingarch.condmean <- function(paramvec, model, ts, derivatives=c("none", "first",
         }
       }      
     }
-    if(init == "zero"){ #initialisation by value zero:
+    if(init.method == "zero"){ #initialisation by value zero:
       kappa <- c(rep(0, q_max), numeric(n))  
       z <- c(rep(0, p_max), ts)
       if(derivatives %in% c("first", "second")){
@@ -91,7 +91,7 @@ ingarch.condmean <- function(paramvec, model, ts, derivatives=c("none", "first",
     }    
   }
   X <- matrix(0, nrow=q_max+n, ncol=r) #regressors are initalised by zero
-  X[q_max+(1:n), ] <- model$xreg
+  X[q_max+(1:n), ] <- xreg
   ##############
   
   ##############

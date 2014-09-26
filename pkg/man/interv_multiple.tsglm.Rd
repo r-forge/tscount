@@ -11,7 +11,7 @@ Iterative detection procedure for multiple interventions of unknown types occuri
 \usage{
 \method{interv_multiple}{tsglm}(fit, taus=2:length(ts), deltas=c(0,0.8,1),
                 external=FALSE, B=10, signif_level=0.05,
-                init.control_bootstrap, final.control_bootstrap,
+                start.control_bootstrap, final.control_bootstrap,
                 inter.control_bootstrap, parallel=FALSE, ...)
 }
 
@@ -35,8 +35,8 @@ an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{t
   \item{signif_level}{
   numeric value with \code{0 <= signif_level <= 1} giving a significance level for the procedure.
 }
-  \item{init.control_bootstrap}{
-  named list that determines how to make initial estimation in the bootstrap, see argument \code{init.control} in \code{\link{tsglm}}. If missing, the same settings as for the regular estimation are used.
+  \item{start.control_bootstrap}{
+  named list that determines how to make initial estimation in the bootstrap, see argument \code{start.control} in \code{\link{tsglm}}. If missing, the same settings as for the regular estimation are used.
 }
   \item{final.control_bootstrap}{
   named list that determines how to make final maximum likelihood estimation in the bootstrap, see argument \code{final.control} in \code{\link{tsglm}}. If missing, the same settings as for the regular estimation are used.

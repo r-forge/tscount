@@ -31,7 +31,7 @@ Returns a list with elements \code{x} and \code{y}, where \code{x} are the thres
 }
 
 \references{
-Christou, V. and Fokianos, K. (2013) On count time series prediction. \emph{Journal of Statistical Computation and Simulation}, \url{http://dx.doi.org/10.1080/00949655.2013.823612}.
+Christou, V. and Fokianos, K. (2013) On count time series prediction. \emph{Journal of Statistical Computation and Simulation} (published online), \url{http://dx.doi.org/10.1080/00949655.2013.823612}.
 
 Czado, C., Gneiting, T. and Held, L. (2009) Predictive model assessment for count data. \emph{Biometrics} \bold{65}, 1254--1261, \url{http://dx.doi.org/10.1111/j.1541-0420.2009.01191.x}.
 

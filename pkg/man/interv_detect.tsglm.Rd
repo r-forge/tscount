@@ -12,7 +12,7 @@ Detection procedure for an intervention of given type occuring at unknown time a
 
 \usage{
 \method{interv_detect}{tsglm}(fit, taus=2:length(ts), delta, external=FALSE, 
-              B=NULL, info=c("score"), init.control_bootstrap, 
+              B=NULL, info=c("score"), start.control_bootstrap, 
               final.control_bootstrap, inter.control_bootstrap, 
               parallel=FALSE, est_interv=TRUE, ...)
 }
@@ -37,8 +37,8 @@ an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{t
   \item{info}{
   character value that determines how to calculate the information matrix, see \code{\link{tsglm}}. Currently \code{"score"} is the only possible choice.
 }
-  \item{init.control_bootstrap}{
-  named list that determines how to make initial estimation in the bootstrap, see argument \code{init.control} in \code{\link{tsglm}}. If missing, the same settings as for the regular estimation are used.
+  \item{start.control_bootstrap}{
+  named list that determines how to make initial estimation in the bootstrap, see argument \code{start.control} in \code{\link{tsglm}}. If missing, the same settings as for the regular estimation are used.
 }
   \item{final.control_bootstrap}{
   named list that determines how to make final maximum likelihood estimation in the bootstrap, see argument \code{final.control} in \code{\link{tsglm}}. If missing, the same settings as for the regular estimation are used.
@@ -94,7 +94,7 @@ Fokianos, K. and Fried, R. (2010) Interventions in INGARCH processes. \emph{Jour
 
 Fokianos, K., and Fried, R. (2012) Interventions in log-linear Poisson autoregression. \emph{Statistical Modelling} \bold{12(4)}, 299--322. \url{http://dx.doi.org/10.1177/1471082X1201200401}.
 
-Liboschik, T., Kerschke, P., Fokianos, K. and Fried, R. (2013) Modelling interventions in INGARCH processes. \emph{SFB 823 Discussion Paper} \bold{03/13}, \url{http://hdl.handle.net/2003/29878}.
+Liboschik, T., Kerschke, P., Fokianos, K. and Fried, R. (2014) Modelling interventions in INGARCH processes. \emph{International Journal of Computer Mathematics} (published online), \url{http://dx.doi.org/10.1080/00207160.2014.949250}.
 }
 
 \author{

@@ -54,7 +54,7 @@ ingarch.acf(intercept, past_obs=NULL, past_mean=NULL, lag.max=10,
 }
 
 \author{
-Tobias Liboschik and Philipp Probst
+Tobias Liboschik
 }
 
 \references{

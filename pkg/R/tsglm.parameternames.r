@@ -1,7 +1,7 @@
-tsglm.parameternames <- function(model){
+tsglm.parameternames <- function(model, xreg){
   p <- length(model$past_obs)
   q <- length(model$past_mean)
-  r <- if(!is.null(model$xreg)) ncol(model$xreg) else 0
+  r <- if(!is.null(xreg)) ncol(xreg) else 0
   R <- seq(along=numeric(r)) #sequence 1:r if r>0 and NULL otherwise
   #Set names of parameters:
   parameternames <- c(
@@ -11,7 +11,7 @@ tsglm.parameternames <- function(model){
     if(r>0){paste("eta", R, sep="_")}else{NULL} #parameters for covariates
   )
   #Use names provided with the covariates when available:
-  if(!is.null(dimnames(model$xreg)[[2]])) parameternames[1+p+q+R] <- dimnames(model$xreg)[[2]]
+  if(!is.null(dimnames(xreg)[[2]])) parameternames[1+p+q+R] <- dimnames(xreg)[[2]]
  return(parameternames)
 }
         

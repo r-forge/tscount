@@ -20,22 +20,24 @@ The function \code{ingarch.fit} is a lower level function to fit the mean specif
 }
 \usage{
 tsglm(ts, model = list(past_obs = NULL, past_mean = NULL,
-            xreg = NULL, external = NULL), link = c("identity", "log"),
+            external = NULL), xreg = NULL, link = c("identity", "log"),
             distr = c("poisson", "nbinom"), ...)
 
 ingarch.fit(ts, model = list(past_obs = NULL, past_mean = NULL,
-            xreg = NULL, external = NULL), score = TRUE,
+            external = NULL), xreg = NULL, score = TRUE,
             info = c("score", "none", "hessian", "sandwich"),
-            init=c("marginal", "iid", "firstobs"),
-            epsilon = 1e-06, slackvar = 1e-06, init.control = list(),
-            final.control = list(), inter.control = NULL)
+            init.method=c("marginal", "iid", "firstobs", "zero"),
+            init.drop = FALSE, epsilon = 1e-06, slackvar = 1e-06,
+            start.control = list(), final.control = list(),
+            inter.control = NULL)
 
 loglin.fit(ts, model = list(past_obs = NULL, past_mean = NULL,
-            xreg = NULL, external = NULL), score = TRUE,
+            external = NULL), xreg = NULL, score = TRUE,
             info = c("score", "none"),
-            init=c("marginal", "iid", "firstobs"),
-            epsilon = 1e-06,  slackvar = 1e-06, init.control = list(),
-            final.control = list(), inter.control = NULL) 
+            init.method=c("marginal", "iid", "firstobs", "zero"),
+            init.drop = FALSE, epsilon = 1e-06,  slackvar = 1e-06,
+            start.control = list(), final.control = list(),
+            inter.control = NULL) 
 }
 
 
@@ -47,10 +49,12 @@ loglin.fit(ts, model = list(past_obs = NULL, past_mean = NULL,
     a named list specifying the model for the linear predictor, which can be of the following elements:
     \describe{  
       \item{\code{past_obs}}{integer vector giving the previous observations to be regressed on (autoregression). This is a vector with the elements \eqn{i_1,\ldots,i_p}{i[1],\ldots,i[p]} (see Details). If omitted, or of length zero there will be no regression on previous observations.}    
-      \item{\code{past_mean}}{integer vector giving the previous conditional means to be regressed on. This is a vector with the elements \eqn{j_1,\ldots,j_q}{j[1],\ldots,j[q]} (see Details). If omitted, or of length zero there will be no regression on previous conditional means.}
-      \item{\code{xreg}}{matrix with covariates in the columns, i.e. its number of rows must be \code{length(ts)}. This is the matrix \eqn{X} (see Details). If omitted no covariates will be included. For the identity link the covariates have to be non-negative.} 
+      \item{\code{past_mean}}{integer vector giving the previous conditional means to be regressed on. This is a vector with the elements \eqn{j_1,\ldots,j_q}{j[1],\ldots,j[q]} (see Details). If omitted, or of length zero there will be no regression on previous conditional means.} 
       \item{\code{external}}{logical vector of length \code{ncol(xreg)} specifying for each covariate wether its effect should be external or not (see Details). If this is a scalar this choice will be used for all covariates. If omitted, all covariates will have an internal effect (i.e. \code{external=FALSE}).}
     } 
+  }
+  \item{xreg}{
+    matrix with covariates in the columns, i.e. its number of rows must be \code{length(ts)}. This is the matrix \eqn{X} (see Details). If omitted no covariates will be included. For the identity link the covariates have to be non-negative.
   }
   \item{link}{
     character giving the link function. Default is \code{"identity"}, fitting an INGARCH model. Another possible choice is \code{"log"}, fitting a log-linear model.
@@ -67,8 +71,11 @@ loglin.fit(ts, model = list(past_obs = NULL, past_mean = NULL,
   \item{info}{
     character that determines if and how to compute the information matrix. Can be set to \code{"score"} (the default) for calculation via the outer product of the score vector or to \code{"hessian"} for calculation via the Hessian matrix of second derivatives. For \code{info="sandwich"} the information matrix is estimated by a sandwich formula using both the outer score product and the Hessian matrix. If set to \code{"none"}, no information matrix is computed. For \code{link="log"} the alternatives \code{"hessian"} and \code{"sandwich"} are currently not available and will result in an error. For \code{distr="nbinom"} one should use \code{info="score"}.
   }
-  \item{init}{
-    character that determines how the recursion of the conditional mean (and possibly of its derivatives) is initialised. If \code{init="marginal"} (the default) the marginal mean of a model without covariates and its derivatives are used. If \code{init="iid"} all values are initialised by the marginal mean under the assumption of iid data, which depends on the intercept only. If \code{init="firstobs"} the first obersvation is used. If \code{init="zero"} the recursions are initialised by the value zero.
+  \item{init.method}{
+    character that determines how the recursion of the conditional mean (and possibly of its derivatives) is initialised. If set to \code{"marginal"} (the default) the marginal mean of a model without covariates and its derivatives are used. If set to \code{"iid"} all values are initialised by the marginal mean under the assumption of iid data, which depends on the intercept only. If set to \code{"firstobs"} the first obersvation is used. If set to \code{"zero"} the recursions are initialised by the value zero.
+  }
+  \item{init.drop}{
+    logical value that determines which observations are considered for computation of the log-likelihood, the score vector and, if applicable, the information matrix. If \code{FALSE} (the default) all observations are considered, else the first \code{max(model$past_obs)} observations, which are needed for the autoregression, are not considered.
   }
   \item{epsilon}{
     numeric positive but small value determining how close the parameters may come to the limits of the parameter space.
@@ -76,24 +83,24 @@ loglin.fit(ts, model = list(past_obs = NULL, past_mean = NULL,
   \item{slackvar}{
     numeric positive but small value determining how true inequalities among the parameter restrictions are treated; a true inequality \code{x < y} will be transformed to \code{x + slackvar <= y}.
   }
-  \item{init.control}{
-    named list with optional elements that determine how to make the initial estimation. Possible list elements are:
+  \item{start.control}{
+    named list with optional elements that determine how to make the start estimation. Possible list elements are:
     \describe{  
-      \item{\code{use}}{integer vector of length one or two giving the number of observations from the beginning (if of length one) or the range of observations (if of length two) used for initial estimation. For \code{use = Inf} all observations are used, which is the default.}
-      \item{\code{method}}{character specifying how initial estimators should be estimated. Possible values are \code{"iid"}, \code{"CSS"}, \code{"CSS-ML"}, \code{"ML"}, \code{"MM"}, \code{"GLM"} and \code{"fixed"}. 
+      \item{\code{use}}{integer vector of length one or two giving the number of observations from the beginning (if of length one) or the range of observations (if of length two) used for start estimation. For \code{use = Inf} all observations are used, which is the default.}
+      \item{\code{method}}{character specifying how start estimators should be estimated. Possible values are \code{"iid"}, \code{"CSS"}, \code{"CSS-ML"}, \code{"ML"}, \code{"MM"}, \code{"GLM"} and \code{"fixed"}. 
   If \code{method} is \code{"iid"} (the default) a moment estimator assuming an iid model without covariates is used.
-  If \code{method="MM"}, the initial estimate is an ARMA(1,1) fit by moment estimators and parameters of higher order than one are set to zero. For this method the initial parameter values for the covariates are zero by default and can be set by the list element \code{xreg}.
-  If \code{method} is \code{"CSS"}, \code{"CSS-ML"} or \code{"ML"}, the initial estimate is based on an ARMA fit using the function \code{\link{arima}}, and list element \code{method} is passed to its argument of the same name.  
-  If \code{method="GLM"}, the estimated parameters of a generalised linear model with regression on the specified past observations and covariates, but not on past conditional means, are used as initial estimates. Initial estimates for the coefficients of past conditional means are set to zero.
-  If \code{method="fixed"}, parameters given in further named list elements of \code{init.control} are used when available, else the predefined values given in the following are used.}
-      \item{\code{intercept}}{numeric value with the initial value for the intercept parameter. Default value is 1.}
-      \item{\code{past_obs}}{numeric vector with the initial values for parameters for regression on previous observations. Default values are zero.}
-      \item{\code{past_mean}}{numeric vector with the initial values for parameters for regression on previous conditional means. Default values are zero.}
-      \item{\code{xreg}}{numeric vector with the initial values for the regression parameters. These values will also be used if \code{method="MM"}. Default values are zero.}
+  If \code{method="MM"}, the start estimate is an ARMA(1,1) fit by moment estimators and parameters of higher order than one are set to zero. For this method the starting parameter values for the covariates are zero by default and can be set by the list element \code{xreg}.
+  If \code{method} is \code{"CSS"}, \code{"CSS-ML"} or \code{"ML"}, the start estimate is based on an ARMA fit using the function \code{\link{arima}}, and list element \code{method} is passed to its argument of the same name.  
+  If \code{method="GLM"}, the estimated parameters of a generalised linear model with regression on the specified past observations and covariates, but not on past conditional means, are used as start estimates. Initial estimates for the coefficients of past conditional means are set to zero.
+  If \code{method="fixed"}, parameters given in further named list elements of \code{start.control} are used when available, else the predefined values given in the following are used.}
+      \item{\code{intercept}}{numeric value with the start value for the intercept parameter. Default value is 1.}
+      \item{\code{past_obs}}{numeric vector with the start values for parameters for regression on previous observations. Default values are zero.}
+      \item{\code{past_mean}}{numeric vector with the start values for parameters for regression on previous conditional means. Default values are zero.}
+      \item{\code{xreg}}{numeric vector with the start values for the regression parameters. These values will also be used if \code{method="MM"}. Default values are zero.}
     }  
   }
   \item{final.control}{
-    named list with optional elements that determine how to make the final maximum likelihood estimation. If \code{final.control=NULL}, only initial estimates are computed and a list with fewer elements which has not the class \code{"tsglm"} is returned. Possible list elements of this argument are:
+    named list with optional elements that determine how to make the final maximum likelihood estimation. If \code{final.control=NULL}, only start estimates are computed and a list with fewer elements which has not the class \code{"tsglm"} is returned. Possible list elements of this argument are:
     \describe{  
       \item{\code{constrained}}{named list whose elements are passed to function \code{\link{constrOptim}} with possible elements \code{mu}, \code{outer.iterations} and \code{outer.eps} (see \code{\link{constrOptim}} for details). If \code{constrained=NULL}, an unconstrained optimisation is made with function \code{\link{optim}}. Note that this is likely to result in a fitted model which is non-stationary, which might cause further problems.}
       \item{\code{optim.method}}{character which is passed to functions \code{\link{constrOptim}} or \code{\link{optim}} as argument \code{method}.}
@@ -101,7 +108,7 @@ loglin.fit(ts, model = list(past_obs = NULL, past_mean = NULL,
     }
   }
   \item{inter.control}{
-    named list determining how to maximise the log-likelihood function in a first step. This intermediate optimisation will start from the initial estimation and be followed by the final optimisation, which will in turn start from the intermediate optimisation result. This intermediate optimisation is intended to use a very quick but imprecise optimisation algorithm. Possible elements are the same as for \code{final.control}. The default is \code{inter.control=NULL}, which skips this intermediate optimisation step. 
+    named list determining how to maximise the log-likelihood function in a first step. This intermediate optimisation will start from the start estimation and be followed by the final optimisation, which will in turn start from the intermediate optimisation result. This intermediate optimisation is intended to use a very quick but imprecise optimisation algorithm. Possible elements are the same as for \code{final.control}. The default is \code{inter.control=NULL}, which skips this intermediate optimisation step. 
   }
 }
 
@@ -158,7 +165,7 @@ An object of class \code{"tsglm"}, which is a list with at least the following e
 
   \item{coefficients}{a named vector of the maximum likelihood estimated coefficients, which can be extracted by the \code{\link{coef}} method.}
   
-  \item{init}{a named vector of the estimated initial coefficients.}
+  \item{start}{a named vector of the start values for the coefficients.}
   
   \item{residuals}{a vector of residuals, which can be extracted by the \code{\link[=residuals.tsglm]{residuals}} method.}
 
@@ -181,6 +188,8 @@ An object of class \code{"tsglm"}, which is a list with at least the following e
   \item{ts}{the original time series.}
 
   \item{model}{the model specification.}
+  
+  \item{xreg}{the given covariates.}
   
   \item{distr}{a character giving the fitted conditional distribution.}
   
@@ -205,7 +214,7 @@ Tobias Liboschik, Philipp Probst, Konstantinos Fokianos and Roland Fried
 }
 
 \references{
-Christou, V. and Fokianos, K. (2013) Quasi-likelihood inference for negative binomial time series models. \emph{Journal of Time Series Analysis} (published online), \url{http://dx.doi.org/10.1002/jtsa.12050}.
+Christou, V. and Fokianos, K. (2014) Quasi-likelihood inference for negative binomial time series models. \emph{Journal of Time Series Analysis} \bold{35(1)}, 55--78, \url{http://dx.doi.org/10.1002/jtsa.12050}.
 
 Ferland, R., Latour, A. and Oraichi, D. (2006) Integer-valued GARCH process. \emph{Journal of Time Series Analysis} \bold{27(6)}, 923--942, \url{http://dx.doi.org/10.1111/j.1467-9892.2006.00496.x}.
 
@@ -217,7 +226,7 @@ Fokianos, K., Rahbek, A. and Tjostheim, D. (2009) Poisson autoregression. \emph{
 
 Fokianos, K. and Tjostheim, D. (2011) Log-linear Poisson autoregression. \emph{Journal of Multivariate Analysis} \bold{102(}, 563--578, \url{http://dx.doi.org/10.1016/j.jmva.2010.11.002}.
 
-Liboschik, T., Kerschke, P., Fokianos, K. and Fried, R. (2013) Modelling interventions in INGARCH processes. \emph{SFB 823 Discussion Paper} \bold{03/13}, \url{http://hdl.handle.net/2003/29878}.
+Liboschik, T., Kerschke, P., Fokianos, K. and Fried, R. (2014) Modelling interventions in INGARCH processes. \emph{International Journal of Computer Mathematics} (published online), \url{http://dx.doi.org/10.1080/00207160.2014.949250}.
 }
 
 \seealso{
@@ -235,14 +244,14 @@ Example time series of counts are \code{\link{campy}}, \code{\link{ecoli}}, \cod
 \examples{
 #Fit an INGARCH model with identity link function and negative binomial distribution:
 seatbelts_fit <- tsglm(ts=Seatbelts[, "DriversKilled"],
-  model=list(past_obs=1, past_mean=c(1, 12), xreg=Seatbelts[, "PetrolPrice"]),
+  model=list(past_obs=1, past_mean=c(1, 12)), xreg=Seatbelts[, "PetrolPrice"],
   link="identity", distr="nbinom")
 summary(seatbelts_fit)
 plot(seatbelts_fit)
 
 #Fit a log-linear model with Poisson distribution:
 seatbelts_fit <- tsglm(ts=Seatbelts[, "DriversKilled"],
-  model=list(past_obs=1, past_mean=c(1, 12), xreg=Seatbelts[, "PetrolPrice"]),
+  model=list(past_obs=1, past_mean=c(1, 12)), xreg=Seatbelts[, "PetrolPrice"],
   link="log", distr="poisson")
 seatbelts_fit
 }

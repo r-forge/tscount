@@ -62,7 +62,7 @@ S3 method \code{\link{print}}.
 }
 \examples{
 seatbelts_fit <- tsglm(ts=Seatbelts[, "DriversKilled"],
-  model=list(past_obs=1, past_mean=c(1, 12), xreg=Seatbelts[, "PetrolPrice"]),
+  model=list(past_obs=1, past_mean=c(1, 12)), xreg=Seatbelts[, "PetrolPrice"],
   link="identity", distr="poisson")
 summary(seatbelts_fit)
 }
