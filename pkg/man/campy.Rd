@@ -31,6 +31,10 @@ plot(campy)
 campy_fit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
 summary(campy_fit)
 plot(campy_fit)
+#Note that these parameter estimations differ from those obtained by
+#Ferland et al. (2006). This might be due to a different initialisation
+#of pre-sample values and different optimisation algorithms (they use
+#Microsoft Excel Solver Macro). 
 }
 
 \keyword{Data}

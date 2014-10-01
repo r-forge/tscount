@@ -55,9 +55,9 @@ an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{t
 \details{
 This function performs an iterative procedure for detection of multiple intervention effects. In each step the function \code{\link[=interv_detect.tsglm]{interv_detect}} is applied for each of the possible intervention types provided in the argument \code{deltas}. If there is (after a Bonferroni correction) no significant intervention effect the procedure stops. Otherwise the type of intervention with the minimum p-value is chosen. In case of equal p-values preference is given to a level shift (i.e. \eqn{\delta=1}) and then to the type of intervention with the largest test statistic. The effect of the chosen intervention is removed from the time series. The time series cleaned from the intervention effect is tested for further interventions in a next step.
 
-For each time in \code{taus} the test statistic of a score test on an intervention effect occuring at that time is computed, see \code{\link[=interv_test.tsglm]{interv_test}}. The time with the maximum test statistic is considered as a candidate for a possible intervention effect at that time. The type of the intervention effect is specified by \code{delta} as described in \code{\link{interv_covariate}}. The intervention is included as an additional covariate according to the definition in \code{\link{tsglm}} and can have an internal (the default) or external \code{external=TRUE} effect.
+For each time in \code{taus} the test statistic of a score test on an intervention effect occuring at that time is computed, see \code{\link[=interv_test.tsglm]{interv_test}}. The time with the maximum test statistic is considered as a candidate for a possible intervention effect at that time. The type of the intervention effect is specified by \code{delta} as described in \code{\link{interv_covariate}}. The intervention is included as an additional covariate according to the definition in \code{\link{tsglm}}. It can have an internal (the default) or external (\code{external=TRUE}) effect (see Liboschik et al., 2014).
 
-All p-values given in the output are multiplied by the number of intervention types considered to account for the multiple testing in each step by a Bonferroni correction. However, this procedure does not guarantee to hold an overall significance level for all steps.
+All p-values given in the output are multiplied by the number of intervention types considered to account for the multiple testing in each step by a Bonferroni correction.
 
 Note that this bootstrap procedure is very time-consuming.
 }
@@ -101,7 +101,7 @@ Tobias Liboschik, Philipp Probst, Konstantinos Fokianos and Roland Fried
 S3 methods \code{\link{print}} and \code{\link[=plot.interv_multiple]{plot}}.
 
 \code{\link{tsglm}} for fitting a GLM for time series of counts.
-\code{\link[=interv_test.tsglm]{interv_test}} for testing on intervention effects and \code{\link[=interv_detect.tsglm]{interv_detect}} for detection of single interventions of given type. \code{\link{interv_covariate}} for generation of deterministic covariates describing intervention effects.
+\code{\link[=interv_test.tsglm]{interv_test}} for testing for intervention effects and \code{\link[=interv_detect.tsglm]{interv_detect}} for detection of single interventions of given type. \code{\link{interv_covariate}} for generation of deterministic covariates describing intervention effects.
 }
 
 \examples{
@@ -115,5 +115,4 @@ plot(campy_intervmultiple)
 }
 }
 
-\keyword{Generalised linear model}
 \keyword{Intervention detection}

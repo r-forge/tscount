@@ -7,10 +7,10 @@ Simulate a Time Series Following a Generalised Linear Model
 Generates a simulated time series from a GLM-type model for time series of counts (see \code{\link{tsglm}} for details).
 }
 \usage{
-tsglm.sim(n, param = list(intercept = 1, past_obs = NULL, past_mean = NULL, xreg = NULL), 
-            model = list(past_obs = NULL, past_mean = NULL, external = FALSE), xreg = NULL,
-            link = c("identity", "log"), distr = c("poisson", "nbinom"), distrcoefs,
-            fit, n_start = 50)
+tsglm.sim(n, param = list(intercept = 1, past_obs = NULL, past_mean = NULL,
+            xreg = NULL), model = list(past_obs = NULL, past_mean = NULL,
+            external = FALSE), xreg = NULL, link = c("identity", "log"),
+            distr = c("poisson", "nbinom"), distrcoefs, fit, n_start = 50)
 }
 \arguments{
   \item{n}{
@@ -29,7 +29,7 @@ tsglm.sim(n, param = list(intercept = 1, past_obs = NULL, past_mean = NULL, xreg
   a named list specifying the model for the linear predictor, which has the elements \code{past_obs}, \code{past_mean} and \code{external} (see function \code{\link{tsglm}} for details). This model specification must be in accordance to the parameters given in argument \code{param}.
 }
   \item{xreg}{
-  matrix with covariates in the columns (see \code{\link{tsglm}} for details). If this matrix has less than \code{n.ahead} rows, the values of the covariates at the last time point where they are available are used for all future time points.
+  matrix with covariates in the columns (see \code{\link{tsglm}} for details). Its number of rows must be equal to the number of observations which should be simulated.
 }
   \item{link}{
     character giving the link function. Default is \code{"identity"}, simulating from a so-called INGARCH model. Another possible choice is \code{"log"}, simulating from a log-linear model.
@@ -87,5 +87,4 @@ tsglm.sim(n=200, param=param, model=model, xreg=interventions, link="identity",
           distr="nbinom", distrcoefs=c(size=1))
 }
 
-\keyword{Generalised linear model}
 \keyword{Simulation}

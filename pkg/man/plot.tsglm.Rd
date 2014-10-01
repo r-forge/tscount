@@ -40,5 +40,4 @@ plot(seatbelts_fit, ask=FALSE)
 par(op)
 }
 
-\keyword{Generalised linear model}
 \keyword{Model assessment}

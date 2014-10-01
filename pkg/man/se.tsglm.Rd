@@ -28,7 +28,7 @@ positive integer value giving the number of bootstrap samples to use for estimat
 \details{
 By default the standard errors are based on a normal approximation of the (quasi) maximum likelihood estimator. They are the square roots of the diagonal elements of the inverse of the information matrix.
 
-If the number of bootstrap samples \code{B} is given, the standard errors are computed by a parametric bootstrap. The standard errors are the empirical standard deviation of the parameter estimations of \code{B} random samples drawn from the fitted model \code{object}.
+If the number of bootstrap samples \code{B} is given, the standard errors are computed by a parametric bootstrap. The standard errors are the empirical standard deviation of the parameter estimations of \code{B} random samples drawn from the fitted model given in argument \code{object}.
 }
 
 \value{
@@ -59,9 +59,10 @@ seatbelts_fit <- tsglm(ts=Seatbelts[, "DriversKilled"],
   link="identity", distr="poisson")
 se(seatbelts_fit) #by normal approximation
 \dontrun{
-se(seatbelts_fit, B=10) #by bootstrap
+se(seatbelts_fit, B=100) #by bootstrap
+#This estimation of bootstrap standard errors takes several minutes on a single
+#processing unit, of course depending on its speed.
 }
 }
 
-\keyword{Generalised linear model}
 \keyword{Inference}

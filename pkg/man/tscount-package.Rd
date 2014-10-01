@@ -6,7 +6,7 @@
 Analysis of Count Data Time Series
 }
 \description{
-Collection of R functions for analysis of count time series.
+Collection of R functions for analysis of count time series. Currently the focus is on count time series following generalised linear models.
 }
 \details{
 See the main function \code{\link{tsglm}} for more details on the usage of the package.
@@ -25,12 +25,11 @@ Fokianos, K., and Fried, R. (2012) Interventions in log-linear Poisson autoregre
 
 Fokianos, K., Rahbek, A. and Tjostheim, D. (2009) Poisson autoregression. \emph{Journal of the American Statistical Association} \bold{104(488)}, 1430--1439, \url{http://dx.doi.org/10.1198/jasa.2009.tm08270}.
 
-Fokianos, K. and Tjostheim, D. (2011) Log-linear Poisson autoregression. \emph{Journal of Multivariate Analysis} \bold{102(}, 563--578, \url{http://dx.doi.org/10.1016/j.jmva.2010.11.002}.
+Fokianos, K. and Tjostheim, D. (2011) Log-linear Poisson autoregression. \emph{Journal of Multivariate Analysis} \bold{102(3)}, 563--578, \url{http://dx.doi.org/10.1016/j.jmva.2010.11.002}.
 
 Liboschik, T., Kerschke, P., Fokianos, K. and Fried, R. (2014) Modelling interventions in INGARCH processes. \emph{International Journal of Computer Mathematics} (published online), \url{http://dx.doi.org/10.1080/00207160.2014.949250}.
 }
 
-\keyword{Generalised linear model}
 \keyword{Intervention detection}
 \keyword{Model assessment}
 \keyword{Inference}

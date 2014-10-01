@@ -17,6 +17,7 @@ The conditional distribution can be chosen to be either Poisson or negative bino
 Estimation is done by conditional maximum likelihood for the Poisson distribution or by a conditional quasi-likelihood approach based on the Poisson likelihood function for the negative binomial distribution.
 
 The function \code{ingarch.fit} is a lower level function to fit the mean specification of an INGARCH model assuming a Poisson distribution. It is called by \code{tsglm}. It has additional arguments allowing for a finer control of the fitting procedure, which can be handed over from the function \code{tsglm} by its \code{...} argument. Analogously, \code{loglin.fit} is the lower level fitting function for the model with the logarithmic link.
+Note that it is usually not necessary for a user to call these lower level functions nor to worry about the additional arguments provided by these functions. The defaults of these arguments have been chosen wisely by the authors of this package and should perform well in most applications.
 }
 \usage{
 tsglm(ts, model = list(past_obs = NULL, past_mean = NULL,
@@ -48,8 +49,8 @@ loglin.fit(ts, model = list(past_obs = NULL, past_mean = NULL,
   \item{model}{
     a named list specifying the model for the linear predictor, which can be of the following elements:
     \describe{  
-      \item{\code{past_obs}}{integer vector giving the previous observations to be regressed on (autoregression). This is a vector with the elements \eqn{i_1,\ldots,i_p}{i[1],\ldots,i[p]} (see Details). If omitted, or of length zero there will be no regression on previous observations.}    
-      \item{\code{past_mean}}{integer vector giving the previous conditional means to be regressed on. This is a vector with the elements \eqn{j_1,\ldots,j_q}{j[1],\ldots,j[q]} (see Details). If omitted, or of length zero there will be no regression on previous conditional means.} 
+      \item{\code{past_obs}}{integer vector giving the previous observations to be regressed on (autoregression). This is a vector with the elements \eqn{i_1,\ldots,i_p}{i[1],\ldots,i[p]} (see Details). If omitted, or of length zero, there will be no regression on previous observations.}    
+      \item{\code{past_mean}}{integer vector giving the previous conditional means to be regressed on. This is a vector with the elements \eqn{j_1,\ldots,j_q}{j[1],\ldots,j[q]} (see Details). If omitted, or of length zero, there will be no regression on previous conditional means.} 
       \item{\code{external}}{logical vector of length \code{ncol(xreg)} specifying for each covariate wether its effect should be external or not (see Details). If this is a scalar this choice will be used for all covariates. If omitted, all covariates will have an internal effect (i.e. \code{external=FALSE}).}
     } 
   }
@@ -69,13 +70,13 @@ loglin.fit(ts, model = list(past_obs = NULL, past_mean = NULL,
     logical value indicating whether the score vector should be computed.
   }
   \item{info}{
-    character that determines if and how to compute the information matrix. Can be set to \code{"score"} (the default) for calculation via the outer product of the score vector or to \code{"hessian"} for calculation via the Hessian matrix of second derivatives. For \code{info="sandwich"} the information matrix is estimated by a sandwich formula using both the outer score product and the Hessian matrix. If set to \code{"none"}, no information matrix is computed. For \code{link="log"} the alternatives \code{"hessian"} and \code{"sandwich"} are currently not available and will result in an error. For \code{distr="nbinom"} one should use \code{info="score"}.
+    character that determines if and how to compute the information matrix. Can be set to \code{"score"} (the default) for calculation via the outer product of the score vector, or to \code{"hessian"} for calculation via the Hessian matrix of second derivatives. For \code{info="sandwich"} the information matrix is estimated by a sandwich formula using both the outer score product and the Hessian matrix. If set to \code{"none"}, no information matrix is computed. For \code{link="log"} the alternatives \code{"hessian"} and \code{"sandwich"} are currently not available and will result in an error. For \code{distr="nbinom"} one can only use \code{info="score"}.
   }
   \item{init.method}{
-    character that determines how the recursion of the conditional mean (and possibly of its derivatives) is initialised. If set to \code{"marginal"} (the default) the marginal mean of a model without covariates and its derivatives are used. If set to \code{"iid"} all values are initialised by the marginal mean under the assumption of iid data, which depends on the intercept only. If set to \code{"firstobs"} the first obersvation is used. If set to \code{"zero"} the recursions are initialised by the value zero.
+    character that determines how the recursion of the conditional mean (and possibly of its derivatives) is initialised. If set to \code{"marginal"} (the default), the marginal mean of a model without covariates and its derivatives are used. If set to \code{"iid"}, all values are initialised by the marginal mean under the assumption of i.i.d. data, which depends on the intercept only. If set to \code{"firstobs"} the first obersvation is used. If set to \code{"zero"}, the recursions are initialised by the value zero.
   }
   \item{init.drop}{
-    logical value that determines which observations are considered for computation of the log-likelihood, the score vector and, if applicable, the information matrix. If \code{FALSE} (the default) all observations are considered, else the first \code{max(model$past_obs)} observations, which are needed for the autoregression, are not considered.
+    logical value that determines which observations are considered for computation of the log-likelihood, the score vector and, if applicable, the information matrix. If \code{TRUE}, the first \code{max(model$past_obs)} observations, which are needed for the autoregression, are not considered. If \code{FALSE} (the default), all observations are considered and pre-sample values determined by the method specified by the argument \code{itit.method} are used for the autoregression.
   }
   \item{epsilon}{
     numeric positive but small value determining how close the parameters may come to the limits of the parameter space.
@@ -88,7 +89,7 @@ loglin.fit(ts, model = list(past_obs = NULL, past_mean = NULL,
     \describe{  
       \item{\code{use}}{integer vector of length one or two giving the number of observations from the beginning (if of length one) or the range of observations (if of length two) used for start estimation. For \code{use = Inf} all observations are used, which is the default.}
       \item{\code{method}}{character specifying how start estimators should be estimated. Possible values are \code{"iid"}, \code{"CSS"}, \code{"CSS-ML"}, \code{"ML"}, \code{"MM"}, \code{"GLM"} and \code{"fixed"}. 
-  If \code{method} is \code{"iid"} (the default) a moment estimator assuming an iid model without covariates is used.
+  If \code{method} is \code{"iid"} (the default), a moment estimator assuming an iid model without covariates is used.
   If \code{method="MM"}, the start estimate is an ARMA(1,1) fit by moment estimators and parameters of higher order than one are set to zero. For this method the starting parameter values for the covariates are zero by default and can be set by the list element \code{xreg}.
   If \code{method} is \code{"CSS"}, \code{"CSS-ML"} or \code{"ML"}, the start estimate is based on an ARMA fit using the function \code{\link{arima}}, and list element \code{method} is passed to its argument of the same name.  
   If \code{method="GLM"}, the estimated parameters of a generalised linear model with regression on the specified past observations and covariates, but not on past conditional means, are used as start estimates. Initial estimates for the coefficients of past conditional means are set to zero.
@@ -117,7 +118,7 @@ The INGARCH model (argument \code{link="identity"}) used here follows the defini
     \deqn{Z_{t}|{\cal{F}}_{t-1} \sim \mathrm{Poi}(\kappa_{t}) \quad \mathrm{or} \quad Z_{t}|{\cal{F}}_{t-1} \sim \mathrm{NegBin}(\kappa_{t}, \nu),}{
     Z[t]|F[t-1] ~ Poi(\kappa[t]) or  Z[t]|F[t-1] ~ NegBin(\kappa[t], \nu),}
 where \eqn{{\cal{F}}_{t-1}}{F[t-1]} denotes the history of the process up to time \eqn{t-1}, \eqn{\mathrm{Poi}}{Poi} and \eqn{\mathrm{NegBin}}{NegBin} is the Poisson respectively the negative binomial distribution with the parametrisation as specified below.
-For the model with covariates having an internal effect (the default) the linear predictor of the INGARCH model (which is identical to the conditional mean for the identity link) is given by
+For the model with covariates having an internal effect (the default) the linear predictor of the INGARCH model (which is in that case identical to the conditional mean) is given by
     \deqn{\kappa_t = \beta_0 + \beta_1 Z_{t-i_1} + \ldots + \beta_p Z_{t-i_p}
     + \alpha_1 \kappa_{t-j_1} + \ldots  + \alpha_q \kappa_{t-j_q}
     + \eta_1 X_{t,1} + \ldots + \eta_r X_{t,r}.}{
@@ -156,6 +157,7 @@ and analoguesly for the model with logarithmic link by
     + \alpha_1 \lambda_{t-j_1} + \ldots  + \alpha_q \lambda_{t-j_q}.}{
     \mu[t] = \beta[0] + \beta[1] \log(Z[t-i[1]]+1) + \ldots + \beta[p] \log(Z[t-i[p]+1)
     + \alpha[1] \lambda[t-j[1]] + \ldots  + \alpha[q] \lambda[t-j[q]].} 
+This is described in more detail by Liboschik et al. (2014) for the case of deterministic covariates for modelling interventions.
 It is also possible to model a combination of external and internal covariates, which can be defined straightforwardly by adding each covariate either to the linear predictor \eqn{\kappa_t}{\kappa[t]} itself (for an internal effect) or to \eqn{\mu_t}{\mu[t]} defined above (for an external effect).
 
 }
@@ -165,7 +167,7 @@ An object of class \code{"tsglm"}, which is a list with at least the following e
 
   \item{coefficients}{a named vector of the maximum likelihood estimated coefficients, which can be extracted by the \code{\link{coef}} method.}
   
-  \item{start}{a named vector of the start values for the coefficients.}
+  \item{start}{a named vector of the start estimation for the coefficients.}
   
   \item{residuals}{a vector of residuals, which can be extracted by the \code{\link[=residuals.tsglm]{residuals}} method.}
 
@@ -193,9 +195,9 @@ An object of class \code{"tsglm"}, which is a list with at least the following e
   
   \item{distr}{a character giving the fitted conditional distribution.}
   
-  \item{distrcoefs}{a named vector of the estimated additional coefficients specifying the conditional distribution.}
+  \item{distrcoefs}{a named vector of the estimated additional coefficients specifying the conditional distribution. Is \code{NULL} in case of a Poisson distribution.}
   
-  \item{sigmasq}{the estimated variance coefficient.}
+  \item{sigmasq}{the estimated variance coefficient. Is zero in case of a Poisson distribution.}
 
 The functions \code{ingarch.fit} and \code{loglin.fit} have the same output except the elements \code{distr}, \code{distrcoefs} and \code{sigmasq}. In addition, they return the following list elements:
 
@@ -224,7 +226,7 @@ Fokianos, K., and Fried, R. (2012) Interventions in log-linear Poisson autoregre
 
 Fokianos, K., Rahbek, A. and Tjostheim, D. (2009) Poisson autoregression. \emph{Journal of the American Statistical Association} \bold{104(488)}, 1430--1439, \url{http://dx.doi.org/10.1198/jasa.2009.tm08270}.
 
-Fokianos, K. and Tjostheim, D. (2011) Log-linear Poisson autoregression. \emph{Journal of Multivariate Analysis} \bold{102(}, 563--578, \url{http://dx.doi.org/10.1016/j.jmva.2010.11.002}.
+Fokianos, K. and Tjostheim, D. (2011) Log-linear Poisson autoregression. \emph{Journal of Multivariate Analysis} \bold{102(3)}, 563--578, \url{http://dx.doi.org/10.1016/j.jmva.2010.11.002}.
 
 Liboschik, T., Kerschke, P., Fokianos, K. and Fried, R. (2014) Modelling interventions in INGARCH processes. \emph{International Journal of Computer Mathematics} (published online), \url{http://dx.doi.org/10.1080/00207160.2014.949250}.
 }
@@ -235,7 +237,7 @@ The S3 method \code{\link[=se.tsglm]{se}} computes the standard errors of the pa
 Additionally, there are the S3 methods \code{\link[=pit.tsglm]{pit}}, \code{\link[=marcal.tsglm]{marcal}} and \code{\link[=scoring.tsglm]{scoring}} for predictive model assessment.
 
 
-S3 methods \code{\link[=interv_test.tsglm]{interv_test}}, \code{\link[=interv_detect.tsglm]{interv_detect}} and \code{\link[=interv_multiple.tsglm]{interv_multiple}} for tests on and detection of intervention effects.
+S3 methods \code{\link[=interv_test.tsglm]{interv_test}}, \code{\link[=interv_detect.tsglm]{interv_detect}} and \code{\link[=interv_multiple.tsglm]{interv_multiple}} for tests and detection procedures for intervention effects.
 \code{\link{tsglm.sim}} for simulation from GLM-type model for time series of counts. \code{\link{ingarch.mean}}, \code{\link{ingarch.var}} and \code{\link{ingarch.acf}} for calculation of analytical mean, variance and autocorrelation function of an INGARCH model (i.e. with identity link) without covariates.
 
 Example time series of counts are \code{\link{campy}}, \code{\link{ecoli}}, \code{\link{ehec}}, \code{\link{influenza}}, \code{\link{measles}} in this package, \code{\link[gamlss.data]{polio}} in package \code{gamlss.data}.
@@ -255,5 +257,3 @@ seatbelts_fit <- tsglm(ts=Seatbelts[, "DriversKilled"],
   link="log", distr="poisson")
 seatbelts_fit
 }
-
-\keyword{Generalised linear model}

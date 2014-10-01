@@ -38,9 +38,13 @@ A named list with the following elements:
  
   \item{residuals}{see \code{\link{tsglm}}.}
  
-  \item{coefficients}{data frame with estimated parameters and their standard errors (based on a normal approximation, see \code{\link[=se.tsglm]{se}}).}
- 
+  \item{coefficients}{data frame with estimated parameters and their standard errors (based on a normal approximation or a parametric bootstrap, see \code{\link[=se.tsglm]{se}}).}
+  
   \item{number.coef}{number of coefficients.}
+ 
+  \item{se.type}{type of standard errors, see \code{\link{se.tsglm}}.}
+  
+  \item{se.bootstrapsamples}{number of bootstrap samples used for estimation of the standard errors, see \code{\link{se.tsglm}}. Is omitted if the standard errors are not obtained by a bootstrap procedure.}
   
   \item{logLik}{value of the maximised log-likelihood function.}
  
@@ -67,6 +71,5 @@ seatbelts_fit <- tsglm(ts=Seatbelts[, "DriversKilled"],
 summary(seatbelts_fit)
 }
 
-\keyword{Generalised linear model}
 \keyword{Model assessment}
 \keyword{Inference}

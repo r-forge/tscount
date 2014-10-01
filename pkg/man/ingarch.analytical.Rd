@@ -44,7 +44,7 @@ ingarch.acf(intercept, past_obs=NULL, past_mean=NULL, lag.max=10,
   The INGARCH model of order \eqn{p} and \eqn{q} used here follows the definition
     \deqn{Z_{t}|{\cal{F}}_{t-1} \sim \mathrm{Poi}(\kappa_{t}),}{
     Z[t]|F[t-1] ~ Poi(\kappa[t]),}
-  where \eqn{{\cal{F}}_{t-1}}{F[t-1]} is the history of the process up to time \eqn{t-1} and \eqn{\mathrm{Poi}}{Poi} is the Poisson distribution parametrised by its mean.
+  where \eqn{{\cal{F}}_{t-1}}{F[t-1]} is the history of the process up to time \eqn{t-1} and \eqn{\mathrm{Poi}}{Poi} is the Poisson distribution parametrised by its mean (cf. Ferland et al., 2006).
   The conditional mean \eqn{\kappa_t}{\kappa[t]} is given by
     \deqn{\kappa_t = \beta_0 + \beta_1 Z_{t-1} + \ldots + \beta_p Z_{t-p}
     + \alpha_1 \kappa_{t-1} + \ldots  + \alpha_q \kappa_{t-q}.}{
@@ -71,5 +71,3 @@ ingarch.mean(0.3, c(0.1,0.1), 0.1)
 ingarch.var(0.3, c(0.1,0.1), 0.1)
 ingarch.acf(0.3, c(0.1,0.1,0.1), 0.1, type="acf", lag.max=15)}
 }
-
-\keyword{Generalised linear model}

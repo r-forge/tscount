@@ -26,7 +26,7 @@ further arguments are currently ignored. Only for compatibility with generic fun
 The scoring rules are penalties that should be minimised for a better forecast, so a smaller scoring value means better sharpness. 
 Different competing forecast models can be ranked via these scoring rules. 
 They are computed as follows:
-For each score \eqn{s} and observation \eqn{t} the value \eqn{s(P_{t},Y_{t})}{s(P[t],Y[t])} is computed, where \eqn{P_t}{P[t]} is the predictive 
+For each score \eqn{s} and time \eqn{t} the value \eqn{s(P_{t},Y_{t})}{s(P[t],Y[t])} is computed, where \eqn{P_t}{P[t]} is the predictive 
 c.d.f. and \eqn{Y_t}{Y[t]} is the observation at time \eqn{t}. To obtain the overall score for one model the average of the score of all observations
 \eqn{(1/n) \sum_{t=1}^{n}s(P_{t},Y_{t})}{(1/n) \sum s(P[t],Y[t])}
 is calculated. 
@@ -51,7 +51,7 @@ Normalized squared error score: \eqn{nses(P_{t},Y_{t})=\left(\frac{Y_t-\mu_{P_t}
 
 Squared error score: \eqn{ses(P_{t},Y_{t})=(Y_t-\mu_{P_t})^2}{ses(P[t],Y[t])=(Y[t]-\mu_P[t])^2}
 
-For more information on the scoring rules see the references listed below.
+For more information on scoring rules see the references listed below.
 
 }
 
@@ -96,5 +96,4 @@ campy_fit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
 scoring(campy_fit)
 }
 
-\keyword{Generalised linear model}
 \keyword{Model assessment}

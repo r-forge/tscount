@@ -14,7 +14,7 @@ Predict future observations based on a fitted GLM-type model for time series of 
 an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{tsglm}}.
 }
   \item{n.ahead}{
-positive integer value giving the number of steps ahead for which prediction is required.
+positive integer value giving the number of steps ahead for which predictions should be made.
 }
   \item{newobs}{
 integer vector of known future observations of the time series. This argument is only relevant if more than one observation ahead is to be predicted (\code{n.ahead} greater than 1). The \eqn{h}-step-ahead prediction for \eqn{h>1} is computed as a 1-step-ahead prediction given all previous values, which can be observations of the original time series or new observations provided in this argument. Previous observations which are not available are replaced by their respective 1-step-ahead prediction.
@@ -33,14 +33,16 @@ further arguments are currently ignored. Only for compatibility with generic fun
 }
 }
 \details{
-Returns predictions for the \code{n.ahead} observations following the fitted time series contained in argument \code{object}. The 1-step-ahead prediction is the conditional expectation of the observation to be predicted. The true parameters are replaced by their estimations given in argument \code{object}. For a 2-step-prediction the true previous observation is used when given in argument \code{newobs}, otherwise it is replaced by the 1-step-ahead prediction computed before. For a 3-step-prediction this holds for the previous two observations, which are replaced by their respective predictions if not available, and so on.
+Returns predictions for the \code{n.ahead} observations following the fitted time series contained in argument \code{object}. The 1-step-ahead prediction is the conditional expectation of the observation to be predicted given the past. The true parameters are replaced by their estimations given in argument \code{object}. For a 2-step-ahead-prediction the true previous observation is used when given in argument \code{newobs}, otherwise it is replaced by the 1-step-ahead prediction computed before. For a 3-step-prediction this holds for the previous two observations, which are replaced by their respective predictions if not available, and so on.
+
+The function additionally returns prediction intervals numerically determined by a parametric bootstrap, if the number of bootstrap replicates is specified by the argument \code{B}. Note that the prediction intervals do not reflect the additional uncertainty induced by the parameter estimation. However, for sufficiently long time series it is expected that this uncertainty is negligible compared to the uncertainty of the predictive distribution.
 }
 \value{
 A list with the following element:
 
   \item{pred}{a numeric vector of the predictions. Has class \code{"ts"} if the response used for fitting has this class.}
 
-If prediction intervals are computed the list has the additional elements:
+If prediction intervals are computed, the list has the additional elements:
 
   \item{interval}{a matrix with the rows \code{"lower"} and \code{"upper"} giving the lower and upper boundary of the computed prediction interval. Has class \code{"ts"} if the response used for fitting has this class.}
 
@@ -63,5 +65,4 @@ campy_fit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)),
 predict(campy_fit, n.ahead=5)
 }
 
-\keyword{Generalised linear model}
 \keyword{Prediction}

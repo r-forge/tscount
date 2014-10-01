@@ -25,7 +25,7 @@ numeric vector with constants specifying the type of intervention (see Details).
 \details{
 The intervention effect occuring at time \eqn{\tau} is described by the covariate
 \deqn{X_t = \delta^{t-\tau} I_{[\tau,\infty)}(t),}{X_t = \delta^(t-\tau) I(t>=\tau),}
-where \eqn{I_{[\tau,\infty)}(t)}{I(t>=\tau)} is the indicator function which is 0 for \eqn{t < \tau} and 1 for \eqn{t \geq \tau}{t >= \tau}. The constant \eqn{\delta} with \eqn{0 \leq \delta \leq 1}{0 <= \delta <= 1} specifies the type of intervention. For \eqn{\delta = 0} the intervention has an effect only at the time of its occurence, for \eqn{0 < \delta < 1} the effect decays exponentially and for \eqn{\delta = 1} there is a constant effect of the intervention after its occurence.
+where \eqn{I_{[\tau,\infty)}(t)}{I(t>=\tau)} is the indicator function which is 0 for \eqn{t < \tau} and 1 for \eqn{t \geq \tau}{t >= \tau}. The constant \eqn{\delta} with \eqn{0 \leq \delta \leq 1}{0 <= \delta <= 1} specifies the type of intervention. For \eqn{\delta = 0} the intervention has an effect only at the time of its occurence, for \eqn{0 < \delta < 1} the effect decays exponentially and for \eqn{\delta = 1} there is a persistent effect of the intervention after its occurence.
 
 If \code{tau} and \code{delta} are vectors, one covariate is generated with \code{tau[1]} as \eqn{\tau} and \code{delta[1]} as \eqn{\delta}, another covariate for the second elements and so on.
 }
@@ -48,12 +48,11 @@ Tobias Liboschik
 
 \seealso{
 \code{\link{tsglm}} for fitting a GLM for time series of counts.
-\code{\link[=interv_test.tsglm]{interv_test}}, \code{\link[=interv_detect.tsglm]{interv_detect}} and \code{\link[=interv_multiple.tsglm]{interv_multiple}} for tests on and detection of intervention effects.
+\code{\link[=interv_test.tsglm]{interv_test}}, \code{\link[=interv_detect.tsglm]{interv_detect}} and \code{\link[=interv_multiple.tsglm]{interv_multiple}} for tests and detection procedures for intervention effects.
 }
 
 \examples{
 interv_covariate(n=140, tau=c(84,100), delta=c(1,0))
 }
 
-\keyword{Generalised linear model}
 \keyword{Intervention detection}

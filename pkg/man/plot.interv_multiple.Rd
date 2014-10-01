@@ -4,7 +4,7 @@
 Plot for Iterative Intervention Detection Procedure for Count Time Series following Generalised Linear Models
 }
 \description{
-Provides a plot with the detected intervention effects and the time series cleaned from these intervention effects.
+Provides a plot with the intervention effects detected by an iterative procedure (as returned by \code{\link{interv_multiple.tsglm}}) and the time series cleaned from these intervention effects.
 }
 \usage{
 \method{plot}{interv_multiple}(x, ...)
@@ -37,5 +37,4 @@ campy_intervmultiple <- interv_multiple(fit=campy_fit, taus=80:120,
 plot(campy_intervmultiple)}
 }
 
-\keyword{Generalised linear model}
 \keyword{Intervention detection}

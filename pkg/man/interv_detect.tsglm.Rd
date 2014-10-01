@@ -22,8 +22,8 @@ Detection procedure for an intervention of given type occuring at unknown time a
 an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{tsglm}}.
 }
   \item{taus}{
-  integer vector of times which are considered for the possible intervention to occur.
-  Default is to consider all times.
+  integer vector of time points which are considered for the possible intervention to occur.
+  Default is to consider all possible time points.
 }
   \item{delta}{
   numeric value that determines the type of intervention (see Details).
@@ -58,7 +58,7 @@ an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{t
 }
  
 \details{
-For each time in \code{taus} the score test statistic for an intervention effect occuring at that time is computed, see \code{\link[=interv_test.tsglm]{interv_test}}. The time with the maximum test statistic is considered as a candidate for a possible intervention effect at that time. The type of the intervention effect is specified by \code{delta} as described in \code{\link{interv_covariate}}.  The intervention is included as an additional covariate according to the definition in \code{\link{tsglm}} and can have an internal (the default) or external \code{external=TRUE} effect.
+For each time in \code{taus} the score test statistic for an intervention effect occuring at that time is computed, see \code{\link[=interv_test.tsglm]{interv_test}}. The time with the maximum test statistic is considered as a candidate for a possible intervention effect at that time. The type of the intervention effect is specified by \code{delta} as described in \code{\link{interv_covariate}}.  The intervention is included as an additional covariate according to the definition in \code{\link{tsglm}}. It can have an internal (the default) or external (\code{external=TRUE}) effect (see Liboschik et al., 2014).
 
 If argument \code{B} is not \code{NULL}, the null hypothesis that there is no intervention effect at any time is tested. Test statistic for this test is the maximum test statistic of the score test (see above). The p-value is computed by a parametric bootstrap with \code{B} bootstrap samples. It is recommended to use at least several hundred bootstrap samples. Note that this bootstrap procedure is very time-consuming.
 }
@@ -114,7 +114,9 @@ campy_fit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
 campy_intervdetect <- interv_detect(fit=campy_fit, taus=80:120, delta=1)
 campy_intervdetect
 plot(campy_intervdetect)
+#Additionally computing a p-value with the bootstrap procedure would take about
+#20 minutes in this example on a single processing unit, of course depending on
+#its speed.
 }
 
-\keyword{Generalised linear model}
 \keyword{Intervention detection}

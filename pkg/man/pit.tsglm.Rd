@@ -57,5 +57,4 @@ campy_fit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
 pit(campy_fit)
 }
 
-\keyword{Generalised linear model}
 \keyword{Model assessment}

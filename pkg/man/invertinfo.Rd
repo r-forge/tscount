@@ -24,6 +24,8 @@ invertinfo(mat, silent=TRUE, stopOnError=FALSE)
 
 \details{
 A Cholesky decomposition is used to obtain the covariance matrix. This can be done because the Fisher information matrix is symmetric and positive definite.
+
+This function is meant to be a more stable alternative to the function \code{\link{solve}}, which does not take into account, that the matrix is symmetric and positive definite.
 }
 
 \value{
