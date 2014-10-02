@@ -1,8 +1,8 @@
 Package: tscount
 Type: Package
 Title: Analysis of count time series
-Version: 0.4.0
-Date: 2014-05-02
+Version: 0.4.1
+Date: 2014-10-02
 Authors@R: c(
   person("Tobias", "Liboschik", role=c("aut", "cre"), email="liboschik@statistik.tu-dortmund.de"),
   person("Roland", "Fried", role=c("ctb"), email="fried@statistik.tu-dortmund.de"),
@@ -11,7 +11,7 @@ Authors@R: c(
   person("Philipp", "Probst", role=c("aut"), email="philipp.probst@tu-dortmund.de"),
   person("Jonathan", "Rathjens", role=c("ctb"), email="jonathan.rathjens@tu-dortmund.de"))
 Description: Collection of R functions for analysis of count time series. 
-Suggests: snowfall, ltsa, MASS, Matrix
+Suggests: parallel, ltsa, MASS, Matrix
 License: GPL-2 | GPL-3
 URL: http://tscount.r-forge.r-project.org
 ByteCompile: true

@@ -18,7 +18,7 @@ an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{t
 positive integer value giving the number of bootstrap samples to use for estimation of the standard errors. If missing the standard errors are based on a normal approximation.
   }
   \item{parallel}{
-  logical value. If \code{parallel=TRUE}, the bootstrap is distributed to multiple cores parallely. Requires a computing cluster to be initialised by \code{\link[snowfall:sfInit]{sfInit}} from package \code{snowfall}. 
+  logical value. If \code{parallel=TRUE}, the bootstrap is distributed to multiple cores parallely. Requires a computing cluster to be initialised and registered as the default cluster by \code{\link[parallel:makeCluster]{makeCluster}} and \code{\link[parallel:setDefaultCluster]{setDefaultCluster}} from package \code{parallel}. 
 }
   \item{...}{
   additional arguments to be passed to the fitting function \code{\link{tsglm}}. Only made use of if the standard errors are computed by a bootstrap procedure.
@@ -58,11 +58,17 @@ seatbelts_fit <- tsglm(ts=Seatbelts[, "DriversKilled"],
   model=list(past_obs=1, past_mean=c(1, 12)), xreg=Seatbelts[, "PetrolPrice"],
   link="identity", distr="poisson")
 se(seatbelts_fit) #by normal approximation
+
 \dontrun{
 se(seatbelts_fit, B=100) #by bootstrap
 #This estimation of bootstrap standard errors takes several minutes on a single
 #processing unit, of course depending on its speed.
-}
+#Parallel computation for shorter run time on a cluster:
+library(parallel)
+ntasks <- 3
+clust <- makeCluster(ntasks)
+setDefaultCluster(cl=clust)
+se(seatbelts_fit, B=100, parallel=TRUE)}
 }
 
 \keyword{Inference}

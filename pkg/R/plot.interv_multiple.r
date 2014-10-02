@@ -6,8 +6,8 @@ plot.interv_multiple <- function(x, ...){
     lines(timser)
     legend("topleft", legend="No interventions detected    ", bg="white")
   }else{  
-    for(i in 1:nrow(intervention)) lines(x=time(timser)[seq(along=timser)], y=x$ts_cleaned[[i]], lty="dashed", col="red")
-    abline(v=time(timser)[intervention[,"tau"]], col="red")
+    lines(x=time(timser)[seq(along=timser)], y=x$ts_cleaned[[nrow(intervention)]], lty="dashed", col="blue")
+    abline(v=time(timser)[intervention[, "tau"]], col="red")
     lines(timser)
     legend("topleft", legend=paste("Intervention ", rownames(intervention), ": tau=", intervention[,"tau"], ", delta=", intervention[,"delta"], ", size=", round(intervention[,"size"],2), "    ", sep=""), bg="white")
   }

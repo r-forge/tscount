@@ -39,13 +39,13 @@ an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{t
   named list that determines how to make initial estimation in the bootstrap, see argument \code{start.control} in \code{\link{tsglm}}. If missing, the same settings as for the regular estimation are used.
 }
   \item{final.control_bootstrap}{
-  named list that determines how to make final maximum likelihood estimation in the bootstrap, see argument \code{final.control} in \code{\link{tsglm}}. If missing, the same settings as for the regular estimation are used.
+  named list that determines how to make final maximum likelihood estimation in the bootstrap, see argument \code{final.control} in \code{\link{tsglm}}. If missing, the same settings as for the regular estimation are used. If \code{final.control_bootstrap=NULL}, then the model is not re-fitted for each bootstrap sample. Instead the parameters of the original fit which have been used for simulating the bootstrap samples are used. This approach saves computation time at the cost of a more conservative procedure, see Fokianos and Fried (2012).
 }
   \item{inter.control_bootstrap}{
   named list  determining how to maximise the log-likelihood function in an intermediate step, see argument \code{inter.control} in \code{\link{tsglm}}. If missing, the same settings as for the regular estimation are used.
 }
   \item{parallel}{
-  logical value. If \code{parallel=TRUE}, the bootstrap is distributed to multiple cores parallely. Requires a computing cluster to be initialised by \code{\link[snowfall:sfInit]{sfInit}} from package \code{snowfall}. 
+  logical value. If \code{parallel=TRUE}, the bootstrap is distributed to multiple cores parallely. Requires a computing cluster to be initialised and registered as the default cluster by \code{\link[parallel:makeCluster]{makeCluster}} and \code{\link[parallel:setDefaultCluster]{setDefaultCluster}} from package \code{parallel}.
 }
   \item{...}{
   additional arguments passed to be passed to the function for detection of single intervention effects \code{\link[=interv_detect.tsglm]{interv_detect}} and via this function some of the arguments are passed to the fitting function \code{\link{tsglm}}.
@@ -112,7 +112,13 @@ campy_intervmultiple <- interv_multiple(fit=campy_fit, taus=80:120,
                               deltas=c(0,0.8,1), B=500, signif_level=0.05)
 campy_intervmultiple
 plot(campy_intervmultiple)
-}
+#Parallel computation for shorter run time on a cluster:
+library(parallel)
+ntasks <- 3
+clust <- makeCluster(ntasks)
+setDefaultCluster(cl=clust)
+interv_multiple(fit=campy_fit, taus=80:120, deltas=c(0,0.8,1), B=500,
+                signif_level=0.05, parallel=TRUE)}
 }
 
 \keyword{Intervention detection}

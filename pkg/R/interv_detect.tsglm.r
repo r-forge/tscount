@@ -68,24 +68,14 @@ interv_detect.tsglm <- function(fit, taus=2:length(ts), delta, external=FALSE, B
   if(!is.null(B)){
     #Set arguments controlling the estimation in the bootstrap:
     if(missing(start.control_bootstrap)) start.control_bootstrap <- if(hasArg(start.control)) start.control else list()
-    bootstrap_noest <- !missing(final.control_bootstrap) && is.null(final.control_bootstrap) #is argument final.control_bootstrap is NULL, then the parameters are not re-estimated for each bootstrap sample but the true parameters used for simulation are used
+    bootstrap_noest <- !missing(final.control_bootstrap) && is.null(final.control_bootstrap) #if argument final.control_bootstrap is NULL, then the parameters are not re-estimated for each bootstrap sample but the true parameters used for simulation are used
     if(missing(final.control_bootstrap) || is.null(final.control_bootstrap)) final.control_bootstrap <- if(hasArg(final.control)) final.control else list()        
     if(missing(inter.control_bootstrap)) inter.control_bootstrap <- if(hasArg(final.control)) final.control else NULL    
     if(parallel){
-      cluster_running <- try(sfIsRunning(), silent=TRUE)
-      snowfall_loaded <- !class(cluster_running)=="try-error"
-      if(snowfall_loaded){
-        if(cluster_running){
-          sfExport("compute_test_statistic")
-          Lapply <- sfLapply
-        }else{
-          stop("No cluster initialised; initialise cluster with function 'sfInit' or set argument 'parallel=FALSE'")
-        }
-      }else{   
-        stop("Package 'snowfall' not loaded; load package with 'library(snowfall)' and initialise cluster with function 'sfInit' or set argument 'parallel=FALSE'")
-      }
+      library(parallel)
+      Sapply <- function(X, FUN, ...) parSapply(cl=NULL, X=X, FUN=FUN, ..., simplify=FALSE) 
     }else{
-      Lapply <- lapply
+      Sapply <- function(X, FUN, ...) sapply(X=X, FUN=FUN, ..., simplify=FALSE)
     }
     bootstrap <- function(seed=NULL, fit_H0, n, model, xreg, link, distr, taus, delta, external, ...){
       if(!is.null(seed)) set.seed(seed)
@@ -102,8 +92,8 @@ interv_detect.tsglm <- function(fit, taus=2:length(ts), delta, external=FALSE, B
     B_left <- B
     while(B_left > 0){
       seeds <- sample(1e+8, size=B_left)
-      if(B_left==1) Lapply <- lapply #temporary solution for the problem, that sfLapply does give an error (Error in cut.default(i, breaks) : 'breaks' are not unique) if applied to a vector of length one (see https://bugs.r-project.org/bugzilla3/show_bug.cgi?id=14898 for a similar error)   
-      output.bootstrap <- Lapply(seeds, bootstrap, fit_H0=fit, n=fit$n_obs, model=fit$model, xreg=fit$xreg, link=fit$link, distr=fit$distr, taus=taus, delta=delta, external=external, ...)
+      if(B_left==1) Sapply <- function(X, FUN, ...) sapply(X=X, FUN=FUN, ..., simplify=FALSE) #temporary solution for the problem, that parSapply does give an error (Error in cut.default(i, breaks) : 'breaks' are not unique) if applied to a vector of length one (see https://bugs.r-project.org/bugzilla3/show_bug.cgi?id=14898 for a similar error)   
+      output.bootstrap <- Sapply(seeds, bootstrap, fit_H0=fit, n=fit$n_obs, model=fit$model, xreg=fit$xreg, link=fit$link, distr=fit$distr, taus=taus, delta=delta, external=external, ...)
       index_errors <- sapply(output.bootstrap, function(x) is.character(x[[1]]))
       bootstrap_test_statistics <- c(bootstrap_test_statistics, unlist(output.bootstrap[!index_errors]))
       B_left <- B - length(bootstrap_test_statistics)

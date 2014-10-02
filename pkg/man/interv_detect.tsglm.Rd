@@ -41,13 +41,13 @@ an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{t
   named list that determines how to make initial estimation in the bootstrap, see argument \code{start.control} in \code{\link{tsglm}}. If missing, the same settings as for the regular estimation are used.
 }
   \item{final.control_bootstrap}{
-  named list that determines how to make final maximum likelihood estimation in the bootstrap, see argument \code{final.control} in \code{\link{tsglm}}. If missing, the same settings as for the regular estimation are used.
+  named list that determines how to make final maximum likelihood estimation in the bootstrap, see argument \code{final.control} in \code{\link{tsglm}}. If missing, the same settings as for the regular estimation are used. If \code{final.control_bootstrap=NULL}, then the model is not re-fitted for each bootstrap sample. Instead the parameters of the original fit which have been used for simulating the bootstrap samples are used. This approach saves computation time at the cost of a more conservative procedure, see Fokianos and Fried (2012).
 }
   \item{inter.control_bootstrap}{
   named list  determining how to maximise the log-likelihood function in an intermediate step, see argument \code{inter.control} in \code{\link{tsglm}}. If missing, the same settings as for the regular estimation are used.
 }
   \item{parallel}{
-  logical value. If \code{parallel=TRUE}, the bootstrap is distributed to multiple cores parallely. Requires a computing cluster to be initialised by \code{\link[snowfall:sfInit]{sfInit}} from package \code{snowfall}. 
+  logical value. If \code{parallel=TRUE}, the bootstrap is distributed to multiple cores parallely. Requires a computing cluster to be initialised and registered as the default cluster by \code{\link[parallel:makeCluster]{makeCluster}} and \code{\link[parallel:setDefaultCluster]{setDefaultCluster}} from package \code{parallel}.
 }
   \item{est_interv}{
   logical value. If \code{est_interv=TRUE} a fit for the model with the intervention effect with the largest test statistic is computed and additionally returned.
@@ -114,9 +114,17 @@ campy_fit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
 campy_intervdetect <- interv_detect(fit=campy_fit, taus=80:120, delta=1)
 campy_intervdetect
 plot(campy_intervdetect)
-#Additionally computing a p-value with the bootstrap procedure would take about
-#20 minutes in this example on a single processing unit, of course depending on
-#its speed.
+#Additionally computing a p-value with the bootstrap procedure based on 500
+#replications would take about 20 minutes in this example on a single
+#processing unit, of course depending on its speed.
+
+\dontrun{
+#Parallel computation for shorter run time on a cluster:
+library(parallel)
+ntasks <- 3
+clust <- makeCluster(ntasks)
+setDefaultCluster(cl=clust)
+interv_detect(fit=campy_fit, taus=80:120, delta=1, B=500, parallel=TRUE)}
 }
 
 \keyword{Intervention detection}

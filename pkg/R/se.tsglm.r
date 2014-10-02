@@ -19,18 +19,8 @@ se.tsglm <- function(object, B, parallel=FALSE, ...){
     }
     seeds <- sample(1e+9, size=B)
     if(parallel){
-      cluster_running <- try(sfIsRunning(), silent=TRUE)
-      snowfall_loaded <- !class(cluster_running)=="try-error"
-      if(snowfall_loaded){
-        if(cluster_running){
-          sfExport("simfit")
-          Sapply <- sfSapply
-        }else{
-          stop("No cluster initialised; initialise cluster with function 'sfInit' or set argument 'parallel=FALSE'")
-        }
-      }else{   
-        stop("Package 'snowfall' not loaded; load package with 'library(snowfall)' and initialise cluster with function 'sfInit' or set argument 'parallel=FALSE'")
-      }
+      library(parallel)
+      Sapply <- function(X, FUN, ...) parSapply(cl=NULL, X=X, FUN=FUN, ...)
     }else{
       Sapply <- sapply
     }

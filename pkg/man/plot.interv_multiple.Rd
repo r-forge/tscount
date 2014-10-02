@@ -18,7 +18,7 @@ an object of class \code{"interv_multiple"}, usually a result of a call to \code
 }
 }
 \details{
-The vertical red lines indicate where possible interventions were found and the dotted line is the time series cleaned from all detected intervention effects.
+The vertical red lines indicate where possible interventions were found and the dashed blue line is the time series cleaned from all detected intervention effects.
 }
 \author{
 Tobias Liboschik and Philipp Probst
