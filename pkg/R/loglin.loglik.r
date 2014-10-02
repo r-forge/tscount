@@ -18,7 +18,7 @@ loglin.loglik <- function(paramvec, model, ts, xreg, score=FALSE, info=c("none",
   }
   derivatives <- if(!score) "none" else "first"
   parameternames <- tsglm.parameternames(model=model, xreg=xreg)
-  startfrom <- ifelse(init.drop, p_max, 0) #first time point which is considered for the final result
+  startfrom <- ifelse(init.drop, p_max+1, 1) #first time point which is considered for the final result
   n_effective <- ifelse(init.drop, n-p_max, n) #effective number of observations considered for the final result
   ##############
   

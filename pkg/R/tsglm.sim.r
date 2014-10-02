@@ -29,9 +29,9 @@ tsglm.sim <- function(n, param=list(intercept=1, past_obs=NULL, past_mean=NULL, 
     link <- fit$link
   }else{
     if(missing(n)) stop("Argument 'n' is missing. Either provide this argument or an argument 'fit' with the result of a previous model fit")
-    if(missing(param)) stop("Argument 'param' is missing. Either provide this argument or an argument 'fit' with the result of a previous model fit")
-    if(missing(model)) stop("Argument 'model' is missing. Either provide this argument or an argument 'fit' with the result of a previous model fit")
-    if(missing(xreg)) stop("Argument 'xreg' is missing. Either provide this argument or an argument 'fit' with the result of a previous model fit")
+    #if(missing(param)) stop("Argument 'param' is missing. Either provide this argument or an argument 'fit' with the result of a previous model fit")
+    #if(missing(model)) stop("Argument 'model' is missing. Either provide this argument or an argument 'fit' with the result of a previous model fit")
+    #if(missing(xreg)) stop("Argument 'xreg' is missing. Either provide this argument or an argument 'fit' with the result of a previous model fit")
   }
   
   #Check and modify arguments:
