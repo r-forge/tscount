@@ -1,4 +1,5 @@
 predict.tsglm <- function(object, n.ahead=1, newobs=NULL, newxreg=NULL, level=0.95, B, ...){
+  if(!is.null(newobs) && !missing(B)) warning("Prediction intervals are not yet available for a repeated 1-step-ahead prediction which makes use of new observations. It is currently not recommended to use the argument 'newobs' when prediction intervals are computed.")
   tsglm.check(object)
   #Link and related functions:
   if(object$link=="identity"){
@@ -33,7 +34,7 @@ predict.tsglm <- function(object, n.ahead=1, newobs=NULL, newxreg=NULL, level=0.
     if(is.na(ts[t])) ts[t] <- g_inv(kappa[t]) #unobserved future observations are replaced by their prediction (by the conditional mean)
   }
   if(is.ts(object$ts)){
-    pred <- window(g_inv(kappa), start=end(object$ts)[1]+1/frequency(object$ts)) #use time series class if input time series has this class
+    pred <- window(g_inv(kappa), start=tsp(object$ts)[2]+1/frequency(object$ts)) #use time series class if input time series has this class
   }else{
     pred <- g_inv(kappa)[n+(1:n.ahead)]
   }

@@ -11,7 +11,6 @@ tsglm.parameternames <- function(model, xreg){
     if(r>0){paste("eta", R, sep="_")}else{NULL} #parameters for covariates
   )
   #Use names provided with the covariates when available:
-  if(!is.null(dimnames(xreg)[[2]])) parameternames[1+p+q+R] <- dimnames(xreg)[[2]]
+  if(!is.null(dimnames(xreg)[[2]])) parameternames[1+p+q+R] <- ifelse(dimnames(xreg)[[2]]!="", dimnames(xreg)[[2]], parameternames[1+p+q+R])   
  return(parameternames)
 }
-        
