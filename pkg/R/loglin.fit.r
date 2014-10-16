@@ -89,8 +89,8 @@ loglin.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, external=NU
     grad <- function(paramvec, model, xreg) loglin.loglik(paramvec=paramvec, model=model, ts=ts, xreg=xreg, score=TRUE, info="none", init.method=init.method, init.drop=init.drop)$score
     optimisation <- function(starting_value, model, xreg, arguments){  
       if(!is.null(arguments$constrained)){
-        ui <- -cbind(rep(0,2^(p+q)), as.matrix(expand.grid(lapply(c(P,Q), function(x) c(-1,+1)))), matrix(0, ncol=r, nrow=2^(p+q)))
-        ci <- rep(-1+slackvar, 2^(p+q)) 
+        ui <- -cbind(rep(0, 2*(p+q)+2), rbind(+diag(p+q), -diag(p+q), rep(+1, p+q), rep(-1, p+q)), matrix(0, ncol=r, nrow=2*(p+q)+2))
+        ci <- rep(-1+slackvar, 2*(p+q)+2) 
         optim_result <- do.call(constrOptim, args=c(list(theta=starting_value, f=f, grad=grad, ui=ui, ci=ci, method=arguments$optim.method, control=c(list(fnscale=-1), arguments$optim.control), model=model, xreg=xreg), arguments$constrained))
       }else{
         optim_result <- optim(par=starting_value, fn=f, gr=grad, model=model, xreg=xreg, method=arguments$optim.method, control=c(list(fnscale=-1), arguments$optim.control))
