@@ -58,17 +58,21 @@ loglin.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, external=NU
   ##############
   #Initial estimation:
   begin_start <- proc.time()["elapsed"]
-  param_start <- do.call(start.fit, args=list(allobj=mget(ls()), linkfunc="log"))
+  param_start <- start.fit(ts=ts, model=model, xreg=xreg, start.control=start.control, linkfunc="log")
+  
   # # # # # # #
-  #Transformation to a stationary solution of a autoregressive log-linear process process:
-  total <- sum(abs(param_start$past_obs))+sum(abs(param_start$past_mean))
-  if(total > 1-epsilon-slackvar){ #Shrink the parameters to fulfill the stationarity condition if necessary:
-    shrinkage_factor <- (1-slackvar-epsilon)/total #chosen, such that total_new = 1-slackvar-epsilon for total_new the sum of the alpha's and beta's after shrinkage
+  #Transformation to a stationary solution of an autoregressive log-linear process process:
+  param_start$past_obs <- sign(param_start$past_obs)*pmin(abs(param_start$past_obs), rep(1-slackvar-epsilon, p)) #beta_i in[-1+slackvar+epsilon, 1-slackvar-epsilon]
+  param_start$past_mean <- sign(param_start$past_mean)*pmin(abs(param_start$past_mean), rep(1-slackvar-epsilon, q)) #alpha_i in [-1+slackvar+epsilon, 1-slackvar-epsilon]
+  total <- sum(param_start$past_obs)+sum(param_start$past_mean)
+  if(abs(total) > 1-epsilon-slackvar){ #Shrink the parameters to fulfill the stationarity condition if necessary:
+    shrinkage_factor <- (1-slackvar-epsilon)/abs(total) #chosen, such that total_new = 1-slackvar-epsilon for total_new the sum of the alpha's and beta's after shrinkage
     param_start$past_mean <- param_start$past_mean*shrinkage_factor
     param_start$past_obs <- param_start$past_obs*shrinkage_factor
-#########correct the start estimation of the intercept for this possible shrinkage?
+    ##the start estimation of the intercept is not corrected such that the resulting model has the same marginal mean as before the correction step, as it is done for the INGARCH model
   }
   # # # # # # #
+  
   paramvec_start <- unlist(param_start)
   names(paramvec_start) <- parameternames
   # # # # # # #

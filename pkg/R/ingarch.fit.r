@@ -60,19 +60,19 @@ ingarch.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, external=N
   ##############
   #Initial estimation:
   begin_start <- proc.time()["elapsed"]
-  param_start <- do.call(start.fit, args=list(allobj=mget(ls()), linkfunc="identity"))
+  param_start <- start.fit(ts=ts, model=model, xreg=xreg, start.control=start.control, linkfunc="identity")
 
   # # # # # # #
   #Transformation to a stationary solution of an INGARCH process:
   marginalmean <- param_start$intercept/(1-sum(param_start$past_obs)-sum(param_start$past_mean))
-  param_start$past_mean <- pmax(param_start$past_mean, rep(epsilon, q)) #alpha_i in [0+epsilon,Inf)
   param_start$past_obs <- pmax(param_start$past_obs, rep(epsilon, p)) #beta_i in [0+epsilon,Inf)
+  param_start$past_mean <- pmax(param_start$past_mean, rep(epsilon, q)) #alpha_i in [0+epsilon,Inf)
   total <- sum(param_start$past_obs)+sum(param_start$past_mean)
   if(total > 1-epsilon-slackvar){ #Shrink the parameters to fulfill the stationarity condition if necessary:
     shrinkage_factor <- (1-slackvar-epsilon)/total #chosen, such that total_new = 1-slackvar-epsilon for total_new the sum of the alpha's and beta's after shrinkage
     param_start$past_mean <- param_start$past_mean*shrinkage_factor
     param_start$past_obs <- param_start$past_obs*shrinkage_factor
-    #Note: This way former negative values, which have been set to epsilon before, become lower than epsilon!
+    #Note: This way former negative values, which have been set to epsilon before, become lower than epsilon. However, this will probably happen rarely (if at all) in practice.
   }
   if(start.control$method %in% c("MM", "CSS", "ML", "CSS-ML", "GLM")) param_start$intercept <- marginalmean*(1-sum(param_start$past_obs)-sum(param_start$past_mean)) #replaces the previous value of the intercept by one which results, together with the corrected dependence parameters, to the same marginal mean as before the correction step
   param_start$intercept <- max(param_start$intercept, slackvar+epsilon)
