@@ -45,8 +45,9 @@ start.fit <- function(ts, model, xreg, start.control, linkfunc){
     param_start$xreg <- rep(0, r)
   }
   if(start.control$method == "GLM"){
-    delayed_ts <- function(x, timser) c(rep(0,x), timser[(x:length(timser))-x])
-    dataset <- data.frame(timser=ts_start, trafo(sapply(model$past_obs, delayed_ts, timser=ts_start)), xreg[start_use,])
+    max_delay <- max(model$past_obs, 0)
+    delayed_ts <- function(del, timser=ts_start, max_del=max_delay) c(timser[((1+max_del):length(timser))-del])
+    dataset <- data.frame(timser=delayed_ts(del=0), trafo(sapply(model$past_obs, delayed_ts)), if(r>0){apply(xreg[start_use, , drop=FALSE], 2, delayed_ts, del=0)}else{matrix(nrow=length(start_use)-max_delay, ncol=0)})
     startingvalues <- c(trafo(mean(ts_start)), rep(0, ncol(dataset)-1))
     glm_fit <- suppressWarnings(glm(timser ~ ., family=poisson(link=linkfunc), data=dataset, start=startingvalues)$coefficients)
     param_start$intercept <- intercept <- glm_fit[1]

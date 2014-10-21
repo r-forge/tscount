@@ -30,7 +30,7 @@ predict.tsglm <- function(object, n.ahead=1, newobs=NULL, newxreg=NULL, level=0.
   kappa <- c(object$linear.predictors, rep(NA, n.ahead))
   if(is.ts(object$ts)) kappa <- ts(kappa, start=start(object$ts), frequency=frequency(object$ts))
   for(t in n+(1:n.ahead)){
-    kappa[t] <- sum(coef(object)*c(1, trafo(ts[t-model$past_obs]), kappa[t-model$past_mean]-if(r>0){(as.numeric(model$external)*coef(object)[1+p+q+R])%*%t(xreg[t-model$past_mean,])}else{0}, xreg[t,])) 
+    kappa[t] <- sum(coef(object)*c(1, trafo(ts[t-model$past_obs]), kappa[t-model$past_mean]-if(r>0){sum((as.numeric(model$external)*coef(object)[1+p+q+R])*t(xreg[t-model$past_mean,]))}else{0}, xreg[t,])) 
     if(is.na(ts[t])) ts[t] <- g_inv(kappa[t]) #unobserved future observations are replaced by their prediction (by the conditional mean)
   }
   if(is.ts(object$ts)){
