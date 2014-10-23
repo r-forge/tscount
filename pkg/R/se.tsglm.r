@@ -25,7 +25,7 @@ se.tsglm <- function(object, B, parallel=FALSE, ...){
       Sapply <- sapply
     }
     bootstrap_coefs <- Sapply(seeds, simfit, fit=object, ..., simplify=TRUE)
-    if(object$distr=="nbinom" && anyNA(bootstrap_coefs["size",])) warning(paste("The parameter 'size' of the negative binomial distribution could not be estimated in", sum(is.na(bootstrap_coefs["size",])), "of the", B, "replications. These replications are ignored for computation of the standard deviation of this parameter. It is likely that this results in an underestimation of the true variability."))
+    if(object$distr=="nbinom" && anyNA(bootstrap_coefs["size",])) warning(paste("The parameter 'size' of the negative binomial distribution could\nnot be estimated in", sum(is.na(bootstrap_coefs["size",])), "of the", B, "replications. These replications\nare ignored for computation of the standard deviation of this\nparameter. It is likely that this results in an underestimation\nof the true variability."))
     stderrors <- apply(bootstrap_coefs, 1, sd, na.rm=TRUE)
     result <- list(est=est, se=stderrors, type="bootstrap", B=B)
   }

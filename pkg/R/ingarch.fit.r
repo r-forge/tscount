@@ -36,7 +36,7 @@ ingarch.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, external=N
   q_max <- max(model$past_mean, 0)
   r <- ncol(xreg)
   R <- seq(along=numeric(r)) #sequence 1:r if r>0 and NULL otherwise
-  if(p==0 & q>0) warning("Without dependence on past observations the dependence on past values of the linear predictor has no effect. Choose the model wisely.")
+  if(p==0 & q>0) warning("Without dependence on past observations the dependence on past values of the\nlinear predictor has no effect. Choose the model wisely.")
   parameternames <- tsglm.parameternames(model=model, xreg=xreg)
   #start_default <- list(method="CSS", use=Inf, optim.method="BFGS", optim.control=list(maxit=25))
   start_default <- list(method="iid", use=Inf)
@@ -118,9 +118,9 @@ ingarch.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, external=N
   }
   paramvec_inter <- as.numeric(inter_optim$par)
   paramvec_final <- as.numeric(final_optim$par)
-  if(p+q+r>0 && all(abs((paramvec_final-paramvec_start)/paramvec_final) < 0.01)) warning("Final estimation is still very close to start estimation. This might indicate a problem with the optimisation but could also have happended by chance. Please check results carefully.")
-  if(p+q>0 && mean(paramvec_final[c(1+P,1+p+Q)]) < 1e-04) warning("There is almost no serial dependence estimated in the data. This might be appropriate but could just as likely indicate a problem with the optimisation. Please check results carefully.")
-  if(paramvec_final[1] < 0.1) warning("Estimated intercept is very small (< 0.1). This might indicate a problem with the optimisation unless the observed marginal mean is very low or the observed serial dependence is very strong. Please check results carefully.")
+  if(p+q+r>0 && all(abs((paramvec_final-paramvec_start)/paramvec_final) < 0.01)) warning("Final estimation is still very close to start estimation. This might indicate a\nproblem with the optimisation but could also have happended by chance. Please\ncheck results carefully.")
+  if(p+q>0 && mean(paramvec_final[c(1+P,1+p+Q)]) < 1e-04) warning("There is almost no serial dependence estimated in the data. This might be\nappropriate but could just as likely indicate a problem with the optimisation. Please check\nresults carefully.")
+  if(paramvec_final[1] < 0.1) warning("Estimated intercept is very small (< 0.1). This might indicate a problem with\nthe optimisation unless the observed marginal mean is very low or the observed\nserial dependence is very strong. Please check results carefully.")
   ##############  
   
   ##############

@@ -10,7 +10,7 @@ plot.tsglm <- function(x, ask=TRUE, ...){
     title(main="Cumulative periodogram of Pearson residuals", xlab="Frequency")
     par(ann=TRUE)
   }else{
-    warning("The plot of the cumulative periodogram of the residuals is omitted, because it depends on the package 'MASS', which is not installed.")
+    warning("The plot of the cumulative periodogram of the residuals is omitted, because it\ndepends on the package 'MASS', which is not installed.")
   }
   pit(x)
   marcal(x)

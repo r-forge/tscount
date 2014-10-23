@@ -10,7 +10,7 @@ start.fit <- function(ts, model, xreg, start.control, linkfunc){
   q_max <- max(model$past_mean, 0)
   r <- ncol(xreg)
   R <- seq(along=numeric(r)) #sequence 1:r if r>0 and NULL otherwise
-  if(!(start.control$method %in% c("fixed", "iid", "GLM", "MM", "CSS", "ML", "CSS-ML"))) stop("Argument 'start.control$method' needs to be one of 'fixed', 'iid', 'GLM', 'MM', 'CSS', 'ML' or 'CSS-ML'.")
+  if(!(start.control$method %in% c("fixed", "iid", "GLM", "MM", "CSS", "ML", "CSS-ML"))) stop("Argument 'start.control$method' needs to be one of 'fixed', 'iid', 'GLM', 'MM',\n'CSS', 'ML' or 'CSS-ML'.")
   
   if(linkfunc=="identity") trafo <- function(x) x
   if(linkfunc=="log") trafo <- function(x) if(!is.null(x)) log(x+1) else NULL  
@@ -27,12 +27,12 @@ start.fit <- function(ts, model, xreg, start.control, linkfunc){
         if(length(start.control$use)<1 | length(start.control$use)>2) stop("Argument 'start.control$use' must be of length 1 or 2")
         if(length(start.control$use)==1){
           if(start.control$use==Inf) start.control$use <- n
-          if(start.control$use<p+q+1) stop(paste("Too few observations for start estimation, argument 'start.control$use' must be greater than p+q+1=", p+q+1, sep=""))
+          if(start.control$use<p+q+1) stop(paste("Too few observations for start estimation, argument 'start.control$use' must be\ngreater than p+q+1=", p+q+1, sep=""))
           if(start.control$use>n){ start.control$use <- n; warning(paste("Argument 'start.control$use' is out of range and set to the largest possible value n=", n, sep="")) }
           start_use <- 1:start.control$use
         }else{
-          if(start.control$use[2]-start.control$use[1]<=p+q+1) stop(paste("Too few observations for start estimation, for argument 'start.control$use' the difference start.control$use[2]-start.control$use[1] must be greater than p+q+1=", p+q+1, sep=""))
-          if(start.control$use[2]>n | start.control$use[1]<1) stop(paste("Argument 'start.control$use' is out of range, start.control$use[1] must be greater than 1 and start.control$use[2] lower than n=", n, sep=""))
+          if(start.control$use[2]-start.control$use[1]<=p+q+1) stop(paste("Too few observations for start estimation, for argument 'start.control$use' the\ndifference start.control$use[2]-start.control$use[1] must be greater than p+q+1=", p+q+1, sep=""))
+          if(start.control$use[2]>n | start.control$use[1]<1) stop(paste("Argument 'start.control$use' is out of range, start.control$use[1] must be\ngreater than 1 and start.control$use[2] lower than n=", n, sep=""))
           start_use <- start.control$use[1]:start.control$use[2]
         }
     ts_start <- ts[start_use]

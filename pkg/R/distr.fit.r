@@ -13,7 +13,7 @@ distr.fit <- function(object, distr){
     root <- try(uniroot(f=find_root, interval=c(0, 1e100)), silent=TRUE)  
     if(class(root)=="try-error"){
       size <- NA
-      warning("The parameter of the negative binomial distribution cannot be estimated. Try a Poisson distribution with argument distr='poisson' instead")
+      warning("The parameter of the negative binomial distribution cannot be estimated.\nTry a Poisson distribution with argument 'distr' set to \"poisson\" instead")
     }else{
       size <- root$root 
     }

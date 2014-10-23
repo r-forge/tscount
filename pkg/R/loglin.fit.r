@@ -36,7 +36,7 @@ loglin.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, external=NU
   q_max <- max(model$past_mean, 0)
   r <- ncol(xreg)
   R <- seq(along=numeric(r)) #sequence 1:r if r>0 and NULL otherwise
-  if(p==0 & q>0) warning("Without dependence on past observations the dependence on past values of the linear predictor has no effect. Choose the model wisely.")
+  if(p==0 & q>0) warning("Without dependence on past observations the dependence on past values of the\nlinear predictor has no effect. Choose the model wisely.")
   parameternames <- tsglm.parameternames(model=model, xreg=xreg)
   start_default <- list(method="iid", use=Inf)
   if(!all(names(start.control)%in%c(names(start_default), "intercept", "past_obs", "past_mean", "xreg"))) stop("There are unknown list elements in argument 'start.control'")
@@ -111,9 +111,9 @@ loglin.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, external=NU
   }
   paramvec_inter <- as.numeric(inter_optim$par)
   paramvec_final <- as.numeric(final_optim$par)
-  if(p+q+r>0 && all(abs((paramvec_final-paramvec_start)/paramvec_final) < 0.01)) warning("Final estimation is still very close to start estimation. This might indicate a problem with the optimisation but could also have happended by chance. Please check results carefully.")
-  if(p+q>0 && mean(abs(paramvec_final[c(1+P,1+p+Q)])) < 1e-04) warning("There is almost no serial dependence estimated in the data. This might be appropriate but could just as likely indicate a problem with the optimisation. Please check results carefully.")
-  if(abs(paramvec_final[1]) < 0.01) warning("Estimated absolute intercept is very small (< 0.01). This might indicate a problem with the optimisation unless the observed marginal mean is very low or the observed serial dependence is very strong. Please check results carefully.")
+  if(p+q+r>0 && all(abs((paramvec_final-paramvec_start)/paramvec_final) < 0.01)) warning("Final estimation is still very close to start estimation. This might indicate a\nproblem with the optimisation but could also have happended by chance. Please\ncheck results carefully.")
+  if(p+q>0 && mean(abs(paramvec_final[c(1+P,1+p+Q)])) < 1e-04) warning("There is almost no serial dependence estimated in the data. This might be\nappropriate but could just as likely indicate a problem with the optimisation.\nPlease check results carefully.")
+  if(abs(paramvec_final[1]) < 0.01) warning("Estimated absolute intercept is very small (< 0.01). This might indicate a\nproblem with the optimisation unless the observed marginal mean is very low or\nthe observed serial dependence is very strong. Please check results carefully.")
   ##############  
   
   ##############

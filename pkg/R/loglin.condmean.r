@@ -69,7 +69,7 @@ loglin.condmean <- function(paramvec, model, ts, xreg, derivatives=c("none", "fi
     if(init.method == "firstobs"){ #initialisation by the first observation:
       firstobs <- ts[1]
       kappa <- c(rep(log(firstobs+1), q_max), numeric(n))  
-      z <- c(rep(round(firstobs), p_max), ts)
+      z <- c(rep(firstobs, p_max), ts)
       if(derivatives %in% c("first", "second")){
         partial_kappa <- matrix(0, nrow=n+q_max, ncol=1+p+q+r)
 #        if(derivatives == "second"){
@@ -77,7 +77,7 @@ loglin.condmean <- function(paramvec, model, ts, xreg, derivatives=c("none", "fi
 #        }
       }      
     }
-    if(init.method == "zero"){ #initialisation under iid assumption:
+    if(init.method == "zero"){ #initialisation by zero
       kappa <- c(rep(0, q_max), numeric(n))  
       z <- c(rep(0, p_max), ts)
       if(derivatives %in% c("first", "second")){

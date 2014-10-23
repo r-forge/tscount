@@ -1,5 +1,5 @@
 predict.tsglm <- function(object, n.ahead=1, newobs=NULL, newxreg=NULL, level=0.95, B, ...){
-  if(!is.null(newobs) && !missing(B)) warning("Prediction intervals are not yet available for a repeated 1-step-ahead prediction which makes use of new observations. It is currently not recommended to use the argument 'newobs' when prediction intervals are computed.")
+  if(!is.null(newobs) && !missing(B)) warning("Prediction intervals are not yet available for a repeated 1-step-ahead\nprediction which makes use of new observations. It is currently not recommended\nto use the argument 'newobs' when prediction intervals are computed.")
   tsglm.check(object)
   #Link and related functions:
   if(object$link=="identity"){

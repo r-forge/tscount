@@ -14,7 +14,7 @@ ingarch.loglik <- function(paramvec, model, ts, xreg, score=FALSE, info=c("none"
   info <- match.arg(info)
   if(!score & info!="none"){
     score <- TRUE
-    warning("Information matrix cannot be calculated without score vector. Argument score is set to TRUE.")
+    warning("Information matrix cannot be calculated without score vector. Argument 'score'\nis set to TRUE.")
   }
   derivatives <- if(!score) "none" else if(info %in% c("hessian", "sandwich")) "second" else "first"
   parameternames <- tsglm.parameternames(model=model, xreg=xreg)

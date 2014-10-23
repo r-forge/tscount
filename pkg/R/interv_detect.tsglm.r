@@ -99,7 +99,7 @@ interv_detect.tsglm <- function(fit, taus=2:length(ts), delta, external=FALSE, B
       B_left <- B - length(bootstrap_test_statistics)
       bootstrap_errors <- c(bootstrap_errors, unlist(output.bootstrap[index_errors]))
     }
-    if(length(bootstrap_errors)>0) warning(paste("For", length(bootstrap_errors), "bootstrapped time series no test statistic could be computed and new time series was drawn, see error messages in list element '$bootstrap_errors'"))   
+    if(length(bootstrap_errors)>0) warning(paste("For", length(bootstrap_errors), "bootstrapped time series no test statistic could be computed\nand new time series was drawn, see error messages in list\nelement '$bootstrap_errors'"))   
     p_value <- sum(bootstrap_test_statistics > result$test_statistic)/(B+1)
     result <- c(result, list(
       p_value=p_value,
