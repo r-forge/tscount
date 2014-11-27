@@ -48,6 +48,7 @@ interv_detect.tsglm <- function(fit, taus=2:length(ts), delta, external=FALSE, B
     test_statistic <- test_statistic_tau[index_tau_max]
     covariate <- interv_covariate(n=n, tau=tau_max, delta=delta)
     xreg_extended <- cbind(xreg, covariate) #add intervention with maximum test statistic to the model
+    colnames(xreg_extended) <- c(colnames(xreg), colnames(covariate)) 
     result <- list(
       test_statistic=test_statistic,
       test_statistic_tau=test_statistic_tau,

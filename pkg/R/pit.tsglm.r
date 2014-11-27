@@ -3,7 +3,7 @@ pit <- function(object, ...) UseMethod("pit")
 pit.tsglm <- function(object, bins=10, ...){
   #Cumulative distribution function of the conditional distribution (cf. marcal.tsglm):
   if(object$distr=="poisson") pdistr <- function(q, meanvalue, distrcoefs) ppois(q, lambda=meanvalue)
-  if(object$distr=="nbinom") pdistr <- function(q, meanvalue, distrcoefs) pnbinom(q, mu=meanvalue, size=distrcoefs)
+  if(object$distr=="nbinom") pdistr <- function(q, meanvalue, distrcoefs) pnbinom(q, mu=meanvalue, size=distrcoefs[["size"]])
   n <- object$n_obs
   u <- seq(0, 1, length=bins+1)
   pit <- numeric(length(u))

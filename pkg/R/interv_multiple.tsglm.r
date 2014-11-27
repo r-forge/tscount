@@ -72,8 +72,10 @@ interv_multiple.tsglm <- function(fit, taus=2:length(ts), deltas=c(0,0.8,1), ext
   #Fit the model with all interventions which have been found by the procedure (joint estimation of all parameters):
   result$model_interv <- model
   result$xreg_interv <- xreg
-  if(nrow(result$interventions) > 0){    
-    result$xreg_interv <- cbind(xreg, interv_covariate(n=n, tau=result$interventions$tau, delta=result$interventions$delta))
+  if(nrow(result$interventions) > 0){
+    covariate <- interv_covariate(n=n, tau=result$interventions$tau, delta=result$interventions$delta)    
+    result$xreg_interv <- cbind(xreg, covariate)
+    colnames(result$xreg_interv) <- c(colnames(xreg), colnames(covariate)) 
     result$model_interv$external <- c(model$external, rep(external, nrow(result$interventions)))
     ts <- result$fit_H0$ts #object ts has been replaced by a cleaned time series before and is now set to the original time series
     result$fit_interv <- try(tsglm(ts=ts, model=result$model_interv, xreg=result$xreg_interv, link=fit$link, distr=fit$distr, ...))

@@ -34,21 +34,32 @@ predict.tsglm <- function(object, n.ahead=1, newobs=NULL, newxreg=NULL, level=0.
     if(is.na(ts[t])) ts[t] <- g_inv(kappa[t]) #unobserved future observations are replaced by their prediction (by the conditional mean)
   }
   if(is.ts(object$ts)){
-    pred <- window(g_inv(kappa), start=tsp(object$ts)[2]+1/frequency(object$ts)) #use time series class if input time series has this class
+    fit <- window(g_inv(kappa), start=tsp(object$ts)[2]+1/frequency(object$ts)) #use time series class if input time series has this class
   }else{
-    pred <- g_inv(kappa)[n+(1:n.ahead)]
+    fit <- g_inv(kappa)[n+(1:n.ahead)]
   }
-  result <- list(pred=pred)
+  result <- list(fit=fit)
 
   #Prediction intervals:
   if(!missing(B)){
-    futureobs <- t(replicate(B, tsglm.sim(n=n.ahead, xreg=xreg[-(1:n), , drop=FALSE], fit=object, n_start=0)$ts))
-    predint <- apply(futureobs, 2, quantile, probs=c((1-level)/2, 1-(1-level)/2))
-    rownames(predint) <- c("lower", "upper")
-    if(is.ts(object$ts)){
-      predint <- ts(t(predint), start=tsp(object$ts)[2]+1/frequency(object$ts), frequency=frequency(object$ts)) #use time series class if input time series has this class
+    futureobs <- replicate(B, tsglm.sim(n=n.ahead, xreg=xreg[-(1:n), , drop=FALSE], fit=object, n_start=0)$ts)
+    pred_median <- apply(futureobs, 1, median)    
+    largestdensityinterval <- function(x, level){ #find shortest interval with given probability 
+      probs <- tabulate(x+1)/length(x)
+      ord <- order(probs, decreasing=TRUE)
+      result <- range((seq(along=probs)-1)[ord][1:which(cumsum(probs[ord])>=level)[1]])
+      return(result)
     }
-    result <- c(result, list(interval=predint, type="bootstrap", B=B)) 
+    predint_shortest <- t(apply(futureobs, 1, largestdensityinterval, level=level))
+    a <- (1-level)/2
+    predint_quantiles <- t(apply(futureobs, 1, quantile, probs=c(a, 1-a), type=8))
+    colnames(predint_shortest) <- colnames(predint_quantiles) <- c("lower", "upper")
+    if(is.ts(object$ts)){ #use time series class if input time series has this class
+      pred_median <- ts(pred_median, start=tsp(object$ts)[2]+1/frequency(object$ts), frequency=frequency(object$ts)) 
+      predint_shortest <- ts(predint_shortest, start=tsp(object$ts)[2]+1/frequency(object$ts), frequency=frequency(object$ts))
+      predint_quantiles <- ts(predint_quantiles, start=tsp(object$ts)[2]+1/frequency(object$ts), frequency=frequency(object$ts))  
+    }
+    result <- c(result, list(median=pred_median, interval_shortest=predint_shortest, interval_quantiles=predint_quantiles, type="bootstrap", B=B)) 
   }
   return(result)
 }

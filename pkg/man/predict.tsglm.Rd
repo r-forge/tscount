@@ -42,11 +42,15 @@ A list with the following element:
 
   \item{pred}{a numeric vector of the predictions. Has class \code{"ts"} if the response used for fitting has this class.}
 
-If prediction intervals are computed, the list has the additional elements:
+If the predictive distribution is approximated by simulation (i.e. argument \code{B} specifying the number of simulated trajectories of the process is provided), the list has the additional elements:
 
-  \item{interval}{a matrix with the rows \code{"lower"} and \code{"upper"} giving the lower and upper boundary of the computed prediction interval. Has class \code{"ts"} if the response used for fitting has this class.}
+  \item{median}{a vector giving the empirical median of the simulated predictive distribution for each of the future time points. Has class \code{"ts"} if the response used for fitting has this class.}
 
-  \item{type}{a character value saying which method was used for computing the prediction intervals.}
+  \item{interval_shortest}{a matrix with the columns \code{"lower"} and \code{"upper"} giving the lower and upper boundaries of prediction intervals for the future time points, each with an intended coverage rate as given in argument \code{level}. The prediction intervals are obtained from the simulated predictive distribution such that they have minimal length. Has class \code{"ts"} if the response used for fitting has this class.}
+  
+  \item{interval_quantiles}{like \code{interval_shortest}, but the prediction intervals are given by the empirical \code{a}- and (1-\code{a})-quantiles of the simulated predictive distribution, with \code{a}=(1-\code{level})/2.}
+
+  \item{type}{a character value saying which method was used for computing the prediction intervals. Currently this is always the method \code{"bootstrap"}.}
 
   \item{B}{an integer value giving the number of bootstrap samples which were used for computing prediction intervals.}
 }
