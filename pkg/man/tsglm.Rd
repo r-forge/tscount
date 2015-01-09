@@ -197,7 +197,7 @@ An object of class \code{"tsglm"}, which is a list with at least the following e
   
   \item{distrcoefs}{a named vector of the estimated additional coefficients specifying the conditional distribution. Is \code{NULL} in case of a Poisson distribution.}
   
-  \item{sigmasq}{the estimated variance coefficient. Is zero in case of a Poisson distribution.}
+  \item{sigmasq}{the estimated overdispersion coefficient. Is zero in case of a Poisson distribution.}
 
 The functions \code{ingarch.fit} and \code{loglin.fit} have the same output except the elements \code{distr}, \code{distrcoefs} and \code{sigmasq}. In addition, they return the following list elements:
 

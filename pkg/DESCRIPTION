@@ -1,12 +1,12 @@
 Package: tscount
 Type: Package
 Title: Analysis of count time series
-Version: 0.4.2
+Version: 0.4.3
 Date: 2014-10-02
 Authors@R: c(
   person("Tobias", "Liboschik", role=c("aut", "cre"), email="liboschik@statistik.tu-dortmund.de"),
-  person("Roland", "Fried", role=c("ctb"), email="fried@statistik.tu-dortmund.de"),
-  person("Konstantinos", "Fokianos", role=c("ctb"), email="fokianos@ucy.ac.cy"),
+  person("Roland", "Fried", role=c("aut"), email="fried@statistik.tu-dortmund.de"),
+  person("Konstantinos", "Fokianos", role=c("aut"), email="fokianos@ucy.ac.cy"),
   person("Pascal", "Kerschke", role=c("ctb"), email="kerschke@uni-muenster.de"),
   person("Philipp", "Probst", role=c("aut"), email="philipp.probst@tu-dortmund.de"),
   person("Jonathan", "Rathjens", role=c("ctb"), email="jonathan.rathjens@tu-dortmund.de"))

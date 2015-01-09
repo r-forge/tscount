@@ -2,11 +2,12 @@ se <- function(object, ...) UseMethod("se")
 
 se.tsglm <- function(object, B, parallel=FALSE, ...){
   tsglm.check(object)
-  est <- c(coef(object), object$distrcoefs)
+  sigmasq <- if(is.null(object$distrcoefs)) NULL else object$sigmasq
+  est <- c(coef(object), sigmasq=sigmasq)
   if(missing(B)){
     vcov <- vcov(object)
     var <- diag(vcov)
-    stderrors <- c(sqrt(var), rep(NA, length(object$distrcoefs)))
+    stderrors <- c(sqrt(var), sigmasq=NA)
     result <- list(est=est, se=stderrors, type="normapprox")
   }else{
     stopifnot(B>=2, B%%1==0)
@@ -14,7 +15,8 @@ se.tsglm <- function(object, B, parallel=FALSE, ...){
       set.seed(seed)
       ts_sim <- tsglm.sim(fit=fit)$ts
       fit_sim <- tsglm(ts=ts_sim, model=fit$model, xreg=fit$xreg, link=fit$link, distr=fit$distr, score=FALSE, info="none", ...)
-      result <- c(coef(fit_sim), fit_sim$distrcoefs)
+      sigmasq_sim <- if(is.null(fit_sim$distrcoefs)) NULL else fit_sim$sigmasq
+      result <- c(coef(fit_sim), sigmasq=sigmasq_sim)
       return(result)
     }
     seeds <- sample(1e+9, size=B)
@@ -25,7 +27,7 @@ se.tsglm <- function(object, B, parallel=FALSE, ...){
       Sapply <- sapply
     }
     bootstrap_coefs <- Sapply(seeds, simfit, fit=object, ..., simplify=TRUE)
-    if(object$distr=="nbinom" && anyNA(bootstrap_coefs["size",])) warning(paste("The parameter 'size' of the negative binomial distribution could\nnot be estimated in", sum(is.na(bootstrap_coefs["size",])), "of the", B, "replications. These replications\nare ignored for computation of the standard deviation of this\nparameter. It is likely that this results in an underestimation\nof the true variability."))
+    if(object$distr=="nbinom" && anyNA(bootstrap_coefs["sigmasq",])) warning(paste("The overdispersion coefficient 'sigmasq' could not be estimated in\n", sum(is.na(bootstrap_coefs["sigmasq",])), "of the", B, "replications. It is set to zero for this replications.\nThis might result in an overestimation of the true variability."))
     stderrors <- apply(bootstrap_coefs, 1, sd, na.rm=TRUE)
     result <- list(est=est, se=stderrors, type="bootstrap", B=B)
   }

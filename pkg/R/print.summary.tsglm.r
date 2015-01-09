@@ -9,7 +9,7 @@ print.summary.tsglm <- function(x, ...){
     }
     cat(
       "\nLink function:", x$link,
-      "\nDistribution family:", x$distr, if(x$distr=="nbinom"){"(with dispersion parameter 'size')"}else{NULL},
+      "\nDistribution family:", x$distr, if(x$distr=="nbinom"){"(with overdispersion coefficient 'sigmasq')"}else{NULL},
       "\nNumber of coefficients:", x$number.coef,
       "\nLog-likelihood:", x$logLik,
       "\nAIC:", x$AIC,

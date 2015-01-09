@@ -26,7 +26,7 @@ positive integer value giving the number of bootstrap samples to use for estimat
 }
 
 \details{
-By default the standard errors are based on a normal approximation of the (quasi) maximum likelihood estimator. They are the square roots of the diagonal elements of the inverse of the information matrix.
+By default the standard errors are based on a normal approximation of the (quasi) maximum likelihood estimator. They are the square roots of the diagonal elements of the inverse of the information matrix. There is no analytical approximation of the standard error for the overdispersion coefficient \code{sigmasq}, which is therefore set to \code{NA}.
 
 If the number of bootstrap samples \code{B} is given, the standard errors are computed by a parametric bootstrap. The standard errors are the empirical standard deviation of the parameter estimations of \code{B} random samples drawn from the fitted model given in argument \code{object}.
 }
