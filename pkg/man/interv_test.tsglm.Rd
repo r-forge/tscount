@@ -34,7 +34,7 @@ an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{t
   logical value. If \code{est_interv=TRUE} a fit for the model with all specified interventions is computed and additionally returned.
 }
   \item{...}{
-  additional arguments passed to be passed to the fitting function \code{\link{tsglm}}.
+  additional arguments passed to the fitting function \code{\link{tsglm}}.
 }
 }
  

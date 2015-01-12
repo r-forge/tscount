@@ -68,10 +68,10 @@ interv_detect.tsglm <- function(fit, taus=2:length(ts), delta, external=FALSE, B
   #Bootstrap to compute p-value:
   if(!is.null(B)){
     #Set arguments controlling the estimation in the bootstrap:
-    if(missing(start.control_bootstrap)) start.control_bootstrap <- if(hasArg(start.control)) start.control else list()
+    if(missing(start.control_bootstrap)) start.control_bootstrap <- list(...)[["start.control"]]
     bootstrap_noest <- !missing(final.control_bootstrap) && is.null(final.control_bootstrap) #if argument final.control_bootstrap is NULL, then the parameters are not re-estimated for each bootstrap sample but the true parameters used for simulation are used
-    if(missing(final.control_bootstrap) || is.null(final.control_bootstrap)) final.control_bootstrap <- if(hasArg(final.control)) final.control else list()        
-    if(missing(inter.control_bootstrap)) inter.control_bootstrap <- if(hasArg(final.control)) final.control else NULL    
+    if(missing(final.control_bootstrap) || is.null(final.control_bootstrap)) final.control_bootstrap <- list(...)[["final.control"]]      
+    if(missing(inter.control_bootstrap)) inter.control_bootstrap <- list(...)[["inter.control"]]
     if(parallel){
       library(parallel)
       Sapply <- function(X, FUN, ...) parSapply(cl=NULL, X=X, FUN=FUN, ..., simplify=FALSE) 

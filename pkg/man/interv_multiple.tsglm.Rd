@@ -48,7 +48,7 @@ an object of class \code{"tsglm"}. Usually the result of a call to \code{\link{t
   logical value. If \code{parallel=TRUE}, the bootstrap is distributed to multiple cores parallely. Requires a computing cluster to be initialised and registered as the default cluster by \code{\link[parallel:makeCluster]{makeCluster}} and \code{\link[parallel:setDefaultCluster]{setDefaultCluster}} from package \code{parallel}.
 }
   \item{...}{
-  additional arguments passed to be passed to the function for detection of single intervention effects \code{\link[=interv_detect.tsglm]{interv_detect}} and via this function some of the arguments are passed to the fitting function \code{\link{tsglm}}.
+  additional arguments passed to the function for detection of single intervention effects \code{\link[=interv_detect.tsglm]{interv_detect}} and via this function some of the arguments are passed to the fitting function \code{\link{tsglm}}.
 }
 }
 
