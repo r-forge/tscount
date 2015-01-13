@@ -120,7 +120,6 @@ plot(campy_intervdetect)
 
 \dontrun{
 #Parallel computation for shorter run time on a cluster:
-library(parallel)
 ntasks <- 3
 clust <- makeCluster(ntasks)
 setDefaultCluster(cl=clust)

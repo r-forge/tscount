@@ -1,3 +1,6 @@
+importFrom(parallel, parSapply)
+importFrom(ltsa, tacvfARMA)
+
 export(
   tsglm,
   tsglm.sim,

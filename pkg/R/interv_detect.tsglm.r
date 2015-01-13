@@ -73,7 +73,6 @@ interv_detect.tsglm <- function(fit, taus=2:length(ts), delta, external=FALSE, B
     if(missing(final.control_bootstrap) || is.null(final.control_bootstrap)) final.control_bootstrap <- list(...)[["final.control"]]      
     if(missing(inter.control_bootstrap)) inter.control_bootstrap <- list(...)[["inter.control"]]
     if(parallel){
-      library(parallel)
       Sapply <- function(X, FUN, ...) parSapply(cl=NULL, X=X, FUN=FUN, ..., simplify=FALSE) 
     }else{
       Sapply <- function(X, FUN, ...) sapply(X=X, FUN=FUN, ..., simplify=FALSE)

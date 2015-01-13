@@ -64,7 +64,6 @@ se(seatbelts_fit, B=100) #by bootstrap
 #This estimation of bootstrap standard errors takes several minutes on a single
 #processing unit, of course depending on its speed.
 #Parallel computation for shorter run time on a cluster:
-library(parallel)
 ntasks <- 3
 clust <- makeCluster(ntasks)
 setDefaultCluster(cl=clust)

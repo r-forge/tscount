@@ -19,7 +19,6 @@ se.tsglm <- function(object, B, parallel=FALSE, ...){
     }
     seeds <- sample(1e+9, size=B)
     if(parallel){
-      library(parallel)
       Sapply <- function(X, FUN, ...) parSapply(cl=NULL, X=X, FUN=FUN, ...)
     }else{
       Sapply <- sapply
