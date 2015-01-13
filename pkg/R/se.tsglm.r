@@ -24,7 +24,7 @@ se.tsglm <- function(object, B, parallel=FALSE, ...){
       Sapply <- sapply
     }
     bootstrap_coefs <- Sapply(seeds, simfit, fit=object, ..., simplify=TRUE)
-    if(object$distr!="poisson" && anyNA(bootstrap_coefs["sigmasq",])) warning(paste("The overdispersion coefficient 'sigmasq' could not be estimated in\n", sum(is.na(bootstrap_coefs["sigmasq",])), "of the", B, "replications. It is set to zero for this replications.\nThis might result in an overestimation of the true variability."))
+    if(object$distr!="poisson" && anyNA(bootstrap_coefs["sigmasq",])) warning(paste("The overdispersion coefficient 'sigmasq' could not be estimated in", sum(is.na(bootstrap_coefs["sigmasq",])), "\nof the", B, "replications. It is set to zero for these replications.\nThis might to some extent result in an overestimation of its\ntrue variability."))
     stderrors <- apply(bootstrap_coefs, 1, sd, na.rm=TRUE)
     result <- list(est=est, se=stderrors, type="bootstrap", B=B)
   }
