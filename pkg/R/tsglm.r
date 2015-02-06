@@ -15,7 +15,7 @@ tsglm <- function(ts, model=list(past_obs=NULL, past_mean=NULL, external=NULL), 
   if(distr=="poisson") loglik <- sum(dpois(ts, lambda=meanfit$fitted.values, log=TRUE))
   if(distr=="nbinom") loglik <- sum(dnbinom(ts, mu=meanfit$fitted.values, size=disfit$distrcoefs[["size"]], log=TRUE))
   result <- c(
-    list(coefficients=meanfit$coefficients, start=meanfit$start, residuals=meanfit$residuals, fitted.values=meanfit$fitted.values, linear.predictors=meanfit$linear.predictors, logLik=loglik, score=meanfit$score, info.matrix=meanfit$info.matrix, info.matrix_corrected=info.matrix_corrected, call=cl, n_obs=meanfit$n_obs, ts=meanfit$ts, model=meanfit$model, xreg=meanfit$xreg, link=link), #an extract of the object meanfit with an additional information matrix corrected for the fitted conditional distribution
+    list(coefficients=meanfit$coefficients, start=meanfit$start, residuals=meanfit$residuals, fitted.values=meanfit$fitted.values, linear.predictors=meanfit$linear.predictors, response=meanfit$response, logLik=loglik, score=meanfit$score, info.matrix=meanfit$info.matrix, info.matrix_corrected=info.matrix_corrected, call=cl, n_obs=meanfit$n_obs, n_eff=meanfit$n_eff, ts=meanfit$ts, model=meanfit$model, xreg=meanfit$xreg, link=link), #an extract of the object meanfit with an additional information matrix corrected for the fitted conditional distribution
     disfit
   )
   class(result) <- c("tsglm")

@@ -5,8 +5,8 @@ distr.fit <- function(object, distr){
   }
   if(distr=="nbinom"){  
     fitval <- object$fitted.values
-    ts <- object$ts
-    n <- object$n_obs
+    ts <- object$response
+    n <- object$n_eff
     m <- length(object$coefficients)  
     #Pearson type estimator:
     find_root <- function(v) sum((ts-fitval)^2/(fitval*(1+fitval/v))) - n + m

@@ -16,6 +16,8 @@ The conditional distribution can be chosen to be either Poisson or negative bino
 
 Estimation is done by conditional maximum likelihood for the Poisson distribution or by a conditional quasi-likelihood approach based on the Poisson likelihood function for the negative binomial distribution.
 
+There is a vignette available which introduces the functionality of \code{tsglm} and related functions of this package and its underlying statistical methods (\code{vignette("tsglm", package="tscount")}).
+
 The function \code{ingarch.fit} is a lower level function to fit the mean specification of an INGARCH model assuming a Poisson distribution. It is called by \code{tsglm}. It has additional arguments allowing for a finer control of the fitting procedure, which can be handed over from the function \code{tsglm} by its \code{...} argument. Analogously, \code{loglin.fit} is the lower level fitting function for the model with the logarithmic link.
 Note that it is usually not necessary for a user to call these lower level functions nor to worry about the additional arguments provided by these functions. The defaults of these arguments have been chosen wisely by the authors of this package and should perform well in most applications.
 }
@@ -76,7 +78,7 @@ loglin.fit(ts, model = list(past_obs = NULL, past_mean = NULL,
     character that determines how the recursion of the conditional mean (and possibly of its derivatives) is initialised. If set to \code{"marginal"} (the default), the marginal mean of a model without covariates and its derivatives are used. If set to \code{"iid"}, all values are initialised by the marginal mean under the assumption of i.i.d. data, which depends on the intercept only. If set to \code{"firstobs"} the first obersvation is used. If set to \code{"zero"}, the recursions are initialised by the value zero.
   }
   \item{init.drop}{
-    logical value that determines which observations are considered for computation of the log-likelihood, the score vector and, if applicable, the information matrix. If \code{TRUE}, the first \code{max(model$past_obs)} observations, which are needed for the autoregression, are not considered. If \code{FALSE} (the default), all observations are considered and pre-sample values determined by the method specified by the argument \code{itit.method} are used for the autoregression.
+    logical value that determines which observations are considered for computation of the log-likelihood, the score vector and, if applicable, the information matrix. If \code{TRUE}, the first \code{max(model$past_obs)} observations, which are needed for the autoregression, are not considered. If \code{FALSE} (the default), all observations are considered and pre-sample values determined by the method specified by the argument \code{itit.method} are used for the autoregression. Note that in the first case the effective number of observations used for maximum likelihood estimation is lower than the total number of observations of the original time series. Consequently only this lower number of observations is considered in the output. Note that for \code{init.drop=TRUE} the log-likelihood function for models of different orders might not be comparable if the effective number of observations is different.
   }
   \item{epsilon}{
     numeric positive but small value determining how close the parameters may come to the limits of the parameter space.
@@ -115,50 +117,50 @@ loglin.fit(ts, model = list(past_obs = NULL, past_mean = NULL,
 
 \details{
 The INGARCH model (argument \code{link="identity"}) used here follows the definition
-    \deqn{Z_{t}|{\cal{F}}_{t-1} \sim \mathrm{Poi}(\kappa_{t}) \quad \mathrm{or} \quad Z_{t}|{\cal{F}}_{t-1} \sim \mathrm{NegBin}(\kappa_{t}, \nu),}{
-    Z[t]|F[t-1] ~ Poi(\kappa[t]) or  Z[t]|F[t-1] ~ NegBin(\kappa[t], \nu),}
+    \deqn{Z_{t}|{\cal{F}}_{t-1} \sim \mathrm{Poi}(\nu_{t}) \quad \mathrm{or} \quad Z_{t}|{\cal{F}}_{t-1} \sim \mathrm{NegBin}(\nu_{t}, \phi),}{
+    Z[t]|F[t-1] ~ Poi(\nu[t]) or  Z[t]|F[t-1] ~ NegBin(\nu[t], \phi),}
 where \eqn{{\cal{F}}_{t-1}}{F[t-1]} denotes the history of the process up to time \eqn{t-1}, \eqn{\mathrm{Poi}}{Poi} and \eqn{\mathrm{NegBin}}{NegBin} is the Poisson respectively the negative binomial distribution with the parametrisation as specified below.
 For the model with covariates having an internal effect (the default) the linear predictor of the INGARCH model (which is in that case identical to the conditional mean) is given by
-    \deqn{\kappa_t = \beta_0 + \beta_1 Z_{t-i_1} + \ldots + \beta_p Z_{t-i_p}
-    + \alpha_1 \kappa_{t-j_1} + \ldots  + \alpha_q \kappa_{t-j_q}
+    \deqn{\nu_t = \beta_0 + \beta_1 Z_{t-i_1} + \ldots + \beta_p Z_{t-i_p}
+    + \alpha_1 \nu_{t-j_1} + \ldots  + \alpha_q \nu_{t-j_q}
     + \eta_1 X_{t,1} + \ldots + \eta_r X_{t,r}.}{
-    \kappa[t] = \beta[0] + \beta[1] Z[t-i[1]] + \ldots + \beta[p] Z[t-i[p]]
-    + \alpha[1] \kappa[t-j[1]] + \ldots  + \alpha[q] \kappa[t-j[q]]
+    \nu[t] = \beta[0] + \beta[1] Z[t-i[1]] + \ldots + \beta[p] Z[t-i[p]]
+    + \alpha[1] \nu[t-j[1]] + \ldots  + \alpha[q] \nu[t-j[q]]
     + \eta[1] X[t,1] + \ldots + \eta[r] X[t,r].}
 
 The log-linear model (argument \code{link="log"}) used here follows the definition
-    \deqn{Z_{t}|{\cal{F}}_{t-1} \sim \mathrm{Poi}(\lambda_{t}) \quad \mathrm{or} \quad Z_{t}|{\cal{F}}_{t-1} \sim \mathrm{NegBin}(\lambda_{t}, \nu),}{
-    Z[t]|F[t-1] ~ Poi(\lambda[t]) or  Z[t]|F[t-1] ~ NegBin(\lambda[t], \nu),}
-with \eqn{\lambda_t = \exp(\kappa_t)}{\lambda[t] = \exp(\kappa[t])} and \eqn{{\cal{F}}_{t-1}}{F[t-1]} as above.
-For the model with covariates having an internal effect (the default) the linear predictor \eqn{\kappa_t = \log(\lambda_t)}{\kappa[t] = \log(\lambda[t])} of the log-linear model is given by
-    \deqn{\kappa_t = \beta_0 + \beta_1 \log(Z_{t-i_1}+1) + \ldots + \beta_p \log(Z_{t-i_p}+1)
-    + \alpha_1 \kappa_{t-j_1} + \ldots  + \alpha_q \kappa_{t-j_q}
+    \deqn{Z_{t}|{\cal{F}}_{t-1} \sim \mathrm{Poi}(\lambda_{t}) \quad \mathrm{or} \quad Z_{t}|{\cal{F}}_{t-1} \sim \mathrm{NegBin}(\lambda_{t}, \phi),}{
+    Z[t]|F[t-1] ~ Poi(\lambda[t]) or  Z[t]|F[t-1] ~ NegBin(\lambda[t], \phi),}
+with \eqn{\lambda_t = \exp(\nu_t)}{\lambda[t] = \exp(\nu[t])} and \eqn{{\cal{F}}_{t-1}}{F[t-1]} as above.
+For the model with covariates having an internal effect (the default) the linear predictor \eqn{\nu_t = \log(\lambda_t)}{\nu[t] = \log(\lambda[t])} of the log-linear model is given by
+    \deqn{\nu_t = \beta_0 + \beta_1 \log(Z_{t-i_1}+1) + \ldots + \beta_p \log(Z_{t-i_p}+1)
+    + \alpha_1 \nu_{t-j_1} + \ldots  + \alpha_q \nu_{t-j_q}
     + \eta_1 X_{t,1} + \ldots + \eta_r X_{t,r}.}{
-    \kappa[t] = \beta[0] + \beta[1] \log(Z[t-i[1]]+1) + \ldots + \beta[p] \log(Z[t-i[p]]+1)
-    + \alpha[1] \kappa[t-j[1]] + \ldots  + \alpha[q] \kappa[t-j[q]]
+    \nu[t] = \beta[0] + \beta[1] \log(Z[t-i[1]]+1) + \ldots + \beta[p] \log(Z[t-i[p]]+1)
+    + \alpha[1] \nu[t-j[1]] + \ldots  + \alpha[q] \nu[t-j[q]]
     + \eta[1] X[t,1] + \ldots + \eta[r] X[t,r].}
 Note that because of the logarithmic link function the effect of single summands in the linear predictor on the conditional mean is multiplicative and hence the parameters play a different role than in the INGARCH model, although they are denoted by the same letters.
   
 The Poisson distribution is parametrised by the mean \code{lambda} according to the definition in \code{\link{Poisson}}.
-The negative binomial distribution is parametrised by the mean \code{mu} with an additional dispersion parameter \code{size} according to the definition in \code{\link{NegBinomial}}. In the notation above its mean parameter \code{mu} is \eqn{\kappa_{t}}{\kappa[t]} and its dispersion parameter \code{size} is \eqn{\nu}.
+The negative binomial distribution is parametrised by the mean \code{mu} with an additional dispersion parameter \code{size} according to the definition in \code{\link{NegBinomial}}. In the notation above its mean parameter \code{mu} is \eqn{\nu_{t}}{\nu[t]} and its dispersion parameter \code{size} is \eqn{\phi}.
 
 This function allows to include covariates in two different ways. A covariate can have a so-called internal effect as defined above, where its effect propagates via the regression on past values of the linear predictor and on past observations. Alternatively, it can have a so-called external effect, where its effect does not directly propagates via the feedback on past values of the linear predictor, but only via past observations.
 For external effects of the covariates, the linear predictor for the model with identity link is given by
-    \deqn{\kappa_t = \mu_t + \eta_1 X_{t,1} + \ldots + \eta_r X_{t,r},}{
-    \kappa[t] = \mu[t] + \eta[1] X[t,1] + \ldots + \eta[r] X[t,r],}
+    \deqn{\nu_t = \mu_t + \eta_1 X_{t,1} + \ldots + \eta_r X_{t,r},}{
+    \nu[t] = \mu[t] + \eta[1] X[t,1] + \ldots + \eta[r] X[t,r],}
     \deqn{\mu_t = \beta_0 + \beta_1 Z_{t-i_1} + \ldots + \beta_p Z_{t-i_p}
-    + \alpha_1 \lambda_{t-j_1} + \ldots  + \alpha_q \lambda_{t-j_q},}{
+    + \alpha_1 \mu{t-j_1} + \ldots  + \alpha_q \mu{t-j_q},}{
     \mu[t] = \beta[0] + \beta[1] Z[t-i[1]] + \ldots + \beta[p] Z[t-i[p]
-    + \alpha[1] \lambda[t-j[1]] + \ldots  + \alpha[q] \lambda[t-j[q]],} 
+    + \alpha[1] \mu[t-j[1]] + \ldots  + \alpha[q] \mu[t-j[q]],} 
 and analoguesly for the model with logarithmic link by
-    \deqn{\kappa_t = \mu_t + \eta_1 X_{t,1} + \ldots + \eta_r X_{t,r},}{
-    \kappa[t] = \mu[t] + \eta[1] X[t,1] + \ldots + \eta[r] X[t,r],}
+    \deqn{\nu_t = \mu_t + \eta_1 X_{t,1} + \ldots + \eta_r X_{t,r},}{
+    \nu[t] = \mu[t] + \eta[1] X[t,1] + \ldots + \eta[r] X[t,r],}
     \deqn{\mu_t = \beta_0 + \beta_1 \log(Z_{t-i_1}+1) + \ldots + \beta_p \log(Z_{t-i_p}+1)
-    + \alpha_1 \lambda_{t-j_1} + \ldots  + \alpha_q \lambda_{t-j_q}.}{
+    + \alpha_1 \mu{t-j_1} + \ldots  + \alpha_q \mu{t-j_q}.}{
     \mu[t] = \beta[0] + \beta[1] \log(Z[t-i[1]]+1) + \ldots + \beta[p] \log(Z[t-i[p]+1)
-    + \alpha[1] \lambda[t-j[1]] + \ldots  + \alpha[q] \lambda[t-j[q]].} 
+    + \alpha[1] \mu[t-j[1]] + \ldots  + \alpha[q] \mu[t-j[q]].} 
 This is described in more detail by Liboschik et al. (2014) for the case of deterministic covariates for modelling interventions.
-It is also possible to model a combination of external and internal covariates, which can be defined straightforwardly by adding each covariate either to the linear predictor \eqn{\kappa_t}{\kappa[t]} itself (for an internal effect) or to \eqn{\mu_t}{\mu[t]} defined above (for an external effect).
+It is also possible to model a combination of external and internal covariates, which can be defined straightforwardly by adding each covariate either to the linear predictor \eqn{\nu_t}{\nu[t]} itself (for an internal effect) or to \eqn{\mu_t}{\mu[t]} defined above (for an external effect).
 
 }
 
@@ -174,8 +176,10 @@ An object of class \code{"tsglm"}, which is a list with at least the following e
   \item{fitted.values}{the fitted values, which can be extracted by the \code{\link{fitted}} method.}
 
   \item{linear.predictors}{the linear fit on link scale.}
+  
+  \item{response}{a vector of the response values (this is usually the original time series but  possibly without the first few observations used for initialization if argument \code{init.drop=TRUE}).}
 
-  \item{logLik}{the log-likelihood of the fitted model, which can be extracted by the \code{\link{logLik}} method.}
+  \item{logLik}{the log-likelihood of the fitted model, which can be extracted by the \code{\link{logLik}} method. This is the complete log-likelihood including all constant terms. It is based on \code{n_eff} observations (see below).}
 
   \item{score}{the score vector at the maximum likelihood estimation.}
 
@@ -186,6 +190,8 @@ An object of class \code{"tsglm"}, which is a list with at least the following e
   \item{call}{the matched call.}
 
   \item{n_obs}{the number of observations.}
+  
+  \item{n_eff}{the effective number of observations used for maximum likelihood estimation (might be lower than \code{n_obs} if argument \code{init.drop=TRUE}).}
 
   \item{ts}{the original time series.}
 

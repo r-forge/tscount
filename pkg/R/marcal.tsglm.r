@@ -6,12 +6,12 @@ marcal.tsglm <- function(object, plot=TRUE, ...){
   if(object$distr=="nbinom") pdistr <- function(q, meanvalue, distrcoefs) pnbinom(q, mu=meanvalue, size=distrcoefs)
   xvalues <- min(object$ts):max(object$ts) #range of values could be extended in the future
   p_bar <- g_hat <- numeric(length(xvalues))
-  n <- object$n_obs 
+  n <- object$n_eff 
   for(i in seq(along=xvalues)){
     for(j in 1:n){
       p_bar[i] <- p_bar[i] + pdistr(xvalues[i], meanvalue=fitted(object)[j], distrcoefs=object$distrcoefs)/n
     }
-    g_hat[i] <- sum(object$ts<=xvalues[i])/n
+    g_hat[i] <- sum(object$response<=xvalues[i])/n
   }
   result <- list(x=xvalues, y=p_bar-g_hat)
   if(plot){

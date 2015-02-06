@@ -10,11 +10,11 @@ scoring.tsglm <- function(object, cutoff=1000, ...){
   #Standard deviation of the conditional distribution (cf. marcal.tsglm):
   if(object$distr=="poisson") sddistr <- function(meanvalue, distrcoefs) sqrt(meanvalue)
   if(object$distr=="nbinom") sddistr <- function(meanvalue, distrcoefs) sqrt(meanvalue + meanvalue^2/distrcoefs[["size"]])
-  n <- object$n_obs 
+  n <- object$n_eff 
   logarithmic <- quadratic <- spherical <- rankprob <- dawseb <- normsq <- sqerror <- numeric(n) #scores
   for(t in 1:n){
     #auxiliary objects, which are overwritten in each step:
-      y <- object$ts[t]
+      y <- object$response[t]
       mu <- fitted(object)[t]
       sigma <- sddistr(meanvalue=mu, distrcoefs=object$distrcoefs)
       p_y <- ddistr(y, meanvalue=mu, distrcoefs=object$distrcoefs)

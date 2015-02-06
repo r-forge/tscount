@@ -9,7 +9,7 @@ Analysis of Count Data Time Series
 Collection of R functions for analysis of count time series. Currently the focus is on count time series following generalised linear models.
 }
 \details{
-See the main function \code{\link{tsglm}} for more details on the usage of the package.
+See the main function \code{\link{tsglm}} for more details on the usage of the package. There is a vignette available which introduces the functionality of the package and its underlying statistical methods (\code{vignette("tsglm", package="tscount")}).
 }
 \author{
 Tobias Liboschik <liboschik@statistik.tu-dortmund.de>

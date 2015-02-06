@@ -128,10 +128,24 @@ ingarch.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, external=N
   #If score==FALSE and info=="none" the computation in the following two lines would not be necessary. However, the extra time needed to re-calculate the log-likelihood function which is already available in final_optim$value is negligable in comparison to the total duration of the function. This avoids some additional if-statements and the code is more readable.
   condmean <- ingarch.condmean(paramvec=paramvec_final, model=model, ts=ts, xreg=xreg, derivatives={if(!score & info=="none") "none" else if(info %in% c("hessian", "sandwich")) "second" else "first"}, init.method=init.method)
   loglik <- ingarch.loglik(paramvec=paramvec_final, model=model, ts=ts, xreg=xreg, score=score, info=info, condmean=condmean, from=Inf, init.drop=init.drop) #because of argument from=Inf no re-calculation of the recursion is done, instead the calculations from object condmean are used
-  if(is.ts(ts)) loglik$kappa <- ts(loglik$kappa, start=start(ts), frequency=frequency(ts)) #give the linear predictors the same time series structure as the input time series
   ##############
+
+  ##############
+  #Output preparation:   
+  n_eff <- length(loglik$kappa) #effective number of observations used for maximum likelihood estimation (excluding those only used for initialization when argument init.drop=TRUE)
+  index_eff <- (n-n_eff+1):n #indices of those observations
+  ts_eff <- ts[index_eff]
+  #xreg_eff <- xreg[index_eff, , drop=FALSE]
   
+  if(is.ts(ts)){ #use time series information for output if available from the input time series
+    frqcy <- tsp(ts)[3]
+    strt_original <- tsp(ts)[1]
+    strt_eff <- strt_original+(n-n_eff)*1/frqcy 
+    ts_eff <- ts(ts_eff, start=strt_eff, frequency=frqcy)
+    loglik$kappa <- ts(loglik$kappa, start=strt_eff, frequency=frqcy)
+  }
+    
   durations["total"] <- proc.time()["elapsed"] - begin_total 
-  result <- c(list(coefficients=final_optim$par, start=paramvec_start, inter=inter_optim, final=final_optim, residuals=ts-loglik$kappa, fitted.values=loglik$kappa, linear.predictors=loglik$kappa, logLik=loglik$loglik, score=loglik$score, info.matrix=loglik$info, outerscoreprod=loglik$outerscoreprod, call=cl, n_obs=n, durations=durations, ts=ts, model=model, xreg=xreg))
+  result <- c(list(coefficients=final_optim$par, start=paramvec_start, inter=inter_optim, final=final_optim, residuals=ts_eff-loglik$kappa, fitted.values=loglik$kappa, linear.predictors=loglik$kappa, response=ts_eff, logLik=loglik$loglik, score=loglik$score, info.matrix=loglik$info, outerscoreprod=loglik$outerscoreprod, call=cl, n_obs=n, n_eff=n_eff, durations=durations, ts=ts, model=model, xreg=xreg))
   return(result)
 }

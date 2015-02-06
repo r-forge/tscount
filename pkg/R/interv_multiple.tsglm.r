@@ -1,16 +1,13 @@
 interv_multiple <- function(...) UseMethod("interv_multiple")
 
-#STILL MISSING:
-#Test on a single intervention of UNknown type at a UNknown point in time
-#(still needed, can be done with the function below on multiple interventions with signif_level=0, but this will not work for p-values which are exactly zero)
-
-interv_multiple.tsglm <- function(fit, taus=2:length(ts), deltas=c(0,0.8,1), external=FALSE, B=10, signif_level=0.05, start.control_bootstrap, final.control_bootstrap, inter.control_bootstrap, parallel=FALSE, ...){
+interv_multiple.tsglm <- function(fit, taus=2:length(fit$ts), deltas=c(0,0.8,1), external=FALSE, B=10, signif_level=0.05, start.control_bootstrap, final.control_bootstrap, inter.control_bootstrap, parallel=FALSE, ...){
 #Test on (multiple) interventions of UNknown type at a UNknown points in time
   #taus: vector of times which should be considered for the interventions
   #B: Integer (>0). Number of bootstrap samples for estimation of the p-value.
 ##############################
   #Check and modify arguments:
   tsglm.check(fit)
+  if(fit$n_obs != fit$n_eff) stop("Function is not applicable on a maximum likelihood fit which is\nnot based on all observations. Use a fit obtained with argument\n'init.drop=FALSE' instead.")
   ts <- fit$ts
   model <- fit$model
   xreg <- fit$xreg

@@ -15,9 +15,9 @@ A data frame with variables \code{year} and \code{week} giving the year and cale
 }
 
 \source{
-Robert Koch Institute: SurvStat@RKI, \url{http://www3.rki.de/SurvStat}, accessed on 10th June 2013.
+Robert Koch Institute: SurvStat@RKI, \url{https://survstat.rki.de}, accessed on 10th June 2013.
 
-The data are provided with kind permission of the Robert Koch Institute. Further details and terms of usage are given at \url{http://www3.rki.de/SurvStat/help_en.html}. More data reported under the German Infectious Diseases Protection Act is available via the SurvStat@RKI web application linked above.
+The data are provided with kind permission of the Robert Koch Institute. Further details and terms of usage are given at \url{https://survstat.rki.de}. More data reported under the German Infectious Diseases Protection Act is available via the SurvStat@RKI web application linked above.
 }
 
 \seealso{

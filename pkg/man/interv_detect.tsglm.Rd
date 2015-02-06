@@ -11,7 +11,7 @@ Detection procedure for an intervention of given type occuring at unknown time a
 }
 
 \usage{
-\method{interv_detect}{tsglm}(fit, taus=2:length(ts), delta, external=FALSE, 
+\method{interv_detect}{tsglm}(fit, taus=2:length(fit$ts), delta, external=FALSE, 
               B=NULL, info=c("score"), start.control_bootstrap, 
               final.control_bootstrap, inter.control_bootstrap, 
               parallel=FALSE, est_interv=TRUE, ...)

@@ -9,7 +9,7 @@ Detecting Multiple Interventions in Count Time Series Following Generalised Line
 Iterative detection procedure for multiple interventions of unknown types occuring at unknown times as proposed by Fokianos and Fried (2010, 2012).
 }
 \usage{
-\method{interv_multiple}{tsglm}(fit, taus=2:length(ts), deltas=c(0,0.8,1),
+\method{interv_multiple}{tsglm}(fit, taus=2:length(fit$ts), deltas=c(0,0.8,1),
                 external=FALSE, B=10, signif_level=0.05,
                 start.control_bootstrap, final.control_bootstrap,
                 inter.control_bootstrap, parallel=FALSE, ...)
