@@ -90,10 +90,11 @@ S3 method \code{\link{print}}.
 }
 
 \examples{
+###Campylobacter infections in Canada (see help("campy"))
 #Test for the intervention effects which were found in Fokianos und Fried (2010):
-campy_fit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
-campy_intervtest <- interv_test(fit=campy_fit, tau=c(84,100), delta=c(1,0))
-campy_intervtest
+campyfit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
+campyfit_intervtest <- interv_test(fit=campyfit, tau=c(84,100), delta=c(1,0))
+campyfit_intervtest
 }
 
 \keyword{Intervention detection}

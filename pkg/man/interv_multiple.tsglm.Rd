@@ -106,17 +106,18 @@ S3 methods \code{\link{print}} and \code{\link[=plot.interv_multiple]{plot}}.
 
 \examples{
 \dontrun{
+###Campylobacter infections in Canada (see help("campy"))
 #Searching for potential intervention effects (runs several hours!):
-campy_fit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
-campy_intervmultiple <- interv_multiple(fit=campy_fit, taus=80:120,
+campyfit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
+campyfit_intervmultiple <- interv_multiple(fit=campyfit, taus=80:120,
                               deltas=c(0,0.8,1), B=500, signif_level=0.05)
-campy_intervmultiple
-plot(campy_intervmultiple)
+campyfit_intervmultiple
+plot(campyfir_intervmultiple)
 #Parallel computation for shorter run time on a cluster:
 ntasks <- 3
 clust <- makeCluster(ntasks)
 setDefaultCluster(cl=clust)
-interv_multiple(fit=campy_fit, taus=80:120, deltas=c(0,0.8,1), B=500,
+interv_multiple(fit=campyfit, taus=80:120, deltas=c(0,0.8,1), B=500,
                 signif_level=0.05, parallel=TRUE)}
 }
 

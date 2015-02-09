@@ -717,8 +717,8 @@ The default and preferable choice is to initialize by the respective marginal ex
 \begin{align}
 \E(Y_t) = \E(\nu_t) = \frac{\beta_0}{1-\sum_{k=1}^p\beta_k-\sum_{\ell=1}^q\alpha_{\ell}} =: \mu(\boldsymbol{\theta}).
 \end{align}
-For the log-linear model \eqref{eq:loglin} we instead consider the transformed time series $Z_t:=\log(Y_t+1)$, which has approximately the same second order properties as a time series from the linear model \eqref{eq:linear}. It approximately holds $\E(Z_t)=\E(\nu_t)=\mu(\boldsymbol{\theta}})$.
-Specifically, we initialize past values of $\nu_t$ by $\mu(\boldsymbol{\theta}})$ and past values of $\partial \nu_t(\boldsymbol{\theta}) / \partial \boldsymbol{\theta}$ by
+For the log-linear model \eqref{eq:loglin} we instead consider the transformed time series $Z_t:=\log(Y_t+1)$, which has approximately the same second order properties as a time series from the linear model \eqref{eq:linear}. It approximately holds $\E(Z_t)=\E(\nu_t)=\mu(\boldsymbol{\theta})$.
+Specifically, we initialize past values of $\nu_t$ by $\mu(\boldsymbol{\theta})$ and past values of $\partial \nu_t(\boldsymbol{\theta}) / \partial \boldsymbol{\theta}$ by
 \begin{align*}
 \frac{\partial \mu(\boldsymbol{\theta})}{\partial \boldsymbol{\theta}} = \left(
 \frac{\partial \mu(\boldsymbol{\theta})}{\partial \beta_0},
@@ -832,7 +832,7 @@ Y_t|{\cal F}_{t-1} \sim \text{Poisson}(\lambda_t), \quad
     + \beta_1 \,Y_{t-1}
     + \alpha_1 \lambda_{t-1}
     + \eta_1 X_t,
-\quad $t=1,\dots,n$,
+\quad t=1,\dots,n,
 \end{align*}
 and the log-linear model with the logarithmic link function
 \begin{align*}
@@ -841,7 +841,7 @@ Y_t|{\cal F}_{t-1} \sim \text{Poisson}(\exp(\nu_t)), \quad
     + \beta_1 \,\log(Y_{t-1}+1)
     + \alpha_1 \nu_{t-1}
     + \eta_1 X_t,
-\quad $t=1,\dots,n$.
+\quad t=1,\dots,n.
 \end{align*}
 The dependence parameters are chosen to be $\beta_1=0.3$ and $\alpha_1=0.2$. The intercept parameter is $\beta_0=4 \cdot 0.5$ for the linear and $\beta_0=\log(4) \cdot 0.5$ for the log-linear model in order to obtain a marginal mean (without the covariate effect) of about 4 in both cases.
 %
@@ -851,7 +851,7 @@ The dependence parameters are chosen to be $\beta_1=0.3$ and $\alpha_1=0.2$. The
 \textbf{Abbreviation} & \textbf{Definition} \\
 \midrule
 Linear & $t/n$ \\
-Sine & $(\sin(2\pi \cdot 5 \cdot t/n) + 1)/2 \\
+Sine & $(\sin(2\pi \cdot 5 \cdot t/n) + 1)/2$ \\
 Spiky outlier & $\mathbbm{1}(t = \tau)$ \\
 Transient shift & $0.8^{t-\tau} \mathbbm{1}(t \geq \tau)$ \\
 Level shift & $\mathbbm{1}(t \geq \tau)$ \\
@@ -1047,7 +1047,7 @@ Y_t|{\cal F}_{t-1} \sim \text{NegBin}(\lambda_t, \phi), \quad
 \lambda_t = \beta_0
     + \beta_1 \,Y_{t-1}
     + \alpha_1 \lambda_{t-1},
-\quad $t=1,\dots,n$,
+\quad t=1,\dots,n,
 \end{align*}
 and the log-linear model with the logarithmic link
 \begin{align*}
@@ -1055,7 +1055,7 @@ Y_t|{\cal F}_{t-1} \sim \text{NegBin}(\exp(\nu_t), \phi), \quad
 \nu_t = \beta_0
     + \beta_1 \,\log(Y_{t-1}+1)
     + \alpha_1 \nu_{t-1},
-\quad $t=1,\dots,n$.
+\quad t=1,\dots,n.
 \end{align*}
 The parameters $\beta_0$, $\beta_1$ and $\alpha_1$ are chosen like in the previous section. For the dispersion parameter $\phi$ we employ the values 1, 5, 10, 20 and $\infty$, which are corresponding to overdispersion coefficients $\sigma^2$ of 1, 0.2, 0.1, 0.05 and 0, respectively.
 
@@ -1087,7 +1087,7 @@ colnames(distrcoef_log_summary) <- c("\\textbf{Mean}", "\\textbf{Median}", "\\te
 rownames(distrcoef_log_summary) <- c("$\\sigma^2=\ $ 1.00", "0.20", "0.10", "0.05", "0.00")
 
 library("xtable")
-print(xtable(distrcoef_log_summary, caption="Summary statistics for the estimated overdispersion coefficient $\\Widehat{\\sigma}^2$ of the Negative Binomial distribution. The time series are simulated from a log-linear model with the true overdispersion coefficient given in the rows. Each statistic is based on 200 replications.", label="tab:distrcoef_summary", align="rrrrrr", digits=c(0,2,2,2,2,2)), table.placement="tbp", caption.placement="bottom", booktabs=TRUE, comment=FALSE, sanitize.text.function=function(x){x})
+print(xtable(distrcoef_log_summary, caption="Summary statistics for the estimated overdispersion coefficient $\\widehat{\\sigma}^2$ of the Negative Binomial distribution. The time series are simulated from a log-linear model with the true overdispersion coefficient given in the rows. Each statistic is based on 200 replications.", label="tab:distrcoef_summary", align="rrrrrr", digits=c(0,2,2,2,2,2)), table.placement="tbp", caption.placement="bottom", booktabs=TRUE, comment=FALSE, sanitize.text.function=function(x){x})
 @
 %
 <<distrcoef_boxplots, echo=FALSE>>=

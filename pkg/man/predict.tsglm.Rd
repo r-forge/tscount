@@ -64,9 +64,9 @@ Tobias Liboschik and Philipp Probst
 }
 
 \examples{
-campy_fit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)),
-                    link="identity")
-predict(campy_fit, n.ahead=5)
+###Campylobacter infections in Canada (see help("campy"))
+campyfit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
+predict(campyfit, n.ahead=5)
 }
 
 \keyword{Prediction}

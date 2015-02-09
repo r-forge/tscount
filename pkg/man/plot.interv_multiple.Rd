@@ -30,11 +30,12 @@ Tobias Liboschik and Philipp Probst
 
 \examples{
 \dontrun{
-campy_fit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
-campy_intervmultiple <- interv_multiple(fit=campy_fit, taus=80:120,
+###Campylobacter infections in Canada (see help("campy"))
+campyfit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
+campyfit_intervmultiple <- interv_multiple(fit=campyfit, taus=80:120,
                               deltas=c(0,0.8,1), external=FALSE, B=2,
                               signif_level=0.05) #runs several hours!
-plot(campy_intervmultiple)}
+plot(campyfit_intervmultiple)}
 }
 
 \keyword{Intervention detection}

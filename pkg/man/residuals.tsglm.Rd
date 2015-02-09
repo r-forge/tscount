@@ -37,4 +37,12 @@ Tobias Liboschik and Philipp Probst
 \code{\link{tsglm}} for fitting a GLM for time series of counts.
 }
 
+\examples{
+###Campylobacter infections in Canada (see help("campy"))
+campyfit <- tsglm(ts=campy, model=list(past_obs=1, past_mean=c(7,13)))
+campyfit_resid <- residuals(campyfit, type="pearson")
+plot(campyfit_resid)
+acf(campyfit_resid)
+}
+
 \keyword{Model assessment}

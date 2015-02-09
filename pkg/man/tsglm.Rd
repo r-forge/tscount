@@ -250,16 +250,21 @@ Example time series of counts are \code{\link{campy}}, \code{\link{ecoli}}, \cod
 }
 
 \examples{
-#Fit an INGARCH model with identity link function and negative binomial distribution:
-seatbelts_fit <- tsglm(ts=Seatbelts[, "DriversKilled"],
-  model=list(past_obs=1, past_mean=c(1, 12)), xreg=Seatbelts[, "PetrolPrice"],
-  link="identity", distr="nbinom")
-summary(seatbelts_fit)
-plot(seatbelts_fit)
+###Campylobacter infections in Canada (see help("campy"))
+interventions <- interv_covariate(n=length(campy), tau=c(84, 100),
+  delta=c(1, 0)) #detected by Fokianos and Fried (2010, 2012)
+#Linear link function with Negative Binomial distribution:
+campyfit <- tsglm(campy, model=list(past_obs=1, past_mean=13),
+  xreg=interventions, dist="nbinom")
+campyfit
+plot(campyfit)
 
-#Fit a log-linear model with Poisson distribution:
-seatbelts_fit <- tsglm(ts=Seatbelts[, "DriversKilled"],
-  model=list(past_obs=1, past_mean=c(1, 12)), xreg=Seatbelts[, "PetrolPrice"],
-  link="log", distr="poisson")
-seatbelts_fit
+###Road casualties in Great Britain (see help("Seatbelts"))
+timeseries <- Seatbelts[, "VanKilled"]
+regressors <- cbind(PetrolPrice=Seatbelts[, c("PetrolPrice")],
+                    linearTrend=seq(along=timeseries)/12)
+#Logarithmic link function with Poisson distribution:                    
+seatbeltsfit <- tsglm(ts=timeseries, link="log",
+  model=list(past_obs=c(1, 12)), xreg=regressors, distr="pois")
+summary(seatbeltsfit)
 }

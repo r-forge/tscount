@@ -65,10 +65,14 @@ S3 method \code{\link{print}}.
 \code{\link{tsglm}} for fitting a GLM for time series of counts.
 }
 \examples{
-seatbelts_fit <- tsglm(ts=Seatbelts[, "DriversKilled"],
-  model=list(past_obs=1, past_mean=c(1, 12)), xreg=Seatbelts[, "PetrolPrice"],
-  link="identity", distr="poisson")
-summary(seatbelts_fit)
+###Road casualties in Great Britain (see help("Seatbelts"))
+timeseries <- Seatbelts[, "VanKilled"]
+regressors <- cbind(PetrolPrice=Seatbelts[, c("PetrolPrice")],
+                    linearTrend=seq(along=timeseries)/12)
+#Logarithmic link function with Poisson distribution:                    
+seatbeltsfit <- tsglm(ts=timeseries, link="log",
+  model=list(past_obs=c(1, 12)), xreg=regressors, distr="pois")
+summary(seatbeltsfit)
 }
 
 \keyword{Model assessment}

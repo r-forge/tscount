@@ -54,20 +54,25 @@ Tobias Liboschik and Philipp Probst
 }
 
 \examples{
-seatbelts_fit <- tsglm(ts=Seatbelts[, "DriversKilled"],
-  model=list(past_obs=1, past_mean=c(1, 12)), xreg=Seatbelts[, "PetrolPrice"],
-  link="identity", distr="poisson")
-se(seatbelts_fit) #by normal approximation
+###Road casualties in Great Britain (see help("Seatbelts"))
+timeseries <- Seatbelts[, "VanKilled"]
+regressors <- cbind(PetrolPrice=Seatbelts[, c("PetrolPrice")],
+                    linearTrend=seq(along=timeseries)/12)
+#Logarithmic link function with Poisson distribution:                    
+seatbeltsfit <- tsglm(ts=timeseries, link="log",
+  model=list(past_obs=c(1, 12)), xreg=regressors, distr="pois")
 
 \dontrun{
-se(seatbelts_fit, B=100) #by bootstrap
+system.time(stderror <- se(seatbeltsfit, B=100)) #by bootstrap
+stderror
 #This estimation of bootstrap standard errors takes several minutes on a single
 #processing unit, of course depending on its speed.
 #Parallel computation for shorter run time on a cluster:
+library(parallel)
 ntasks <- 3
 clust <- makeCluster(ntasks)
 setDefaultCluster(cl=clust)
-se(seatbelts_fit, B=100, parallel=TRUE)}
+system.time(stderror <- se(seatbeltsfit, B=100, parallel=TRUE))}
 }
 
 \keyword{Inference}

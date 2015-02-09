@@ -32,12 +32,13 @@ Tobias Liboschik and Philipp Probst
 }
 
 \examples{
-seatbelts_fit <- tsglm(ts=Seatbelts[, "DriversKilled"],
-  model=list(past_obs=1, past_mean=c(1, 12)), xreg=Seatbelts[, "PetrolPrice"],
-  link="identity", distr="nbinom")
-op <- par(mfrow=c(2,2))
-plot(seatbelts_fit, ask=FALSE)
-par(op)
+###Campylobacter infections in Canada (see help("campy"))
+interventions <- interv_covariate(n=length(campy), tau=c(84, 100),
+  delta=c(1, 0)) #detected by Fokianos and Fried (2010, 2012)
+#Linear link function with Negative Binomial distribution:
+campyfit <- tsglm(campy, model=list(past_obs=1, past_mean=13),
+  xreg=interventions, dist="nbinom")
+plot(campyfit)
 }
 
 \keyword{Model assessment}
