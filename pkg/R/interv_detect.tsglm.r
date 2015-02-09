@@ -16,7 +16,7 @@ interv_detect.tsglm <- function(fit, taus=2:length(fit$ts), delta, external=FALS
   compute_test_statistic <- function(model, ts, xreg, link, distr, fit_H0=NULL, taus, delta, external, est_interv=FALSE, stopOnError=FALSE, ...){
     n <- length(ts)
     if(all(ts==0)) return(list(error_message="Time series is constantly zero"))
-    if(is.null(fit_H0)){ #do not estimate the parameter under the null hypothesis of no intervention if it is given in the argument fit_H0
+    if(is.null(fit_H0)){ #only estimate the parameter under the null hypothesis of no intervention if it is not given in the argument fit_H0
       #ML estimation for the model without intervention:
       op <- options(show.error.messages=FALSE) #suppress error messages for the next call
       fit_H0 <- try(tsglm(ts=ts, model=model, xreg=xreg, link=link, distr=distr, score=FALSE, info="none", ...))
@@ -68,10 +68,18 @@ interv_detect.tsglm <- function(fit, taus=2:length(fit$ts), delta, external=FALS
   #Bootstrap to compute p-value:
   if(!is.null(B)){
     #Set arguments controlling the estimation in the bootstrap:
-    if(missing(start.control_bootstrap)) start.control_bootstrap <- list(...)[["start.control"]]
+    dotdotdot <- list(...)
+    if(missing(start.control_bootstrap)){
+      if(!is.null(dotdotdot[["start.control"]])) start.control_bootstrap <- dotdotdot[["start.control"]] else start.control_bootstrap <- list()
+    }
     bootstrap_noest <- !missing(final.control_bootstrap) && is.null(final.control_bootstrap) #if argument final.control_bootstrap is NULL, then the parameters are not re-estimated for each bootstrap sample but the true parameters used for simulation are used
-    if(missing(final.control_bootstrap) || is.null(final.control_bootstrap)) final.control_bootstrap <- list(...)[["final.control"]]      
-    if(missing(inter.control_bootstrap)) inter.control_bootstrap <- list(...)[["inter.control"]]
+    if(missing(final.control_bootstrap)){
+      if(!is.null(dotdotdot[["start.control"]])) final.control_bootstrap <- dotdotdot[["final.control"]] else final.control_bootstrap <- list()
+    }
+    if(is.null(final.control_bootstrap)) final.control_bootstrap <- list()      
+    if(missing(inter.control_bootstrap)){
+      inter.control_bootstrap <- if(!is.null(dotdotdot[["inter.control"]])) dotdotdot[["inter.control"]] else list()
+    }
     if(parallel){
       Sapply <- function(X, FUN, ...) parSapply(cl=NULL, X=X, FUN=FUN, ..., simplify=FALSE) 
     }else{
@@ -98,6 +106,10 @@ interv_detect.tsglm <- function(fit, taus=2:length(fit$ts), delta, external=FALS
       bootstrap_test_statistics <- c(bootstrap_test_statistics, unlist(output.bootstrap[!index_errors]))
       B_left <- B - length(bootstrap_test_statistics)
       bootstrap_errors <- c(bootstrap_errors, unlist(output.bootstrap[index_errors]))
+      if(length(bootstrap_errors) >= B){
+        print(bootstrap_errors)
+        stop(paste("Bootstrap has failed more than 'B' times with", B-B_left, "succesful replications and has thus been aborted"))
+      } 
     }
     if(length(bootstrap_errors)>0) warning(paste("For", length(bootstrap_errors), "bootstrapped time series no test statistic could be computed\nand new time series was drawn, see error messages in list\nelement '$bootstrap_errors'"))   
     p_value <- sum(bootstrap_test_statistics > result$test_statistic)/(B+1)

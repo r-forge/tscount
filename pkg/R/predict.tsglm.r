@@ -27,7 +27,7 @@ predict.tsglm <- function(object, n.ahead=1, newobs=NULL, newxreg=NULL, level=0.
   new[seq(along=newobs)] <- newobs
   ts <- c(object$ts, new)
   if(is.ts(object$ts)) ts <- ts(ts, start=start(object$ts), frequency=frequency(object$ts))
-  kappa <- c(object$linear.predictors, rep(NA, n.ahead))
+  kappa <- c(rep(NA, n-object$n_eff), object$linear.predictors, rep(NA, n.ahead))
   if(is.ts(object$ts)) kappa <- ts(kappa, start=start(object$ts), frequency=frequency(object$ts))
   for(t in n+(1:n.ahead)){
     kappa[t] <- sum(coef(object)*c(1, trafo(ts[t-model$past_obs]), kappa[t-model$past_mean]-if(r>0){sum((as.numeric(model$external)*coef(object)[1+p+q+R])*t(xreg[t-model$past_mean,]))}else{0}, xreg[t,])) 

@@ -56,7 +56,7 @@ loglin.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, external=NU
   }
   
   ##############
-  #Initial estimation:
+  #Starting value:
   begin_start <- proc.time()["elapsed"]
   param_start <- start.fit(ts=ts, model=model, xreg=xreg, start.control=start.control, linkfunc="log")
   

@@ -39,7 +39,7 @@ start.fit <- function(ts, model, xreg, start.control, linkfunc){
     # # # # # # #
   }
   if(start.control$method == "iid"){
-    param_start$intercept <- intercept <- trafo(mean(ts_start))
+    param_start$intercept <- intercept <- mean(trafo(ts_start))
     param_start$past_obs <- rep(0, p) 
     param_start$past_mean <- rep(0, q)
     param_start$xreg <- rep(0, r)
@@ -48,7 +48,7 @@ start.fit <- function(ts, model, xreg, start.control, linkfunc){
     max_delay <- max(model$past_obs, 0)
     delayed_ts <- function(del, timser=ts_start, max_del=max_delay) c(timser[((1+max_del):length(timser))-del])
     dataset <- data.frame(timser=delayed_ts(del=0), trafo(sapply(model$past_obs, delayed_ts)), if(r>0){apply(xreg[start_use, , drop=FALSE], 2, delayed_ts, del=0)}else{matrix(nrow=length(start_use)-max_delay, ncol=0)})
-    startingvalues <- c(trafo(mean(ts_start)), rep(0, ncol(dataset)-1))
+    startingvalues <- c(mean(trafo(ts_start)), rep(0, ncol(dataset)-1))
     glm_fit <- suppressWarnings(glm(timser ~ ., family=poisson(link=linkfunc), data=dataset, start=startingvalues)$coefficients)
     param_start$intercept <- intercept <- glm_fit[1]
     param_start$past_obs <- glm_fit[1+P] 
@@ -65,6 +65,11 @@ start.fit <- function(ts, model, xreg, start.control, linkfunc){
         ma <- c(momest["ma1"], rep(0,k-1)) #set higher order parameters to zero
         ar <- c(momest["ar1"], rep(0,k-1)) #see above
         intercept <- momest["intercept"]
+        if(intercept < 0){
+          warning("The start estimation of the intercept has been negative with\n argument 'method=\"MM\"'. Instead 'method=\"iid\"' is used.")
+          ar[1] <- ma[1] <- 0
+          intercept <- mean(ts_start)
+        }  
       }else{
         ar <- ma <- NULL
         intercept <- mean(ts_start)

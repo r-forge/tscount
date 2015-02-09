@@ -4,19 +4,13 @@ tsglm.sim <- function(n, param=list(intercept=1, past_obs=NULL, past_mean=NULL, 
   if(!missing(fit)){
     tsglm.check(fit)
     #Some of the given arguments override the corresponding elements of the provided model fit in argument 'fit':    
-    if(!missing(n)){
-      #warning("Number of observations provided in argument 'n' is used, the number of observations in argument 'fit$n_obs' is ignored")
-    }else{
-      n <- fit$n
+    if(missing(n)){
+      n <- fit$n_obs
     }
-    if(!missing(xreg)){
-      #warning("Covariates in argument 'xreg' are used, the covariates in argument 'fit$xreg' are ignored")
-    }else{
+    if(missing(xreg)){
       xreg <- fit$xreg
     }
-    if(!missing(distr) && !missing(distrcoefs)){
-      #warning("Conditional distribution provided in argument 'distr' with additional distribution coefficients provided in argument 'distrcoefs' is used, the distribution in argument 'fit$distr' and its additional distribution coefficients in argument 'fit$distrcoefs' is ignored")
-    }else{
+    if(missing(distr) || missing(distrcoefs)){
       distr <- fit$distr
       distrcoefs <- fit$distrcoefs
     }
@@ -51,7 +45,7 @@ tsglm.sim <- function(n, param=list(intercept=1, past_obs=NULL, past_mean=NULL, 
   )
   model <- model[model_names]
   names(model) <- model_names
-  xreg <- if(length(xreg) == 0) matrix(0, nrow=n, ncol=0) else as.matrix(xreg)
+  if(is.null(xreg)) xreg <- matrix(0, nrow=n, ncol=0) else xreg <- as.matrix(xreg)
   p <- length(model$past_obs)
   P <- seq(along=numeric(p)) #sequence 1:p if p>0 and NULL otherwise
   p_max <- max(model$past_obs, 0)
@@ -129,9 +123,9 @@ tsglm.sim <- function(n, param=list(intercept=1, past_obs=NULL, past_mean=NULL, 
 
   #Initialisation:
   if(n_start==0 & !missing(fit)){ #If simulation is based on a given fit and the length of the burn-in period is chosen to be 0, the the simulated observations are a direct continuation of the available observations.
-    X_init <- fit$xreg[fit$n-rev(Q_max)+1, , drop=FALSE]
-    kappa_init <- fit$linear.predictors[fit$n-rev(Q_max)+1]
-    z_init <- fit$ts[fit$n-rev(P_max)+1]
+    X_init <- fit$xreg[fit$n_obs-rev(Q_max)+1, , drop=FALSE]
+    kappa_init <- fit$linear.predictors[fit$n_obs-rev(Q_max)+1]
+    z_init <- fit$ts[fit$n_obs-rev(P_max)+1]
   }else{
     X_init <- matrix(0, nrow=q_max+n_start, ncol=r) #the covariates during the burn-in period are set to zero because no other values are available
     kappa_init <- rep(kappa_stationary, q_max)

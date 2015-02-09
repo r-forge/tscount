@@ -6,7 +6,7 @@ tsglm <- function(ts, model=list(past_obs=NULL, past_mean=NULL, external=NULL), 
   if(link=="identity") meanfit <- ingarch.fit(ts=ts, model=model, xreg=xreg, ...)
   if(link=="log") meanfit <- loglin.fit(ts=ts, model=model, xreg=xreg, ...)
   if(length(meanfit$coefficients)==0){ #if no final estimation is done, then the function returns a list with less elements and without the class 'tsglm'
-    result <- list(init=meanfit$init, call=cl, n_obs=meanfit$n_obs, ts=meanfit$ts, model=meanfit$model, xreg=meanfit$xreg, link=link)
+    result <- list(start=meanfit$start, call=cl, n_obs=meanfit$n_obs, ts=meanfit$ts, model=meanfit$model, xreg=meanfit$xreg, link=link)
     return(result)
   }
   #Estimating the distribution:
