@@ -114,6 +114,7 @@ campyfit_intervmultiple <- interv_multiple(fit=campyfit, taus=80:120,
 campyfit_intervmultiple
 plot(campyfir_intervmultiple)
 #Parallel computation for shorter run time on a cluster:
+library(parallel)
 ntasks <- 3
 clust <- makeCluster(ntasks)
 setDefaultCluster(cl=clust)
