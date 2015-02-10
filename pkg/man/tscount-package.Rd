@@ -3,7 +3,7 @@
 \alias{tscount}
 \docType{package}
 \title{
-Analysis of Count Data Time Series
+Analysis of Count Time Series
 }
 \description{
 Collection of R functions for analysis of count time series. Currently the focus is on count time series following generalised linear models.
