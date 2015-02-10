@@ -2,7 +2,7 @@ Package: tscount
 Type: Package
 Title: Analysis of Count Time Series
 Version: 1.0.0
-Date: 2014-10-02
+Date: 2015-02-10
 Authors@R: c(
   person("Tobias", "Liboschik", role=c("aut", "cre"), email="liboschik@statistik.tu-dortmund.de"),
   person("Roland", "Fried", role=c("aut"), email="fried@statistik.tu-dortmund.de"),
