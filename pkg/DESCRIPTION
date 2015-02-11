@@ -7,10 +7,9 @@ Authors@R: c(
   person("Tobias", "Liboschik", role=c("aut", "cre"), email="liboschik@statistik.tu-dortmund.de"),
   person("Roland", "Fried", role=c("aut"), email="fried@statistik.tu-dortmund.de"),
   person("Konstantinos", "Fokianos", role=c("aut"), email="fokianos@ucy.ac.cy"),
-  person("Pascal", "Kerschke", role=c("ctb"), email="kerschke@uni-muenster.de"),
   person("Philipp", "Probst", role=c("aut"), email="philipp.probst@tu-dortmund.de"),
   person("Jonathan", "Rathjens", role=c("ctb"), email="jonathan.rathjens@tu-dortmund.de"))
-Description: The package provides likelihood-based methods for model fitting and assessment, prediction and intervention analysis of count time series following generalized linear models. It allows for models with the identity and with the logarithmic link function. The conditional distribution can be Poisson or Negative Binomial.
+Description: Likelihood-based methods for model fitting and assessment, prediction and intervention analysis of count time series following generalized linear models are provided. Models with the identity and with the logarithmic link function are allowed. The conditional distribution can be Poisson or Negative Binomial.
 Imports: parallel, ltsa
 Suggests: Matrix, xtable, gamlss.data
 License: GPL-2 | GPL-3
