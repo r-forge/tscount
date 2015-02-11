@@ -43,7 +43,14 @@ echo $contents; } ?>
 
 <!-- end of project description -->
 
-<p> More information on the project and the information how to install our R package <tt>tscount</tt> you can find on the <a href="http://<?php echo $domain; ?>/projects/<?php echo $group_name; ?>/">project summary page</a> on the software development platform <a href="http://www.r-forge.r-project.org/">R-Forge</a>.</p>
+<p> More information on the project and the information how to install our R package <tt>tscount</tt> you can find on the <a href="http://<?php echo $domain; ?>/projects/<?php echo $group_name; ?>/">project summary page</a> on the software development platform <a href="http://www.r-forge.r-project.org/">R-Forge</a>. You will also find a current development version there, which can be installed by typing <tt>install.packages("tscount", repos="http://R-Forge.R-project.org")</tt> in R. We recommend to use the most recent stable release available from the Comprehensive R Archive Network (<a href="http://cran.r-project.org">CRAN</a>): <a href="http://cran.r-project.org/web/packages/tscount">http://cran.r-project.org/web/packages/tscount</a>.</p>
+
+<p>There is a <a href="http://cran.r-project.org/web/packages/tscount/vignettes/tsglm.pdf">vignette</a> which summarizes the theoretical background of these methods
+with references to the literature for further details. It gives details on the implementation
+of the package and provides simulation results for models which have not been studied
+theoretically before. The usage of the package is demonstrated by two data examples.</p>
+
+<p>We are happy about any kind of feedback on the package! Contributions to the package are very welcome.</p>
 
 <p> <strong>Maintainer:</strong>
 <a href="https://www.statistik.tu-dortmund.de/liboschik-en.html">Tobias Liboschik</a>, Department of Statistics, Technische Universit&auml;t Dortmund, Germany.</p>
