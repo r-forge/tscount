@@ -34,11 +34,11 @@ predict.tsglm <- function(object, n.ahead=1, newobs=NULL, newxreg=NULL, level=0.
     if(is.na(ts[t])) ts[t] <- g_inv(kappa[t]) #unobserved future observations are replaced by their prediction (by the conditional mean)
   }
   if(is.ts(object$ts)){
-    fit <- window(g_inv(kappa), start=tsp(object$ts)[2]+1/frequency(object$ts)) #use time series class if input time series has this class
+    pred <- window(g_inv(kappa), start=tsp(object$ts)[2]+1/frequency(object$ts)) #use time series class if input time series has this class
   }else{
-    fit <- g_inv(kappa)[n+(1:n.ahead)]
+    pred <- g_inv(kappa)[n+(1:n.ahead)]
   }
-  result <- list(fit=fit)
+  result <- list(pred=pred)
 
   #Prediction intervals:
   if(!missing(B)){
