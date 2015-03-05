@@ -129,7 +129,7 @@ seatbeltssummary
 timeseries_1982 <- window(timeseries, start=1982, end=1982+11/12)
 regressors_1982 <- window(regressors, start=1982, end=1982+11/12) 
 predict(seatbeltsfit, n.ahead=12, level=1-0.1/12, B=2000,
-        newxreg=regressors_1982)$fit
+        newxreg=regressors_1982)$pred
 
 
 ###################################################
@@ -144,7 +144,7 @@ plot(window(timeseries, end=1982.917), type="o",
 lines(fitted(seatbeltsfit), col="blue", lty="dashed", lwd=2)
 arrows(x0=time(predictions_1982$interval_shortest), y0=predictions_1982$interval_shortest[, "lower"], y1=predictions_1982$interval_shortest[, "upper"], angle=90, code=3, length=0.04, col="darkgrey", lwd=2)
 points(timeseries_1982, pch=16, type="o") 
-lines(x=c(1981.917, time(predictions_1982$fit)), c(fitted(seatbeltsfit)[156], predictions_1982$fit), col="red", lty="solid", lwd=2)
+lines(x=c(1981.917, time(predictions_1982$pred)), c(fitted(seatbeltsfit)[156], predictions_1982$pred), col="red", lty="solid", lwd=2)
 
 
 ###################################################
