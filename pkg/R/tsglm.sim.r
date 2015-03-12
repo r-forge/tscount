@@ -99,8 +99,7 @@ tsglm.sim <- function(n, param=list(intercept=1, past_obs=NULL, past_mean=NULL, 
     if(kappa_stationary > 1e+09) stop("Too large mean to simulate from Poisson distribution, sum of parameters for regression on past observations and on past conditional means might be too close to one and/or intercept is too large")
   }
   if(link=="log"){
-    sum_param_past <- sum(abs(param$past_obs))+sum(abs(param$past_mean))
-    if(sum_param_past>=1) stop(paste("Parameters are outside the stationary region, sum of absolute parameters for regression on past observations and on past conditional means is", sum_param_past, "> 1")) 
+    loglin.parametercheck(param) 
   }
     
   n_total <- n_start + n #total number of observations to be simulated (including burn-in)
