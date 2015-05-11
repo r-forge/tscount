@@ -4,13 +4,14 @@
 ###################################################
 ### code chunk number 1: preliminaries
 ###################################################
-options(prompt="R> ", continue="+  ", width=70, useFancyQuotes=FALSE)
+options(prompt="R> ", continue="+  ", width=76, useFancyQuotes=FALSE)
 library("tscount")
 
 
 ###################################################
 ### code chunk number 2: campy1
 ###################################################
+library("tscount")
 par(mar=c(4,4,1,1), mgp=c(2.5,1,0))
 plot(campy, ylab="Number of cases", type="o")
 
@@ -18,43 +19,43 @@ plot(campy, ylab="Number of cases", type="o")
 ###################################################
 ### code chunk number 3: campy2
 ###################################################
-interventions <- interv_covariate(n=length(campy), tau=c(84, 100),
-                  delta=c(1, 0))
-campyfit_pois <- tsglm(campy, model=list(past_obs=1, past_mean=13),
-                  xreg=interventions, dist="poisson")
-campyfit_nbin <- tsglm(campy, model=list(past_obs=1, past_mean=13),
-                  xreg=interventions, dist="nbinom")
+interventions <- interv_covariate(n = length(campy), tau = c(84, 100),
+                  delta = c(1, 0))
+campyfit_pois <- tsglm(campy, model = list(past_obs = 1, past_mean = 13),
+                  xreg = interventions, dist = "poisson")
+campyfit_nbin <- tsglm(campy, model = list(past_obs = 1, past_mean = 13),
+                  xreg = interventions, dist = "nbinom")
 
 
 ###################################################
 ### code chunk number 4: campy3a
 ###################################################
-par(mfrow=c(2,2), mar=c(4,4,3,1), mgp=c(2.5,1,0))
-acf(residuals(campyfit_pois), main="ACF of response residuals")
-marcal(campyfit_pois, ylim=c(-0.03, 0.03), main="Marginal calibration")
-  lines(marcal(campyfit_nbin, plot=FALSE), lty="dashed")
-  legend("bottomright", legend=c("Pois", "NegBin"), lwd=1,
+par(mfrow = c(2, 2), mar = c(4, 4, 3, 1), mgp = c(2.5, 1, 0))
+acf(residuals(campyfit_pois), main = "ACF of response residuals")
+marcal(campyfit_pois, ylim = c(-0.03, 0.03), main = "Marginal calibration")
+  lines(marcal(campyfit_nbin, plot = FALSE), lty = "dashed")
+  legend("bottomright", legend = c("Pois", "NegBin"), lwd=1,
          lty=c("solid", "dashed"))
-pit(campyfit_pois, ylim=c(0, 1.5), main="PIT Poisson")
-pit(campyfit_nbin, ylim=c(0, 1.5), main="PIT Negative Binomial")
+pit(campyfit_pois, ylim = c(0, 1.5), main = "PIT Poisson")
+pit(campyfit_nbin, ylim = c(0, 1.5), main = "PIT Negative Binomial")
 
 
 ###################################################
 ### code chunk number 5: campy3b (eval = FALSE)
 ###################################################
-## acf(residuals(campyfit_pois), main="ACF of response residuals")
-## marcal(campyfit_pois, ylim=c(-0.03, 0.03), main="Marginal calibration")
-##   lines(marcal(campyfit_nbin, plot=FALSE), lty="dashed")
-##   legend("bottomright", legend=c("Pois", "NegBin"), lwd=1,
-##          lty=c("solid", "dashed"))
-## pit(campyfit_pois, ylim=c(0, 1.5), main="PIT Poisson")
-## pit(campyfit_nbin, ylim=c(0, 1.5), main="PIT Negative Binomial")
+## acf(residuals(campyfit_pois), main = "ACF of response residuals")
+## marcal(campyfit_pois, ylim = c(-0.03, 0.03), main = "Marginal calibration")
+##   lines(marcal(campyfit_nbin, plot = FALSE), lty = "dashed")
+##   legend("bottomright", legend = c("Pois", "NegBin"), lwd = 1,
+##          lty = c("solid", "dashed"))
+## pit(campyfit_pois, ylim = c(0, 1.5), main = "PIT Poisson")
+## pit(campyfit_nbin, ylim = c(0, 1.5), main = "PIT Negative Binomial")
 
 
 ###################################################
 ### code chunk number 6: campy4
 ###################################################
-rbind(Poisson=scoring(campyfit_pois), NegBin=scoring(campyfit_nbin))
+rbind(Poisson = scoring(campyfit_pois), NegBin = scoring(campyfit_nbin))
 
 
 ###################################################
@@ -72,7 +73,7 @@ load("campy.RData")
 ###################################################
 ### code chunk number 9: campy6b (eval = FALSE)
 ###################################################
-## se(campyfit_nbin, B=500)$se
+## se(campyfit_nbin, B = 500)$se
 
 
 ###################################################
@@ -85,23 +86,23 @@ warningse[length(warningse)]
 ###################################################
 ### code chunk number 11: seatbelts1
 ###################################################
-par(mar=c(4,4,1,1), mgp=c(2.5,1,0))
-plot(Seatbelts[, "VanKilled"], ylab="Number of casualties", type="o", xaxt="n")
-axis(side=1, at=1969:1985)
-abline(v=1983, col="darkgrey")
+par(mar = c(4,4,1,1), mgp = c(2.5, 1, 0))
+plot(Seatbelts[, "VanKilled"], ylab = "Number of casualties", type = "o", xaxt = "n")
+axis(side = 1, at = 1969:1985)
+abline(v = 1983, col = "darkgrey")
 
 
 ###################################################
 ### code chunk number 12: seatbelts2
 ###################################################
 timeseries <- Seatbelts[, "VanKilled"]
-regressors <- cbind(PetrolPrice=Seatbelts[, c("PetrolPrice")],
-                    linearTrend=seq(along=timeseries)/12)
-timeseries_until1981 <- window(timeseries, end=1981+11/12)
-regressors_until1981 <- window(regressors, end=1981+11/12)
-seatbeltsfit <- tsglm(ts=timeseries_until1981,
-  model=list(past_obs=c(1, 12)), link="log", distr="pois",
-  xreg=regressors_until1981)
+regressors <- cbind(PetrolPrice = Seatbelts[, c("PetrolPrice")],
+                    linearTrend = seq(along=timeseries)/12)
+timeseries_until1981 <- window(timeseries, end = 1981+11/12)
+regressors_until1981 <- window(regressors, end = 1981+11/12)
+seatbeltsfit <- tsglm(timeseries_until1981,
+  model = list(past_obs=c(1, 12)), link = "log", distr = "pois",
+  xreg = regressors_until1981)
 
 
 ###################################################
@@ -113,7 +114,7 @@ load("seatbelts.RData")
 ###################################################
 ### code chunk number 14: seatbelts3b (eval = FALSE)
 ###################################################
-## summary(seatbeltsfit, B=500)
+## summary(seatbeltsfit, B = 500)
 
 
 ###################################################
@@ -126,46 +127,46 @@ seatbeltssummary
 ###################################################
 ### code chunk number 16: seatbelts4
 ###################################################
-timeseries_1982 <- window(timeseries, start=1982, end=1982+11/12)
-regressors_1982 <- window(regressors, start=1982, end=1982+11/12) 
-predict(seatbeltsfit, n.ahead=12, level=1-0.1/12, B=2000,
+timeseries_1982 <- window(timeseries, start = 1982, end = 1982+11/12)
+regressors_1982 <- window(regressors, start = 1982, end = 1982+11/12) 
+predict(seatbeltsfit, n.ahead = 12, level = 1-0.1/12, B = 2000,
         newxreg=regressors_1982)$pred
 
 
 ###################################################
 ### code chunk number 17: seatbelts5
 ###################################################
-par(mar=c(4,4,1,1), mgp=c(2.5,1,0))
-predictions_1982 <- predict(seatbeltsfit, n.ahead=12,
-                            level=1-0.05/12, B=2000,
-                            newxreg=regressors_1982)
-plot(window(timeseries, end=1982.917), type="o",
-     xlim=c(1978.7, 1982.9), ylim=c(0, 20), ylab="Number of casualities")
-lines(fitted(seatbeltsfit), col="blue", lty="dashed", lwd=2)
-arrows(x0=time(predictions_1982$interval_shortest), y0=predictions_1982$interval_shortest[, "lower"], y1=predictions_1982$interval_shortest[, "upper"], angle=90, code=3, length=0.04, col="darkgrey", lwd=2)
-points(timeseries_1982, pch=16, type="o") 
-lines(x=c(1981.917, time(predictions_1982$pred)), c(fitted(seatbeltsfit)[156], predictions_1982$pred), col="red", lty="solid", lwd=2)
+par(mar = c(4, 4, 1, 1), mgp = c(2.5, 1, 0))
+predictions_1982 <- predict(seatbeltsfit, n.ahead = 12,
+                            level = 1-0.05/12, B = 2000,
+                            newxreg = regressors_1982)
+plot(window(timeseries, end = 1982.917), type = "o",
+     xlim = c(1978.7, 1982.9), ylim = c(0, 20), ylab = "Number of casualities")
+lines(fitted(seatbeltsfit), col = "blue", lty = "dashed", lwd = 2)
+arrows(x0 = time(predictions_1982$interval_shortest), y0 = predictions_1982$interval_shortest[, "lower"], y1 = predictions_1982$interval_shortest[, "upper"], angle = 90, code = 3, length = 0.04, col = "darkgrey", lwd = 2)
+points(timeseries_1982, pch = 16, type = "o") 
+lines(x = c(1981.917, time(predictions_1982$pred)), c(fitted(seatbeltsfit)[156], predictions_1982$pred), col = "red", lty = "solid", lwd = 2)
 
 
 ###################################################
 ### code chunk number 18: seatbelts6a
 ###################################################
-seatbeltsfit_alldata <- tsglm(ts=timeseries, link="log",
-                              model=list(past_obs=c(1, 12)),
-                              xreg=regressors, distr="pois")
+seatbeltsfit_alldata <- tsglm(timeseries, link = "log",
+                              model = list(past_obs = c(1, 12)),
+                              xreg = regressors, distr = "pois")
 
 
 ###################################################
 ### code chunk number 19: seatbelts6b
 ###################################################
-seatbelts_test <- interv_test(seatbeltsfit_alldata, tau=170,
-                              delta=1, est_interv=TRUE)
+seatbelts_test <- interv_test(seatbeltsfit_alldata, tau = 170,
+                              delta = 1, est_interv = TRUE)
 
 
 ###################################################
 ### code chunk number 20: seatbelts6c (eval = FALSE)
 ###################################################
-## interv_test(seatbeltsfit_alldata, tau=170, delta=1, est_interv=TRUE)
+## interv_test(seatbeltsfit_alldata, tau = 170, delta = 1, est_interv = TRUE)
 
 
 ###################################################
@@ -194,7 +195,7 @@ comparison <- rbind(
   c(fit_firstobs.drop$coefficients, fit_firstobs.drop$logLik)
 )
 colnames(comparison) <- c("$\\widehat{\\beta}_0$", "$\\widehat{\\beta}_1$", "$\\widehat{\\alpha}_1$", "$\\ell(\\widehat{\\boldsymbol{\\theta}})$")
-rownames(comparison) <- c("\\texttt{init.method=\"marginal\", init.drop=FALSE}", "\\texttt{init.method=\"marginal\", init.drop=TRUE}", "\\texttt{init.method=\"iid\", \\hspace{2em} init.drop=FALSE}", "\\texttt{init.method=\"iid\", \\hspace{2em} init.drop=TRUE}", "\\texttt{init.method=\"firstobs\", init.drop=FALSE}", "\\texttt{init.method=\"firstobs\", init.drop=TRUE}")
+rownames(comparison) <- c("\\code{init.method = \"marginal\", init.drop = FALSE}", "\\code{init.method = \"marginal\", init.drop = TRUE}", "\\code{init.method = \"iid\", \\hspace{2em} init.drop = FALSE}", "\\code{init.method = \"iid\", \\hspace{2em} init.drop = TRUE}", "\\code{init.method = \"firstobs\", init.drop = FALSE}", "\\code{init.method = \"firstobs\", init.drop = TRUE}")
 
 library("xtable")
 print(xtable(comparison, caption="Estimated parameters and log-likelihood of a time series of length 1000 simulated from model \\eqref{eq:linear} for different initialization strategies. The true parameters are $\\beta_0=0.5$, $\\beta_1=0.77$ and $\\alpha_1=0.22$.", label="tab:recursioninit", align="lcccc", digits=c(0,3,3,3,1)), table.placement="tbp", caption.placement="bottom", booktabs=TRUE, comment=FALSE, sanitize.text.function=function(x){x})

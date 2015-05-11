@@ -45,7 +45,7 @@ tsglm.sim <- function(n, param=list(intercept=1, past_obs=NULL, past_mean=NULL, 
   )
   model <- model[model_names]
   names(model) <- model_names
-  if(is.null(xreg)) xreg <- matrix(0, nrow=n, ncol=0) else xreg <- as.matrix(xreg)
+  if(is.null(xreg) || (is.matrix(xreg) && ncol(xreg)==0)) xreg <- matrix(0, nrow=n, ncol=0) else xreg <- as.matrix(xreg)
   p <- length(model$past_obs)
   P <- seq(along=numeric(p)) #sequence 1:p if p>0 and NULL otherwise
   p_max <- max(model$past_obs, 0)
