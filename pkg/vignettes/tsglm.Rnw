@@ -522,11 +522,12 @@ pit(campyfit_nbin, ylim = c(0, 1.5), main = "PIT Negative Binomial")
 The response residuals are identical for the two conditional distributions. Their empirical autocorrelation function, shown in Figure~\ref{fig:campydiagnostic} top left, does not exhibit remaining serial correlation or seasonality which is not described by the models.
 The U-shape of the non-randomized PIT histogram in Figure~\ref{fig:campydiagnostic} bottom left indicates that the Poisson distribution does not fully capture this dispersion well, although the U-shape is not very pronounced. As opposed to this, the PIT histogram which corresponds to the Negative Binomial distribution appears to approach uniformity better. Hence the probabilistic calibration of the Negative Binomial model is satisfactory. The marginal calibration plot, shown in Figure~\ref{fig:campydiagnostic} top right, is inconclusive.
 As a last tool we consider the scoring rules for the two distributions:
+\newpage
 <<campy4>>=
 rbind(Poisson = scoring(campyfit_pois), NegBin = scoring(campyfit_nbin))
 @
-Two of the scoring rules are slightly in favor of the Poisson distribution (quadratic and spherical score), while the other scoring rules support the Negative Binomial distribution.
-Based on the the PIT histograms and the results obtained by most of the scoring rules, we decide for a Negative Binomial model. The degree of overdispersion seems to be small, as the estimated overdispersion coefficient \code{'sigmasq'} given in the output below is close to zero.
+All considered scoring rules are in favor of the Negative Binomial distribution.
+Based on the the PIT histograms and the results obtained by the scoring rules, we decide for a Negative Binomial model. The degree of overdispersion seems to be small, as the estimated overdispersion coefficient \code{'sigmasq'} given in the output below is close to zero.
 <<campy5>>=
 summary(campyfit_nbin)
 @
