@@ -1,6 +1,6 @@
 scoring <- function(object, ...) UseMethod("scoring")
 
-scoring.tsglm <- function(object, cutoff=1000, ...){
+scoring.tsglm <- function(object, individual=FALSE, cutoff=1000, ...){
   #Density functton of the conditional distribution:
   if(object$distr=="poisson") ddistr <- function(x, meanvalue, distrcoefs) dpois(x, lambda=meanvalue)
   if(object$distr=="nbinom") ddistr <- function(x, meanvalue, distrcoefs) dnbinom(x, mu=meanvalue, size=distrcoefs[["size"]])  
@@ -28,14 +28,15 @@ scoring.tsglm <- function(object, cutoff=1000, ...){
       normsq[t] <- sqerror[t]/sigma^2 
       dawseb[t] <- normsq[t] + 2*log(sigma)
   }
-  result <- c(
-    logarithmic=mean(logarithmic),
-    quadratic=mean(quadratic),
-    spherical=mean(spherical),
-    rankprob=mean(rankprob),
-    dawseb=mean(dawseb),
-    normsq=mean(normsq),
-    sqerror=mean(sqerror)
+  result <- data.frame(
+    logarithmic=logarithmic,
+    quadratic=quadratic,
+    spherical=spherical,
+    rankprob=rankprob,
+    dawseb=dawseb,
+    normsq=normsq,
+    sqerror=sqerror
   )
+  if(!individual) result <- apply(result, 2, mean)
   return(result)
 }
