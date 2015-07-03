@@ -1,3 +1,7 @@
+import(stats)
+import(utils)
+import(grDevices)
+import(graphics)
 importFrom(parallel, parSapply)
 importFrom(ltsa, tacvfARMA)
 
@@ -19,6 +23,10 @@ export(
   pit,
   marcal
 )
+
+S3method(marcal, default)
+S3method(pit, default)
+S3method(scoring, default)
 
 S3method(print, tsglm)
 S3method(logLik, tsglm)

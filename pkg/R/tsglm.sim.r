@@ -31,10 +31,7 @@ tsglm.sim <- function(n, param=list(intercept=1, past_obs=NULL, past_mean=NULL, 
   #Check and modify arguments:
   link <- match.arg(link)
   distr <- match.arg(distr)
-  if(distr=="nbinom"){
-    if(missing(distrcoefs) || length(distrcoefs)!=1) stop("For the negative binomial parameter (only) the dispersion parameter 'size' has to be provided in argument 'distrcoefs'")
-    if(distrcoefs<=0) stop("The additional dispersion parameter for the negative binomial distribution has to be greater than zero")
-  }
+  checkdistr(distr=distr, distrcoefs=distrcoefs)
   model_names <- c("past_obs", "past_mean", "external")
   stopifnot(
     n%%1==0 & n>=0,
@@ -104,10 +101,6 @@ tsglm.sim <- function(n, param=list(intercept=1, past_obs=NULL, past_mean=NULL, 
     
   n_total <- n_start + n #total number of observations to be simulated (including burn-in)
   
-  #Random number generation from conditional distribution:
-  if(distr=="poisson") rdistr <- function(n, meanvalue, distrcoefs) rpois(n, lambda=meanvalue)
-  if(distr=="nbinom") rdistr <- function(n, meanvalue, distrcoefs) rnbinom(n, mu=meanvalue, size=distrcoefs)
-  
   #Link and related functions:
   if(link=="identity"){
     g <- function(x) x #link function
@@ -128,7 +121,7 @@ tsglm.sim <- function(n, param=list(intercept=1, past_obs=NULL, past_mean=NULL, 
   }else{
     X_init <- matrix(0, nrow=q_max+n_start, ncol=r) #the covariates during the burn-in period are set to zero because no other values are available
     kappa_init <- rep(kappa_stationary, q_max)
-    z_init <- rdistr(p_max, meanvalue=g_inv(kappa_stationary), distrcoefs=distrcoefs)
+    z_init <- rdistr(n=p_max, meanvalue=g_inv(kappa_stationary), distrcoefs=distrcoefs)
   }
   X <- rbind(X_init, xreg)    
   kappa <- c(kappa_init, numeric(n_total))  
@@ -137,7 +130,7 @@ tsglm.sim <- function(n, param=list(intercept=1, past_obs=NULL, past_mean=NULL, 
   #Recursion:  
   for(t in 1:n_total){
     kappa[t+q_max] <- param$intercept + sum(param$past_obs*trafo(z[(t-model$past_obs)+p_max])) + sum(param$past_mean*kappa[(t-model$past_mean)+q_max]) + if(r>0){sum(param$xreg*X[t+q_max,]) - if(q>0){sum(param$past_mean*colSums(model$external*param$xreg*t(X[(t-model$past_mean)+q_max, , drop=FALSE])))}else{0}}else{0}
-    z[t+p_max] <- rdistr(1, meanvalue=g_inv(kappa[t+q_max]), distrcoefs=distrcoefs)
+    z[t+p_max] <- rdistr(n=1, meanvalue=g_inv(kappa[t+q_max]), distrcoefs=distrcoefs)
   }    
 
   #Remove initialisation:

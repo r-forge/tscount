@@ -1,4 +1,4 @@
-predict.tsglm <- function(object, n.ahead=1, newobs=NULL, newxreg=NULL, level=0.95, B, ...){
+predict.tsglm <- function(object, n.ahead=1, newobs=NULL, newxreg=NULL, level=0.95, global=FALSE, type=c("quantiles", "shortest"), method=c("conddistr", "bootstrap"), B=1000, ...){
   tsglm.check(object)
   #Link and related functions:
   if(object$link=="identity"){
@@ -40,51 +40,62 @@ predict.tsglm <- function(object, n.ahead=1, newobs=NULL, newxreg=NULL, level=0.
   result <- list(pred=pred)
 
   #Prediction intervals:
-  if(!is.null(newobs) && !missing(B)){
-    warning("Prediction intervals are only available for a repeated 1-step ahead\nprediction where either all (prediction intervals of type 'condquant')\nor no (prediction intervals of type 'bootstrap') future observations\nare given in argument 'newobs'. It is currently not possible to compute\nprediction intervals when only some of the future observations are\navailable (except when only the lastfuture observation is missing).")
-    return(result)
-  }
-  a <- (1-level)/2
-  if(n.ahead==1 || !any(is.na(newobs[1:(n.ahead-1)]))){ #all predictions are 1-step ahead predictions, type="condquant"
-    #Quantile function of the conditional distribution (cf. marcal.gslm):
-      if(object$distr=="poisson"){
-        qdistr <- function(p, meanvalue, distrcoefs, upper=FALSE){
-          quant <- qpois(p, lambda=meanvalue)
-          if(upper && p==ppois(quant, lambda=meanvalue)) quant <- quant+1 #different definition of the quantile
-          return(quant)
-        }
+  stopifnot(
+    length(level)==1,
+    !is.na(level),
+    level<1,
+    level>=0
+  )
+  if(level>0){ #do not compute prediction intervals for level==0
+    level_local <- if(global){1-(1-level)/n.ahead}else{level} #Bonferroni adjustment of the coverage rate of each individual prediction interval such that a global coverage rate is achieved
+    type <- match.arg(type)
+    method <- match.arg(method, several.ok=TRUE)
+    conddistr_possible <- n.ahead==1 || (length(newobs)>=n.ahead-1 && !any(is.na(newobs[1:(n.ahead-1)]))) #method="conddistr" is only possible if all predictions are 1-step ahead predictions such that the true previous observations are available (this is the case if only one observation is to be predicted or when the first n.ahead-1 observations are given in argument 'newobs')
+    if(all(c("conddistr", "bootstrap") %in% method)) method <- if(conddistr_possible){"conddistr"}else{"bootstrap"} #automatic choice of the method, prefer method="conddistr" if possible 
+    if(type=="quantiles") a <- (1-level_local)/2
+    if(type=="shortest"){
+      largestdensityinterval <- function(probs, level){ #find shortest interval with given probability, probs are assumed to be the probabilities corresponding to the values seq(along=probs)-1 
+        values <- seq(along=probs)-1
+        ord <- order(probs, decreasing=TRUE)
+        result <- range(values[ord][1:which(cumsum(probs[ord])>=level)[1]])
+        return(result)
       }
-      if(object$distr=="nbinom"){
-        qdistr <- function(p, meanvalue, distrcoefs, upper=FALSE){
-          quant <- qnbinom(p, mu=meanvalue, size=distrcoefs[["size"]])
-          if(upper && p==pnbinom(quant, mu=meanvalue, size=distrcoefs[["size"]])) quant <- quant+1 #different definition of the quantile
-          return(quant)
+    }
+    if(method=="conddistr"){
+      if(!conddistr_possible) stop("Computation of prediction intervals with argument 'method' set to \"bootstrap\"\ndoes only work for 1-step-ahead predictions. If argument 'n.ahead' is larger\nthan 1, future observations have to be provided in argument 'newobs'.") 
+      if(type=="quantiles"){  
+        qdistr_mod <- function(p, meanvalue, distr=c("poisson", "nbinom"), distrcoefs, upper=FALSE){ #allows for alternative definition of the quantile
+          result <- qdistr(p=p, meanvalue=meanvalue, distr=distr, distrcoefs=distrcoefs)
+          if(upper) result <- result + (pdistr(q=result, meanvalue=meanvalue, distr=distr, distrcoefs=distrcoefs)==p) #alternative definition of the quantile
+          return(result)
         }
+        predint <- cbind(lower=qdistr_mod(a, meanvalue=pred, distr=object$distr, distrcoefs=object$distrcoefs), upper=qdistr_mod(1-a, meanvalue=pred, distr=object$distr, distrcoefs=object$distrcoefs, upper=TRUE))
       }
-    predint_condquant <- cbind(lower=qdistr(a, meanvalue=pred, distrcoefs=object$distrcoefs), upper=qdistr(1-a, meanvalue=pred, distrcoefs=object$distrcoefs, upper=TRUE))
+      if(type=="shortest"){
+        cutoff <- qdistr(p=1-(1-level_local)/10, meanvalue=max(pred), distr=object$distr, distrcoefs=object$distrcoefs) #very large quantile which is almost certainly larger than the upper bound of the shortest prediction interval
+        predint <- t(sapply(pred, function(predval) largestdensityinterval(probs=ddistr(x=0:cutoff, meanvalue=predval, distr=object$distr, distrcoefs=object$distrcoefs), level=level_local)))
+      }
+      predmed <- qdistr(p=0.5, meanvalue=pred, distr=object$distr, distrcoefs=object$distrcoefs)
+      B <- NULL
+    }
+    if(method=="bootstrap"){
+      if(!is.null(newobs)) stop("Computation of prediction intervals with argument 'method' set to \"bootstrap\"\ncan currently not take into account the future observations given in argument\n'newobs'. Either set argument 'method' to \"conddistr\" or do not compute\nprediction intervals at all by setting argument 'level' to zero.")
+      stopifnot(
+        length(B)==1,
+        B%%1==0,
+        B>=10
+      )
+      futureobs <- replicate(B, tsglm.sim(n=n.ahead, xreg=xreg[-(1:n), , drop=FALSE], fit=object, n_start=0)$ts)
+      if(type=="quantiles") predint <- t(apply(futureobs, 1, quantile, probs=c(a, 1-a), type=1)) 
+      if(type=="shortest") predint <- t(apply(futureobs, 1, function(x) largestdensityinterval(tabulate(x+1)/length(x), level=level_local)))
+      predmed <- apply(futureobs, 1, median)
+    }
+    colnames(predint) <- c("lower", "upper")
     if(is.ts(object$ts)){ #use time series class if input time series has this class
-      predint_condquant <- ts(predint_condquant, start=tsp(object$ts)[2]+1/frequency(object$ts), frequency=frequency(object$ts))
+        predint <- ts(predint, start=tsp(object$ts)[2]+1/frequency(object$ts), frequency=frequency(object$ts))
+        predmed <- ts(predmed, start=tsp(object$ts)[2]+1/frequency(object$ts), frequency=frequency(object$ts))
     }
-    result <- c(result, list(interval_condquant=predint_condquant, type="condquant"))          
-  }
-  if(!missing(B)){ #type="bootstrap"
-    futureobs <- replicate(B, tsglm.sim(n=n.ahead, xreg=xreg[-(1:n), , drop=FALSE], fit=object, n_start=0)$ts)
-    pred_median <- apply(futureobs, 1, median)    
-    largestdensityinterval <- function(x, level){ #find shortest interval with given probability 
-      probs <- tabulate(x+1)/length(x)
-      ord <- order(probs, decreasing=TRUE)
-      result <- range((seq(along=probs)-1)[ord][1:which(cumsum(probs[ord])>=level)[1]])
-      return(result)
-    }
-    predint_shortest <- t(apply(futureobs, 1, largestdensityinterval, level=level))
-    predint_quantiles <- t(apply(futureobs, 1, quantile, probs=c(a, 1-a), type=8))
-    colnames(predint_shortest) <- colnames(predint_quantiles) <- c("lower", "upper")
-    if(is.ts(object$ts)){ #use time series class if input time series has this class
-      pred_median <- ts(pred_median, start=tsp(object$ts)[2]+1/frequency(object$ts), frequency=frequency(object$ts)) 
-      predint_shortest <- ts(predint_shortest, start=tsp(object$ts)[2]+1/frequency(object$ts), frequency=frequency(object$ts))
-      predint_quantiles <- ts(predint_quantiles, start=tsp(object$ts)[2]+1/frequency(object$ts), frequency=frequency(object$ts))  
-    }
-    result <- c(result, list(median=pred_median, interval_shortest=predint_shortest, interval_quantiles=predint_quantiles, B=B, type="bootstrap")) 
+    result <- c(result, list(interval=predint, level=level, global=global, type=type, method=method, B=B, median=predmed))
   }
   return(result)
 }

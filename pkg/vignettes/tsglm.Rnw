@@ -77,7 +77,7 @@ This paper summarizes the theoretical background of these methods with reference
 \begin{document}
 \SweaveOpts{concordance=TRUE, prefix.string=tscount}
 <<preliminaries, echo=FALSE, results=hide>>=
-options(prompt="R> ", continue="+  ", width=76, useFancyQuotes=FALSE)
+options(prompt="R> ", continue="+  ", width=76, useFancyQuotes=FALSE, digits=5)
 library("tscount")
 @
 %% include your article here, just as usual
@@ -315,15 +315,16 @@ More details on these approaches are given in Appendix~\ref{app:startestimation}
 \section{Prediction}
 \label{sec:prediction}
 
-In terms of the mean square error, the optimal predictor $\widehat{Y}_{n+1}$ for $Y_{n+1}$, given potential covariates at time $n+1$ and the past ${\cal F}_n$ of the process up to time $n$, is the conditional expectation $\lambda_{n+1}$ given in \eqref{eq:linpred}. By construction of the model the conditional distribution of $Y_{n+1}$ is a Poisson~\eqref{eq:poisson} respectively Negative Binomial~\eqref{eq:nbinom} distribution with mean $\lambda_{n+1}$.
+In terms of the mean square error, the optimal 1-step-ahead predictor $\widehat{Y}_{n+1}$ for $Y_{n+1}$, given potential covariates at time $n+1$ and the past ${\cal F}_n$ of the process up to time $n$, is the conditional expectation $\lambda_{n+1}$ given in \eqref{eq:linpred} (S3 method of function \code{predict}). By construction of the model the conditional distribution of $\widehat{Y}_{n+1}$ is a Poisson~\eqref{eq:poisson} respectively Negative Binomial~\eqref{eq:nbinom} distribution with mean $\lambda_{n+1}$.
+An $h$-step-ahead prediction $\widehat{Y}_{n+h}$ for $Y_{n+h}$ is obtained by recursive 1-step-ahead predictions, where unobserved values $Y_{n+1},\dots,Y_{n+h-1}$ are replaced by their respective 1-step-ahead prediction, $h\in\mathbb{N}$. The distribution of this $h$-step-ahead prediction $\widehat{Y}_{n+h}$ is not known analytically but can be approximated numerically by a parametric bootstrap procedure, which is described below.
 
-An $h$-step-ahead prediction $\widehat{Y}_{n+h}$ for $Y_{n+h}$ is obtained by recursive one-step-ahead predictions, where                                                                                                                         unobserved values $Y_{n+1},\dots,Y_{n+h-1}$ are replaced by their respective one-step-ahead prediction (S3 method of function \code{predict}), $h\in\mathbb{N}$. The distribution of this $h$-step-ahead prediction $\widehat{Y}_{n+h}$ is not known analytically but can be approximated numerically by simulation, which is described below.
+In applications $\lambda_{n+1}$ is substituted by its estimator $\widehat{\lambda}_{n+1}=\lambda_{n+1}(\widehat{\boldsymbol{\theta}})$, which depends on the estimated regression parameters $\widehat{\boldsymbol{\theta}}$. The dispersion parameter $\phi$ of the Negative Binomial distribution is replaced by its estimator $\widehat{\phi}$. Plugging in the estimated parameters does increase the uncertainty of the predictive distribution. Note that this is not taken into account for the construction of prediction intervals described in the following paragraphs.
 
-In applications $\lambda_{n+1}$ is substituted by its estimator $\widehat{\lambda}_{n+1}=\lambda_{n+1}(\widehat{\boldsymbol{\theta}})$, which depends on the estimated model parameters $\widehat{\boldsymbol{\theta}}$. The dispersion parameter $\phi$ of the Negative Binomial distribution is replaced by its estimator $\widehat{\phi}$. The additional uncertainty induced by plugging in the estimated model coefficients is not taken into account for the construction of prediction intervals.
+Prediction intervals for $Y_{n+h}$ with a given coverage rate $1-\alpha$ (argument \code{level}) are designed to cover the true observation $Y_{n+h}$ with a probability of $1-\alpha$. Simultaneous prediction intervals achieving a global coverage rate for $Y_{n+1},\dots,Y_{n+h}$ can be obtained by a Bonferroni adjustment of the individual coverage rates to $1-\alpha/h$ each (argument \code{global = TRUE}).
 
-Prediction intervals for $Y_{n+h}$ with a given coverage rate $1-\alpha$ (argument \code{level}) are designed to cover the true observation $Y_{n+h}$ with a probability of $1-\alpha$. Simultaneous prediction intervals achieving a global coverage rate for $Y_{n+1},\dots,Y_{n+h}$ can be obtained by a Bonferroni adjustment of the individual coverage rates to $1-\alpha/h$ each. The prediction intervals are based on $B$ simulations of realizations $y_{n+1}^{(b)},\dots,y_{n+h}^{(b)}$ from the fitted model, $b=1,\dots,B$ (argument \code{B}). To obtain an approximative prediction interval for $Y_{n+h}$ one can either use the empirical $(\alpha/2)$- and $(1-\alpha/2)$-quantile of $y_{n+h}^{(1)},\dots,y_{n+h}^{(B)}$ or find the shortest interval which contains at least $\lceil (1-\alpha) \cdot B \rceil$ of these observations (the function \code{predict} returns both types of prediction intervals and additionally the empirical median of the simulated predictive distribution).
-The computation of prediction intervals can be accelerated by distributing it to multiple cores simultaneously (argument \code{parallel = TRUE}), which requires a computing cluster registered by the \proglang{R} package \pkg{parallel}.
+There are two different principles for construction of predictions intervals available which in practice often yield identical intervals. Firstly, the limits can be the $(\alpha/2)$- and $(1-\alpha/2)$-quantile of the (approximated) predictive distribution (argument \code{type = "quantiles"}). Secondly, the limits can be chosen such that the interval has minimal length given that, according to the (approximated) predictive distribution, the probability that a value falls into this interval is at least as large as the desired coverage rate (argument \code{type = "shortest"}).
 
+One-step-ahead prediction intervals can be straightforwardly obtained from the conditional distribution (argument \code{method = "conddistr"}). Prediction intervals obtained by a parametric bootstrap procedure (argument \code{method = "bootstrap"}) are based on $B$ simulations of realizations $y_{n+1}^{(b)},\dots,y_{n+h}^{(b)}$ from the fitted model, $b=1,\dots,B$ (argument \code{B}). To obtain an approximative prediction interval for $Y_{n+h}$ one can either use the empirical $(\alpha/2)$- and $(1-\alpha/2)$-quantile of $y_{n+h}^{(1)},\dots,y_{n+h}^{(B)}$ (if \code{type = "quantiles"}) or find the shortest interval which contains at least $\lceil (1-\alpha) \cdot B \rceil$ of these observations (if \code{type = "shortest"}). This bootstrap procedure can be accelerated by distributing it to multiple cores simultaneously (argument \code{parallel = TRUE}), which requires a computing cluster registered by the \proglang{R} package \pkg{parallel}.
 
 
 
@@ -601,19 +602,19 @@ Based on the model fitted to the training data until December 1981, we can predi
 <<seatbelts4>>=
 timeseries_1982 <- window(timeseries, start = 1982, end = 1982+11/12)
 regressors_1982 <- window(regressors, start = 1982, end = 1982+11/12) 
-predict(seatbeltsfit, n.ahead = 12, level = 1-0.1/12, B = 2000,
-        newxreg=regressors_1982)$pred
+predict(seatbeltsfit, n.ahead = 12, level = 0.9, global = TRUE,
+        B = 2000, newxreg=regressors_1982)$pred
 @
 %
 <<seatbelts5, echo=FALSE, fig=TRUE, include=FALSE, height=3, width=7>>=
 par(mar = c(4, 4, 1, 1), mgp = c(2.5, 1, 0))
 predictions_1982 <- predict(seatbeltsfit, n.ahead = 12,
-                            level = 1-0.05/12, B = 2000,
-                            newxreg = regressors_1982)
+                            level = 0.9, global = TRUE,
+                            B = 2000, newxreg = regressors_1982)
 plot(window(timeseries, end = 1982.917), type = "o",
      xlim = c(1978.7, 1982.9), ylim = c(0, 20), ylab = "Number of casualities")
 lines(fitted(seatbeltsfit), col = "blue", lty = "dashed", lwd = 2)
-arrows(x0 = time(predictions_1982$interval_shortest), y0 = predictions_1982$interval_shortest[, "lower"], y1 = predictions_1982$interval_shortest[, "upper"], angle = 90, code = 3, length = 0.04, col = "darkgrey", lwd = 2)
+arrows(x0 = time(predictions_1982$interval), y0 = predictions_1982$interval[, "lower"], y1 = predictions_1982$interval[, "upper"], angle = 90, code = 3, length = 0.04, col = "darkgrey", lwd = 2)
 points(timeseries_1982, pch = 16, type = "o") 
 lines(x = c(1981.917, time(predictions_1982$pred)), c(fitted(seatbeltsfit)[156], predictions_1982$pred), col = "red", lty = "solid", lwd = 2)
 @
@@ -656,7 +657,7 @@ adequate for a given time series.
 
 The common regression models for count data are often not capable to describe an exceptionally large number of observations with the value zero. In the literature so-called zero-inflated and hurdle regression models have become popular for zero excess count data \citep[for an introduction and comparison see][]{loeys_analysis_2012}. A first attempt to utilize zero-inflation for INGARCH time series models is made by \citet{zhu_zero-inflated_2012}.
 
-Alternative nonlinear models are for example the threshold model suggested by \citet{douc_ergodicity_2013} or the examples given by \citet{fokianos_nonlinear_2012}. \citet{fokianos_goodness--fit_2013} propose a class of goodness-of-fit tests for the specification of the linear predictor, which are based on the smoothed empirical process of Pearson residuals. \citet{christou_estimation_2013} develop suitably adjusted score tests for parameters which are identifiable as well as non-identifiable under the null hypothesis. These tests can be employed to test for linearity of an assumed model.
+Alternative nonlinear models are for example the threshold model suggested by \citet{douc_ergodicity_2013} or the examples given by \citet{fokianos_nonlinear_2012}. \citet{fokianos_goodness--fit_2013} propose a class of goodness-of-fit tests for the specification of the linear predictor, which are based on the smoothed empirical process of Pearson residuals. \citet{christou_estimation_2015} develop suitably adjusted score tests for parameters which are identifiable as well as non-identifiable under the null hypothesis. These tests can be employed to test for linearity of an assumed model.
 
 In practical applications one is often faced with outliers. \citet{elsaied_robust_2014} and \citet{kitromilidou_robust_2013} develop M-estimators for the linear and the log-linear model respectively.
 \citet{fried_outliers_2014} compare robust estimators of the (partial) autocorrelation for time series of counts, which can be useful for identifying the correct model order.
