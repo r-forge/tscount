@@ -1,4 +1,5 @@
 Changes since version 1.0.0
+  * Covariates with negative values are no longer tolerated when fitting models with the identity link function but produce an error.
   * S3 method 'predict' for class "tsglm" was extended. It now allows to choose the construction  principle (argument 'type'), the computation method (argument 'method') and whether the coverage rate should hold globally (argument 'global').
   * Functions 'marcal', 'pit' and 'scoring' now have a default S3 method which makes them more generally usable than just for objects of class "tsglm".
   * Function 'scoring' does now allow to return the individual scores and not only the mean (argument 'individual').

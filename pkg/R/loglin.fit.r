@@ -5,9 +5,7 @@ loglin.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, external=NU
   durations <- c(start=NA, inter=NA, final=NA, total=NA)
   begin_total <- proc.time()["elapsed"]
   model_names <- c("past_obs", "past_mean", "external")
-  stopifnot( #Are the arguments valid?
-    all(names(model) %in% model_names)
-  )
+  if(!all(names(model) %in% model_names)) stop("Argument 'model' must only contain list elements named \"past_obs\", \"past_mean\"\nand \"external\".")
   model <- model[model_names]
   names(model) <- model_names
   if(is.null(xreg)) xreg <- matrix(0, nrow=length(ts), ncol=0) else xreg <- as.matrix(xreg)
@@ -43,13 +41,13 @@ loglin.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, external=NU
   start_default[names(start.control)] <- start.control #options given by user override the default
   start.control <- start_default #use these options in the following
   if(!is.null(final.control)){
-    final_default <- list(constrained=list(outer.iterations=100, outer.eps=1e-05), optim.method="BFGS", optim.control=list(maxit=100, reltol=1e-11))
+    final_default <- list(constrained=list(), optim.method="BFGS", optim.control=list(maxit=100, reltol=1e-11))
     final_default[names(final.control)] <- final.control  
     final.control <- final_default
     if(!all(names(final.control)%in%names(final_default))) stop("There are unknown list elements in argument 'final.control'")
   }
   if(!is.null(inter.control)){
-    inter_default <- list(constrained=list(outer.iterations=5, outer.eps=1e-05), optim.method="Nelder-Mead", optim.control=list(maxit=20, reltol=1e-8))
+    inter_default <- list(constrained=list(outer.iterations=5), optim.method="Nelder-Mead", optim.control=list(maxit=20, reltol=1e-8))
     inter_default[names(inter.control)] <- inter.control  
     inter.control <- inter_default
     if(!all(names(inter.control)%in%names(inter_default))) stop("There are unknown list elements in argument 'inter.control'")
@@ -113,6 +111,7 @@ loglin.fit <- function(ts, model=list(past_obs=NULL, past_mean=NULL, external=NU
   paramvec_final <- as.numeric(final_optim$par)
   if(p+q+r>0 && all(abs((paramvec_final-paramvec_start)/paramvec_final) < 0.01)) warning("Final estimation is still very close to start estimation. This might indicate a\nproblem with the optimisation but could also have happended by chance. Please\ncheck results carefully.")
   if(p+q>0 && mean(abs(paramvec_final[c(1+P,1+p+Q)])) < 1e-04) warning("There is almost no serial dependence estimated in the data. This might be\nappropriate but could just as likely indicate a problem with the optimisation.\nPlease check results carefully.")
+  if(sum(paramvec_final[1+P+Q])>1-slackvar-epsilon) warning("The sum of the estimated serial dependence parameters is very close to the\nboundary value one. This is a plausible estimation in the presence of very\nstrong serial dependence. However, this could also point to a nonstationarity\nof the process which has not been taken into account, e.g. a trend. Please\n check results carefully.") #Reaching the other (negative) boundaries of the parameter space for the serial dependence parameters does not trigger a warning. It is expected that this will rarely happen in practical applications.
   if(abs(paramvec_final[1]) < log(0.1)) warning("Estimated absolute intercept is very small (< log(0.1)). This might indicate a\nproblem with the optimisation unless the observed marginal mean is very low or\nthe observed serial dependence is very strong. Please check results carefully.")
   ##############  
   

@@ -106,8 +106,8 @@ loglin.fit(ts, model = list(past_obs = NULL, past_mean = NULL,
     named list with optional elements that determine how to make the final maximum likelihood estimation. If \code{final.control=NULL}, only start estimates are computed and a list with fewer elements which has not the class \code{"tsglm"} is returned. Possible list elements of this argument are:
     \describe{  
       \item{\code{constrained}}{named list whose elements are passed to function \code{\link{constrOptim}} with possible elements \code{mu}, \code{outer.iterations} and \code{outer.eps} (see \code{\link{constrOptim}} for details). If \code{constrained=NULL}, an unconstrained optimisation is made with function \code{\link{optim}}. Note that this is likely to result in a fitted model which is non-stationary, which might cause further problems.}
-      \item{\code{optim.method}}{character which is passed to functions \code{\link{constrOptim}} or \code{\link{optim}} as argument \code{method}.}
-      \item{\code{optim.control}}{named list which is passed to function \code{\link{constrOptim}} or \code{\link{optim}} as the argument \code{control}. Must not contain the list element \code{fnscale}.}
+      \item{\code{optim.method}}{character which is passed to functions \code{\link{constrOptim}} or \code{\link{optim}} as argument \code{method}. The default is \code{"BFGS"}.}
+      \item{\code{optim.control}}{named list which is passed to function \code{\link{constrOptim}} or \code{\link{optim}} as the argument \code{control}. Must not contain the list element \code{fnscale}. The default is \code{list(maxit=20, reltol=1e-8)}.}
     }
   }
   \item{inter.control}{
