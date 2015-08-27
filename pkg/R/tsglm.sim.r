@@ -121,7 +121,7 @@ tsglm.sim <- function(n, param=list(intercept=1, past_obs=NULL, past_mean=NULL, 
   }else{
     X_init <- matrix(0, nrow=q_max+n_start, ncol=r) #the covariates during the burn-in period are set to zero because no other values are available
     kappa_init <- rep(kappa_stationary, q_max)
-    z_init <- rdistr(n=p_max, meanvalue=g_inv(kappa_stationary), distrcoefs=distrcoefs)
+    z_init <- rdistr(n=p_max, meanvalue=g_inv(kappa_stationary), distr=distr, distrcoefs=distrcoefs)
   }
   X <- rbind(X_init, xreg)    
   kappa <- c(kappa_init, numeric(n_total))  
@@ -130,7 +130,7 @@ tsglm.sim <- function(n, param=list(intercept=1, past_obs=NULL, past_mean=NULL, 
   #Recursion:  
   for(t in 1:n_total){
     kappa[t+q_max] <- param$intercept + sum(param$past_obs*trafo(z[(t-model$past_obs)+p_max])) + sum(param$past_mean*kappa[(t-model$past_mean)+q_max]) + if(r>0){sum(param$xreg*X[t+q_max,]) - if(q>0){sum(param$past_mean*colSums(model$external*param$xreg*t(X[(t-model$past_mean)+q_max, , drop=FALSE])))}else{0}}else{0}
-    z[t+p_max] <- rdistr(n=1, meanvalue=g_inv(kappa[t+q_max]), distrcoefs=distrcoefs)
+    z[t+p_max] <- rdistr(n=1, meanvalue=g_inv(kappa[t+q_max]), distr=distr, distrcoefs=distrcoefs)
   }    
 
   #Remove initialisation:

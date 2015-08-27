@@ -4,9 +4,9 @@ se.tsglm <- function(object, B, parallel=FALSE, ...){
   tsglm.check(object)
   est <- c(coef(object), sigmasq=if(object$distr=="poisson") NULL else object$sigmasq)
   if(missing(B)){
-    vcov <- vcov(object)
-    var <- diag(vcov)
-    stderrors <- c(sqrt(var), sigmasq=if(object$distr=="poisson") NULL else NA)
+    covmatrix <- vcov(object)
+    variances <- diag(covmatrix)
+    stderrors <- c(sqrt(variances), sigmasq=if(object$distr=="poisson") NULL else NA)
     result <- list(est=est, se=stderrors, type="normapprox")
   }else{
     stopifnot(B>=2, B%%1==0)
@@ -23,7 +23,8 @@ se.tsglm <- function(object, B, parallel=FALSE, ...){
     }else{
       Sapply <- sapply
     }
-    bootstrap_coefs <- Sapply(seeds, simfit, fit=object, ..., simplify=TRUE)
+    bootstrap_coefs <- Sapply(seeds, simfit, fit=object, simplify=TRUE)
+    if(length(est)==1) bootstrap_coefs <- matrix(bootstrap_coefs, nrow=1)
     if(object$distr!="poisson" && anyNA(bootstrap_coefs["sigmasq",])) warning(paste("The overdispersion coefficient 'sigmasq' could not be estimated\nin", sum(is.na(bootstrap_coefs["sigmasq",])), "of the", B, "replications. It is set to zero for these\nreplications. This might to some extent result in an overestimation\nof its true variability."))
     stderrors <- apply(bootstrap_coefs, 1, sd, na.rm=TRUE)
     result <- list(est=est, se=stderrors, type="bootstrap", B=B)

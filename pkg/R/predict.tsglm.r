@@ -1,4 +1,4 @@
-predict.tsglm <- function(object, n.ahead=1, newobs=NULL, newxreg=NULL, level=0.95, global=FALSE, type=c("quantiles", "shortest"), method=c("conddistr", "bootstrap"), B=1000, ...){
+predict.tsglm <- function(object, n.ahead=1, newobs=NULL, newxreg=NULL, level=0.95, global=FALSE, type=c("quantiles", "shortest", "onesided"), method=c("conddistr", "bootstrap"), B=1000, estim_error=c("ignore", "normapprox"), ...){
   tsglm.check(object)
   #Link and related functions:
   if(object$link=="identity"){
@@ -17,7 +17,9 @@ predict.tsglm <- function(object, n.ahead=1, newobs=NULL, newxreg=NULL, level=0.
   n <- object$n_obs
   model <- object$model
   p <- length(model$past_obs)
+  P <- seq(along=numeric(p)) #sequence 1:p if p>0 and NULL otherwise
   q <- length(model$past_mean)
+  Q <- seq(along=numeric(q)) #sequence 1:p if p>0 and NULL otherwise
   r <- ncol(object$xreg)
   R <- seq(along=numeric(r)) 
   xreg <- rbind(object$xreg, newxreg)
@@ -47,12 +49,14 @@ predict.tsglm <- function(object, n.ahead=1, newobs=NULL, newxreg=NULL, level=0.
     level>=0
   )
   if(level>0){ #do not compute prediction intervals for level==0
+    warning_messages <- NULL
     level_local <- if(global){1-(1-level)/n.ahead}else{level} #Bonferroni adjustment of the coverage rate of each individual prediction interval such that a global coverage rate is achieved
-    type <- match.arg(type)
     method <- match.arg(method, several.ok=TRUE)
     conddistr_possible <- n.ahead==1 || (length(newobs)>=n.ahead-1 && !any(is.na(newobs[1:(n.ahead-1)]))) #method="conddistr" is only possible if all predictions are 1-step ahead predictions such that the true previous observations are available (this is the case if only one observation is to be predicted or when the first n.ahead-1 observations are given in argument 'newobs')
-    if(all(c("conddistr", "bootstrap") %in% method)) method <- if(conddistr_possible){"conddistr"}else{"bootstrap"} #automatic choice of the method, prefer method="conddistr" if possible 
+    if(all(c("conddistr", "bootstrap") %in% method)) method <- if(conddistr_possible){"conddistr"}else{"bootstrap"} #automatic choice of the method, prefer method="conddistr" if possible
+    type <- match.arg(type) 
     if(type=="quantiles") a <- (1-level_local)/2
+    if(type=="onesided") a <- 1-level_local
     if(type=="shortest"){
       largestdensityinterval <- function(probs, level){ #find shortest interval with given probability, probs are assumed to be the probabilities corresponding to the values seq(along=probs)-1 
         values <- seq(along=probs)-1
@@ -61,15 +65,19 @@ predict.tsglm <- function(object, n.ahead=1, newobs=NULL, newxreg=NULL, level=0.
         return(result)
       }
     }
+    estim_error <- match.arg(estim_error)
+    if(estim_error=="normapprox" && method!="bootstrap") stop("Accounting for the estimation uncertainty by employing the normal approximation\nof the parameter estimation is only available if argument 'method' is set to\n\"bootstrap\".")
     if(method=="conddistr"){
       if(!conddistr_possible) stop("Computation of prediction intervals with argument 'method' set to \"bootstrap\"\ndoes only work for 1-step-ahead predictions. If argument 'n.ahead' is larger\nthan 1, future observations have to be provided in argument 'newobs'.") 
-      if(type=="quantiles"){  
+      if(type %in% c("quantiles", "onesided")){  
         qdistr_mod <- function(p, meanvalue, distr=c("poisson", "nbinom"), distrcoefs, upper=FALSE){ #allows for alternative definition of the quantile
           result <- qdistr(p=p, meanvalue=meanvalue, distr=distr, distrcoefs=distrcoefs)
           if(upper) result <- result + (pdistr(q=result, meanvalue=meanvalue, distr=distr, distrcoefs=distrcoefs)==p) #alternative definition of the quantile
           return(result)
         }
-        predint <- cbind(lower=qdistr_mod(a, meanvalue=pred, distr=object$distr, distrcoefs=object$distrcoefs), upper=qdistr_mod(1-a, meanvalue=pred, distr=object$distr, distrcoefs=object$distrcoefs, upper=TRUE))
+        lower <- if(type=="onesided"){integer(n.ahead)}else{qdistr_mod(a, meanvalue=pred, distr=object$distr, distrcoefs=object$distrcoefs)}
+        upper <- qdistr_mod(1-a, meanvalue=pred, distr=object$distr, distrcoefs=object$distrcoefs, upper=TRUE)
+        predint <- cbind(lower=lower, upper=upper)
       }
       if(type=="shortest"){
         cutoff <- qdistr(p=1-(1-level_local)/10, meanvalue=max(pred), distr=object$distr, distrcoefs=object$distrcoefs) #very large quantile which is almost certainly larger than the upper bound of the shortest prediction interval
@@ -85,8 +93,31 @@ predict.tsglm <- function(object, n.ahead=1, newobs=NULL, newxreg=NULL, level=0.
         B%%1==0,
         B>=10
       )
-      futureobs <- replicate(B, tsglm.sim(n=n.ahead, xreg=xreg[-(1:n), , drop=FALSE], fit=object, n_start=0)$ts)
-      if(type=="quantiles") predint <- t(apply(futureobs, 1, quantile, probs=c(a, 1-a), type=1)) 
+      if(estim_error=="normapprox"){
+        params <- rmvnorm(n=B, mean=coef(object), sigma=vcov(object))
+        valid_params <- apply(params, 1, function(x) tsglm.parametercheck(list(intercept=x[1], past_obs=x[1+P], past_mean=x[1+p+Q]), link=object$link, stopOnError=FALSE))
+        params <- params[valid_params, ]
+        n_failed_params <- sum(!valid_params)
+        if(n_failed_params>0){
+          bootstrap_message <- paste("In", n_failed_params, "of the", B, "bootstrap samples the regression parameters\ngenerated from the normal approximation were not valid and the respective samples\nhave been dropped. Note that this might affect the validity of the final result.")
+          warning_messages <- c(warning_messages, bootstrap_message)
+          warning(bootstrap_message)
+         }        
+      }else{
+        params <- t(replicate(B, coef(object)))        
+      }
+      simfunc <- function(param, object, xreg, n.ahead){
+        object$coefficients <- param
+        result <- tsglm.sim(n=n.ahead, xreg=xreg[-(1:n), , drop=FALSE], fit=object, n_start=0)$ts
+        return(result)
+      }
+      futureobs <- matrix(apply(params, 1, simfunc, object=object, xreg=xreg, n.ahead=n.ahead), nrow=n.ahead, ncol=nrow(params))          
+      if(type %in% c("quantiles", "onesided")){
+        quantiles <- t(apply(futureobs, 1, quantile, probs=c(a, 1-a), type=1))
+        lower <- if(type=="onesided"){integer(n.ahead)}else{quantiles[, 1]} 
+        upper <- quantiles[, 2]
+        predint <- cbind(lower=lower, upper=upper)
+      } 
       if(type=="shortest") predint <- t(apply(futureobs, 1, function(x) largestdensityinterval(tabulate(x+1)/length(x), level=level_local)))
       predmed <- apply(futureobs, 1, median)
     }
@@ -95,7 +126,7 @@ predict.tsglm <- function(object, n.ahead=1, newobs=NULL, newxreg=NULL, level=0.
         predint <- ts(predint, start=tsp(object$ts)[2]+1/frequency(object$ts), frequency=frequency(object$ts))
         predmed <- ts(predmed, start=tsp(object$ts)[2]+1/frequency(object$ts), frequency=frequency(object$ts))
     }
-    result <- c(result, list(interval=predint, level=level, global=global, type=type, method=method, B=B, median=predmed))
+    result <- c(result, list(interval=predint, level=level, global=global, type=type, method=method, B=B, estim_error=estim_error, warning_messages=warning_messages, median=predmed))
   }
   return(result)
 }

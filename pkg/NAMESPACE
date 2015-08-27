@@ -4,6 +4,7 @@ import(grDevices)
 import(graphics)
 importFrom(parallel, parSapply)
 importFrom(ltsa, tacvfARMA)
+importFrom(mvtnorm, rmvnorm)
 
 export(
   tsglm,
@@ -21,7 +22,14 @@ export(
   se,
   scoring,
   pit,
-  marcal
+  marcal,
+  ddistr,
+  pdistr,
+  qdistr,
+  rdistr,
+  sddistr,
+  ardistr,
+  checkdistr
 )
 
 S3method(marcal, default)

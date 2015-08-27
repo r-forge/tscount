@@ -38,8 +38,8 @@ loglin.loglik <- function(paramvec, model, ts, xreg, score=FALSE, info=c("none",
   infomat <- NULL
   if(info!="none"){
     outerscoreprod <- array(NA, dim=c(n_effective, 1+p+q+r, 1+p+q+r), dimnames=list(NULL, parameternames, parameternames))
-    outerscoreprod[] <- if(p+q+r > 0) aperm(sapply(1:n_effective, function(i) partial_kappa[i,]%*%t(partial_kappa[i,]), simplify="array"), c(3,1,2)) else array(partial_kappa[,1]^2, dim=c(n_effective,1,1))
-    infomat <- apply(exp(kappa)*outerscoreprod, c(2,3), sum)
+    outerscoreprod[] <- if(p+q+r > 0) exp(kappa)^2*aperm(sapply(1:n_effective, function(i) partial_kappa[i,]%*%t(partial_kappa[i,]), simplify="array"), c(3,1,2)) else exp(kappa)^2*array(partial_kappa[,1]^2, dim=c(n_effective,1,1))
+    infomat <- apply(1/exp(kappa)*outerscoreprod, c(2,3), sum)
     dimnames(infomat) <- list(parameternames, parameternames)
   }
   result <- list(loglik=loglik, score=scorevec, info=infomat, outerscoreprod=outerscoreprod, kappa=kappa)

@@ -6,7 +6,7 @@
 Predictive Model Assessment with Proper Scoring Rules
 }
 \description{
-Computes scores for the assessment of sharpness of a fitted GLM-type model for time series of counts.
+Computes scores for the assessment of sharpness of a fitted model for time series of counts.
 }
 \usage{
 \method{scoring}{tsglm}(object, individual=FALSE, cutoff=1000, ...)

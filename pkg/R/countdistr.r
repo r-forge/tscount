@@ -29,11 +29,11 @@ qdistr <- function(p, meanvalue, distr=c("poisson", "nbinom"), distrcoefs, ...){
 }
 
 #Random number generation from conditional distribution:
-rdistr <- function(n, meanvalue, distr=c("poisson", "nbinom"), distrcoefs, ...){
+rdistr <- function(n, meanvalue, distr=c("poisson", "nbinom"), distrcoefs){
   distr <- match.arg(distr)
   result <- switch(distr,
-    "poisson"=rpois(n, lambda=meanvalue, ...),  
-    "nbinom"=rnbinom(n, mu=meanvalue, size=distrcoefs[[1]], ...)
+    "poisson"=rpois(n, lambda=meanvalue),  
+    "nbinom"=rnbinom(n, mu=meanvalue, size=distrcoefs[[1]])
   )  
   return(result)
 }
@@ -64,3 +64,4 @@ checkdistr <- function(distr=c("poisson", "nbinom"), distrcoefs){
     if(distrcoefs[[1]]<=0) stop("The additional dispersion parameter for the negative binomial distribution has to be greater than zero")
   }
 }
+

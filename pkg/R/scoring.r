@@ -14,7 +14,7 @@ scoring.default <- function(response, pred, distr=c("poisson", "nbinom"), distrc
       logarithmic[t] <- - log(p_y)
       quadratic[t] <- - 2*p_y + quadrat_p
       spherical[t] <- - p_y/sqrt(quadrat_p)
-      rankprob[t] <- sum((pdistr(0:cutoff, meanvalue=mu, distrcoefs=distrcoefs) - as.integer(y <= 0:cutoff))^2)
+      rankprob[t] <- sum((pdistr(0:cutoff, meanvalue=mu, distr=distr, distrcoefs=distrcoefs) - as.integer(y <= 0:cutoff))^2)
       sqerror[t] <- (y-mu)^2
       normsq[t] <- sqerror[t]/sigma^2 
       dawseb[t] <- normsq[t] + 2*log(sigma)

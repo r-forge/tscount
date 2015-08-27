@@ -8,8 +8,9 @@ Predict future observations based on a fitted GLM-type model for time series of 
 }
 \usage{
 \method{predict}{tsglm}(object, n.ahead=1, newobs=NULL, newxreg=NULL, level=0.95,
-        global=FALSE, type=c("quantiles", "shortest"), method=c("conddistr", "bootstrap"),
-        B=1000, ...)
+        global=FALSE, type=c("quantiles", "shortest", "onesided"),
+        method=c("conddistr", "bootstrap"), B=1000,
+        estim_error=c("ignore", "normapprox"), ...)
 }
 \arguments{
   \item{object}{
@@ -31,13 +32,16 @@ numeric value determining the desired coverage rate of prediction intervals. If 
 logical value saying whether the coverage rate for \eqn{Y_{n+1},...,Y_{n+h}}{Y[n+1],...,Y[n+h]} specified by argument \code{level} holds globally (\code{global=TRUE}) or for each of the \code{n.ahead} prediction intervals individually (\code{global=FALSE}, the default). In the former case the individual coverage rate for a single prediction interval is Bonferroni adjusted to a level of \code{1-(1-level)/n.ahead}.
 }
   \item{type}{
-character value saying how the prediction interval shall be constructed. If \code{type="quantiles"} (the default), its limits are chosen to be the \code{a}- and \code{(1-a)}-quantiles of the respective (approximated) distribution, with \code{a=(1-level)/2}. If \code{type="shortest"} it is chosen such that it has minimal length. Note that both types of construction principles frequently lead to the same result.
+character value saying how the prediction interval shall be constructed. If \code{type="quantiles"} (the default), its limits are chosen to be the \code{a}- and \code{(1-a)}-quantiles of the respective (approximated) distribution, with \code{a=(1-level)/2}. If \code{type="shortest"} it is chosen such that it has minimal length. Note that these two types of construction principles frequently lead to the same result. If \code{type="onesided"} a one-sided prediction interval is constructed where the lower boundary is always zero.
 }
   \item{method}{
 character value saying which method to be used for computing the prediction intervals. If \code{method="conddistr"} the prediction intervals are based on the conditional distribution given by the model with the unknown parameters being replaced by their respective estimations. This is only possible if only 1-step-ahead predictions are to be computed (possibly recursively using the new observations given in argument \code{newobs}). If \code{method="bootstrap"} the predictive distribution is approximated by a parametric bootstrap where \code{B} trajectories of the process are simulated from the fitted model. This is currently only possible if no new observations are given in argument \code{newobs}. By default the method \code{"conddistr"} is prefered whenever it is appliccable.
 }
   \item{B}{
 positive integer value giving the number of samples of a parametric bootstrap to use for numerical determination of prediction intervals (only necessary if argument \code{method="bootstrap"}).
+}
+  \item{estim_error}{
+character value saying how the prediction intervals shall account for the additional uncertainty induced by the parameter estimation. This is particularly important if the model was fitted on a short time series. If \code{estim_error="ignore"} (the default), this additional uncertainty is ignored. If \code{estim_error="normapprox"} (which is only possible if \code{method="bootstrap"}), then the bootstrap samples are not generated from a model with the original quasi maximum likelihood estimation. Instead, for the generation of each bootstrap sample a new parameter vector is generated from a multivariate normal distribution. This multivariate normal distribution is based on the normal approximation of the original quasi maximum likelihood estimation and reflects the estimation uncertainty. Consequently, also the resulting bootstrap samples reflect this estimation uncertainty. Note that this only holds for the regression parameters and not for additional dispersion parameters like for the negative binomial distribution.
 }
   \item{...}{
 further arguments are currently ignored. Only for compatibility with generic function.
@@ -46,7 +50,7 @@ further arguments are currently ignored. Only for compatibility with generic fun
 \details{
 Returns predictions for the \code{n.ahead} observations following the fitted time series contained in argument \code{object}. The 1-step-ahead prediction is the conditional expectation of the observation to be predicted given the past. The true parameters are replaced by their estimations given in argument \code{object}. For a 2-step-ahead-prediction the true previous observation is used when given in argument \code{newobs}, otherwise it is replaced by the 1-step-ahead prediction computed before. For a 3-step-prediction this holds for the previous two observations, which are replaced by their respective predictions if not available, and so on.
 
-Unless \code{level=0}, the function also returns prediction intervals. Read the description of the arguments \code{type} and\code{method} for further details on the computation. Note that the prediction intervals do not reflect the additional uncertainty induced by the parameter estimation. However, for sufficiently long time series used for model fitting, it is expected that this uncertainty is negligible compared to the uncertainty of the predictive distribution.
+Unless \code{level=0}, the function also returns prediction intervals. Read the description of the arguments \code{type} and\code{method} for further details on the computation. Note that the prediction intervals do not reflect the additional uncertainty induced by the parameter estimation. However, for sufficiently long time series used for model fitting, it is expected that this uncertainty is negligible compared to the uncertainty of the predictive distribution. The argument \code{estim_error} allows to account fot this additional estimation uncertainty if \code{method="bootstrap"}, see the description of this argument.
 
 If prediction intervals are computed the function additionally returns the median of the predictive distribution. If \code{method="conddistr"} this is the analytical median of the conditional distribution, otherwise the empirical median of the simulated distribution.
 }
@@ -68,6 +72,10 @@ If prediction intervals are calculated, the list has the additional element:
   \item{method}{a character value saying which method were used for computation of prediction intervals. Possible values are \code{"conddistr"} and \code{"bootstrap"}.}
   
   \item{B}{an integer value giving the number of bootstrap samples which were used for computing prediction intervals. Is \code{NULL} if computation was done by \code{method="conddistr"}.}
+  
+  \item{estim_error}{a character value saying how the prediction intervals account for estimation uncertainty of the model parameters. Possible values are \code{"ignore"} and \code{"normapprox"}.}
+  
+  \item{warning_messages}{a character vector containing warning messages. This should be \code{NULL} if no warning messages occured.}
   
   \item{median}{a vector giving the median of the predictive distribution for each of the future time points. Has class \code{"ts"} if the response used for fitting has this class.}
 }
