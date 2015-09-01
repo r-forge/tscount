@@ -6,6 +6,7 @@ vcov.tsglm <- function(object, ...){
     result <- invertedinfo
   }else{
     result <- invertedinfo %*% object$info.matrix_corrected %*% invertedinfo #sandwich-type formula (is equal to invertedinfo in case of a Poisson distribution)
+    #result <- (result + t(result))/2 #ensures that the resulting matrix is exactly symmetric, because the previous matrix multiplication may result in numerical deviations from its symmetry
   }
   return(result)
 }

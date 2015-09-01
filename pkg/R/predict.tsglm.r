@@ -94,24 +94,23 @@ predict.tsglm <- function(object, n.ahead=1, newobs=NULL, newxreg=NULL, level=0.
         B>=10
       )
       if(estim_error=="normapprox"){
-        params <- rmvnorm(n=B, mean=coef(object), sigma=vcov(object))
-        valid_params <- apply(params, 1, function(x) tsglm.parametercheck(list(intercept=x[1], past_obs=x[1+P], past_mean=x[1+p+Q]), link=object$link, stopOnError=FALSE))
-        params <- params[valid_params, ]
-        n_failed_params <- sum(!valid_params)
-        if(n_failed_params>0){
-          bootstrap_message <- paste("In", n_failed_params, "of the", B, "bootstrap samples the regression parameters\ngenerated from the normal approximation were not valid and the respective samples\nhave been dropped. Note that this might affect the validity of the final result.")
+        param_complete <- simparam(object=object, n=B)
+        param <- param_complete$param
+        n_invalid <- param_complete$n_invalid
+        if(n_invalid > 0){
+          bootstrap_message <- paste("In", n_invalid, "cases the bootstrap samples of the regression parameter generated\nfrom the normal approximation was not valid and the respective sample has been\ngenerated again. Note that this might affect the validity of the final result.")
           warning_messages <- c(warning_messages, bootstrap_message)
           warning(bootstrap_message)
-         }        
+        }        
       }else{
-        params <- t(replicate(B, coef(object)))        
+        param <- t(replicate(B, coef(object)))        
       }
-      simfunc <- function(param, object, xreg, n.ahead){
-        object$coefficients <- param
-        result <- tsglm.sim(n=n.ahead, xreg=xreg[-(1:n), , drop=FALSE], fit=object, n_start=0)$ts
+      simfunc <- function(paramvec, object, xreg, n.ahead){
+        object$coefficients <- paramvec
+        result <- tsglm.sim(n=n.ahead, xreg=xreg[-(1:object$n_obs), , drop=FALSE], fit=object, n_start=0)$ts
         return(result)
       }
-      futureobs <- matrix(apply(params, 1, simfunc, object=object, xreg=xreg, n.ahead=n.ahead), nrow=n.ahead, ncol=nrow(params))          
+      futureobs <- matrix(apply(param, 1, simfunc, object=object, xreg=xreg, n.ahead=n.ahead), nrow=n.ahead, ncol=nrow(param))          
       if(type %in% c("quantiles", "onesided")){
         quantiles <- t(apply(futureobs, 1, quantile, probs=c(a, 1-a), type=1))
         lower <- if(type=="onesided"){integer(n.ahead)}else{quantiles[, 1]} 
