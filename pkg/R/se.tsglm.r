@@ -9,24 +9,10 @@ se.tsglm <- function(object, B, parallel=FALSE, ...){
     stderrors <- c(sqrt(variances), sigmasq=if(object$distr=="poisson") NULL else NA)
     result <- list(est=est, se=stderrors, type="normapprox")
   }else{
-    stopifnot(B>=2, B%%1==0)
-    simfit <- function(seed, fit, ...){
-      set.seed(seed)
-      ts_sim <- tsglm.sim(fit=fit)$ts
-      fit_sim <- tsglm(ts=ts_sim, model=fit$model, xreg=fit$xreg, link=fit$link, distr=fit$distr, score=FALSE, info="none", ...)
-      result <- c(coef(fit_sim), sigmasq=if(object$distr=="poisson") NULL else fit_sim$sigmasq)
-      return(result)
-    }
-    seeds <- sample(1e+9, size=B)
-    if(parallel){
-      Sapply <- function(X, FUN, ...) parSapply(cl=NULL, X=X, FUN=FUN, ...)
-    }else{
-      Sapply <- sapply
-    }
-    bootstrap_coefs <- Sapply(seeds, simfit, fit=object, simplify=TRUE)
-    if(length(est)==1) bootstrap_coefs <- matrix(bootstrap_coefs, nrow=1)
-    if(object$distr!="poisson" && anyNA(bootstrap_coefs["sigmasq",])) warning(paste("The overdispersion coefficient 'sigmasq' could not be estimated\nin", sum(is.na(bootstrap_coefs["sigmasq",])), "of the", B, "replications. It is set to zero for these\nreplications. This might to some extent result in an overestimation\nof its true variability."))
-    stderrors <- apply(bootstrap_coefs, 1, sd, na.rm=TRUE)
+    bootstrap_coefs <- simcoefs(object, method="bootstrap", B=B, parallel=parallel, ...)$coefs[, seq(along=est), drop=FALSE]
+    n_invalid <- sum(bootstrap_coefs[, "sigmasq"]==1e-9)
+    if(object$distr!="poisson" && n_invalid>0) warning(paste("The overdispersion coefficient 'sigmasq' could not be estimated\nin", n_invalid, "of the", B, "replications. It is set to zero for these\nreplications. This might to some extent result in an overestimation\nof its true variability."))
+    stderrors <- apply(bootstrap_coefs, 2, sd, na.rm=TRUE)
     result <- list(est=est, se=stderrors, type="bootstrap", B=B)
   }
   return(result)

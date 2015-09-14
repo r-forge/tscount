@@ -12,18 +12,11 @@ distr.fit <- function(object, distr){
     find_root <- function(v) sum((ts-fitval)^2/(fitval*(1+fitval/v))) - n + m
     root <- try(uniroot(f=find_root, interval=c(0, 1e100)), silent=TRUE)  
     if(class(root)=="try-error"){
-      size <- NA
-      warning("The parameter of the negative binomial distribution cannot be estimated.\nTry a Poisson distribution with argument 'distr' set to \"poisson\" instead")
+      size <- 1e+9
+      warning("The dispersion parameter of the negative binomial distribution cannot be\nestimated. This indicates that there is no or only very little overdispersion\nin the data. The dispersion parameter was set to a value of 1e+9, which\nvirtually corresponds to a Poisson distribution. Try to use a Poisson\ndistribution with argument 'distr' set to \"poisson\" instead.")
     }else{
-      size <- root$root 
+      size <- root$root
     }
-  #Moment estimator: (does not work reliably)  
-  #   v_1 <- ((1/n) * sum(((ts-fitval)^2 - fitval)/(fitval^2)))^(-1)
-  #   mom_est <- function(v){
-  #     abs(sum((ts-fitval)^2/(fitval*(1+fitval/v))) - n + m)
-  #   }  
-  #   v_21 <- optim(par=1, fn=mom_est, method="Brent", lower=0, upper=5000)
-  #   v_22 <- optimize(f=mom_est, interval=c(0,5000))
     distrcoefs <- c(size=size)
     sigmasq <- 1/size
   }

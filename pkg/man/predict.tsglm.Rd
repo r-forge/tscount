@@ -10,7 +10,8 @@ Predict future observations based on a fitted GLM-type model for time series of 
 \method{predict}{tsglm}(object, n.ahead=1, newobs=NULL, newxreg=NULL, level=0.95,
         global=FALSE, type=c("quantiles", "shortest", "onesided"),
         method=c("conddistr", "bootstrap"), B=1000,
-        estim_error=c("ignore", "normapprox"), ...)
+        estim=c("ignore", "bootstrap", "normapprox", "given"), B_estim=B,
+        coefs_given, ...)
 }
 \arguments{
   \item{object}{
@@ -40,8 +41,17 @@ character value saying which method to be used for computing the prediction inte
   \item{B}{
 positive integer value giving the number of samples of a parametric bootstrap to use for numerical determination of prediction intervals (only necessary if argument \code{method="bootstrap"}).
 }
-  \item{estim_error}{
-character value saying how the prediction intervals shall account for the additional uncertainty induced by the parameter estimation. This is particularly important if the model was fitted on a short time series. If \code{estim_error="ignore"} (the default), this additional uncertainty is ignored. If \code{estim_error="normapprox"} (which is only possible if \code{method="bootstrap"}), then the bootstrap samples are not generated from a model with the original quasi maximum likelihood estimation. Instead, for the generation of each bootstrap sample a new parameter vector is generated from a multivariate normal distribution. This multivariate normal distribution is based on the normal approximation of the original quasi maximum likelihood estimation and reflects the estimation uncertainty. Consequently, also the resulting bootstrap samples reflect this estimation uncertainty. Note that this only holds for the regression parameters and not for additional dispersion parameters like for the negative binomial distribution.
+  \item{estim}{
+character value saying how the prediction intervals shall account for the additional uncertainty induced by the parameter estimation. This is particularly important if the model was fitted on a short time series. If \code{estim="ignore"} (the default), this additional uncertainty is ignored. The other two options (\code{estim="bootstrap"} and \code{estim="normapprox"}) are only possible if \code{method="bootstrap"}. If these are selected the bootstrap samples are not generated from a model with the parameters of the original fit. Instead, each of the \code{B} bootstrap samples is generated from a model with parameters which are itself randomly generated. This two-stage approach should take into account the additional estimation uncertainty.
+If \code{estim="bootstrap"}, the parameters are obtained from a fit to a parametric bootstrap replication of the original time series.
+If \code{estim="normapprox"}, the regression parameters are generated from a multivariate normal distribution which is based on the normal approximation of the original quasi maximum likelihood estimator and reflects the estimation uncertainty. In that case the additional distribution coefficients are not randomly generated such that their estimation uncertainty is ignored.
+If \code{estim="given"}, the parameters are resampled from a table of possible parameters which need to be given in argument \code{coefs_given}.
+}
+  \item{B_estim}{
+positive integer value giving the number of parameters used for resampling to account for estimation uncertainty. Only necessary for \code{estim="bootstrap"} and \code{estim="normapprox"}. If \code{B_estim} is smaller than \code{B}, the parameters are resampled with replacement.
+}
+  \item{coefs_given}{
+table with parameters in the rows. Only necessary for \code{estim="given"}). If \code{nrow(coefs_given)} is smaller than \code{B}, the parameters are resampled with replacement.
 }
   \item{...}{
 further arguments are currently ignored. Only for compatibility with generic function.
@@ -50,7 +60,7 @@ further arguments are currently ignored. Only for compatibility with generic fun
 \details{
 Returns predictions for the \code{n.ahead} observations following the fitted time series contained in argument \code{object}. The 1-step-ahead prediction is the conditional expectation of the observation to be predicted given the past. The true parameters are replaced by their estimations given in argument \code{object}. For a 2-step-ahead-prediction the true previous observation is used when given in argument \code{newobs}, otherwise it is replaced by the 1-step-ahead prediction computed before. For a 3-step-prediction this holds for the previous two observations, which are replaced by their respective predictions if not available, and so on.
 
-Unless \code{level=0}, the function also returns prediction intervals. Read the description of the arguments \code{type} and\code{method} for further details on the computation. Note that the prediction intervals do not reflect the additional uncertainty induced by the parameter estimation. However, for sufficiently long time series used for model fitting, it is expected that this uncertainty is negligible compared to the uncertainty of the predictive distribution. The argument \code{estim_error} allows to account fot this additional estimation uncertainty if \code{method="bootstrap"}, see the description of this argument.
+Unless \code{level=0}, the function also returns prediction intervals. Read the description of the arguments \code{type} and\code{method} for further details on the computation. Note that the prediction intervals do not reflect the additional uncertainty induced by the parameter estimation. However, for sufficiently long time series used for model fitting, it is expected that this uncertainty is negligible compared to the uncertainty of the predictive distribution. The argument \code{estim} allows to account fot this additional estimation uncertainty if \code{method="bootstrap"}, see the description of this argument.
 
 If prediction intervals are computed the function additionally returns the median of the predictive distribution. If \code{method="conddistr"} this is the analytical median of the conditional distribution, otherwise the empirical median of the simulated distribution.
 }
@@ -73,7 +83,9 @@ If prediction intervals are calculated, the list has the additional element:
   
   \item{B}{an integer value giving the number of bootstrap samples which were used for computing prediction intervals. Is \code{NULL} if computation was done by \code{method="conddistr"}.}
   
-  \item{estim_error}{a character value saying how the prediction intervals account for estimation uncertainty of the model parameters. Possible values are \code{"ignore"} and \code{"normapprox"}.}
+  \item{estim}{a character value saying how the prediction intervals account for estimation uncertainty of the model parameters. Possible values are \code{"ignore"}, \code{"bootstrap"}, \code{"normapprox"} and \code{"given"}.}
+  
+  \item{B_estim}{an integer value giving the number of parameter values used for resampling to account for estimation uncertainty. This value is zero if the estimation uncertainty is ignored.}
   
   \item{warning_messages}{a character vector containing warning messages. This should be \code{NULL} if no warning messages occured.}
   

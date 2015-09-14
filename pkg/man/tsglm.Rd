@@ -257,7 +257,7 @@ interventions <- interv_covariate(n=length(campy), tau=c(84, 100),
   delta=c(1, 0)) #detected by Fokianos and Fried (2010, 2012)
 #Linear link function with Negative Binomial distribution:
 campyfit <- tsglm(campy, model=list(past_obs=1, past_mean=13),
-  xreg=interventions, dist="nbinom")
+  xreg=interventions, distr="nbinom")
 campyfit
 plot(campyfit)
 

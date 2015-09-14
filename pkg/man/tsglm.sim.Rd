@@ -63,7 +63,7 @@ If a previous model fit is given in argument \code{fit} and the length of the bu
   an object of class \code{"ts"} with the simulated time series.
 }
 \item{\code{linear.predictors}}{
-  an object of class \code{"ts"} with the simulated conditional means \eqn{\kappa_t}{\kappa[t]} for all \eqn{t=1, \ldots, n}.
+  an object of class \code{"ts"} with the simulated linear predictors \eqn{\kappa_t}{\kappa[t]} for all \eqn{t=1, \ldots, n}.
 }
 \item{\code{xreg.effects}}{
   an object of class \code{"ts"} with the cumulated effect of the covariates \eqn{\eta_1 X_{t,1} + \ldots + \eta_r X_{t,r}}{\eta[1] X[t,1] + \ldots + \eta[r] X[t,r]} for all \eqn{t=1, \ldots, n}.

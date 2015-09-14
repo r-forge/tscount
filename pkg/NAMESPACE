@@ -49,7 +49,7 @@ S3method(scoring, tsglm)
 S3method(interv_test, tsglm)
 S3method(interv_detect, tsglm)
 S3method(interv_multiple, tsglm)
-S3method(simparam, tsglm)
+S3method(simcoefs, tsglm)
 
 S3method(print, summary.tsglm)
 

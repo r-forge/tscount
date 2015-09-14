@@ -1,4 +1,4 @@
-predict.tsglm <- function(object, n.ahead=1, newobs=NULL, newxreg=NULL, level=0.95, global=FALSE, type=c("quantiles", "shortest", "onesided"), method=c("conddistr", "bootstrap"), B=1000, estim_error=c("ignore", "normapprox"), ...){
+predict.tsglm <- function(object, n.ahead=1, newobs=NULL, newxreg=NULL, level=0.95, global=FALSE, type=c("quantiles", "shortest", "onesided"), method=c("conddistr", "bootstrap"), B=1000, estim=c("ignore", "bootstrap", "normapprox", "given"), B_estim=B, coefs_given=NULL, ...){
   tsglm.check(object)
   #Link and related functions:
   if(object$link=="identity"){
@@ -49,7 +49,7 @@ predict.tsglm <- function(object, n.ahead=1, newobs=NULL, newxreg=NULL, level=0.
     level>=0
   )
   if(level>0){ #do not compute prediction intervals for level==0
-    warning_messages <- NULL
+    warning_messages <- character()
     level_local <- if(global){1-(1-level)/n.ahead}else{level} #Bonferroni adjustment of the coverage rate of each individual prediction interval such that a global coverage rate is achieved
     method <- match.arg(method, several.ok=TRUE)
     conddistr_possible <- n.ahead==1 || (length(newobs)>=n.ahead-1 && !any(is.na(newobs[1:(n.ahead-1)]))) #method="conddistr" is only possible if all predictions are 1-step ahead predictions such that the true previous observations are available (this is the case if only one observation is to be predicted or when the first n.ahead-1 observations are given in argument 'newobs')
@@ -65,8 +65,8 @@ predict.tsglm <- function(object, n.ahead=1, newobs=NULL, newxreg=NULL, level=0.
         return(result)
       }
     }
-    estim_error <- match.arg(estim_error)
-    if(estim_error=="normapprox" && method!="bootstrap") stop("Accounting for the estimation uncertainty by employing the normal approximation\nof the parameter estimation is only available if argument 'method' is set to\n\"bootstrap\".")
+    estim <- match.arg(estim)
+    if(estim %in% c("bootstrap", "normapprox") && method!="bootstrap") stop("Accounting for the estimation uncertainty is only available if argument 'method'\nis set to\"bootstrap\".")
     if(method=="conddistr"){
       if(!conddistr_possible) stop("Computation of prediction intervals with argument 'method' set to \"bootstrap\"\ndoes only work for 1-step-ahead predictions. If argument 'n.ahead' is larger\nthan 1, future observations have to be provided in argument 'newobs'.") 
       if(type %in% c("quantiles", "onesided")){  
@@ -93,24 +93,46 @@ predict.tsglm <- function(object, n.ahead=1, newobs=NULL, newxreg=NULL, level=0.
         B%%1==0,
         B>=10
       )
-      if(estim_error=="normapprox"){
-        param_complete <- simparam(object=object, n=B)
-        param <- param_complete$param
-        n_invalid <- param_complete$n_invalid
+      if(estim %in% c("normapprox", "bootstrap")) stopifnot(length(B_estim)==1, B_estim%%1==0, B_estim>=1)
+      if(estim=="normapprox"){
+        coefs_complete <- simcoefs(object, method="normapprox", B=B_estim)
+        coefs <- coefs_complete$coefs[, -(1+p+q+r+1)] #remove column 'sigmasq'
+        n_invalid <- coefs_complete$n_invalid
         if(n_invalid > 0){
           bootstrap_message <- paste("In", n_invalid, "cases the bootstrap samples of the regression parameter generated\nfrom the normal approximation was not valid and the respective sample has been\ngenerated again. Note that this might affect the validity of the final result.")
           warning_messages <- c(warning_messages, bootstrap_message)
           warning(bootstrap_message)
         }        
-      }else{
-        param <- t(replicate(B, coef(object)))        
       }
-      simfunc <- function(paramvec, object, xreg, n.ahead){
-        object$coefficients <- paramvec
-        result <- tsglm.sim(n=n.ahead, xreg=xreg[-(1:object$n_obs), , drop=FALSE], fit=object, n_start=0)$ts
+      if(estim=="bootstrap"){
+        coefs_complete <- simcoefs(object, method="bootstrap", B=B_estim, ...)
+        coefs <- coefs_complete$coefs[, -(1+p+q+r+1)] #remove column 'sigmasq'
+        n_invalid <- sum(coefs_complete$coefs[, 1+p+q+r+1]==1e-9)
+        if(n_invalid > 0){
+          bootstrap_message <- paste("In", n_invalid, "cases of the parametric bootstrap to account for estimation uncertainty\nthe dispersion parameter could not be estimated and a Poisson distribution is\nused instead. Note that this might affect the validity of the final result.")
+          warning_messages <- c(warning_messages, bootstrap_message)
+          warning(bootstrap_message)
+        }
+      }
+      if(estim=="given"){
+        if(is.null(coefs_given) || nrow(coefs_given)<1) stop("Argument 'coefs_given' needs to be a matrix with the parameters in the rows.")
+        coefs <- coefs_given
+        B_estim <- nrow(coefs)
+      }
+      if(estim=="ignore"){
+        coefs <- t(replicate(B, c(coef(object), object$distrcoefs)))
+        B_estim <- 0        
+      }
+      n_coefs <- nrow(coefs)
+      use_coefs <- sample(n_coefs, size=B, replace=(n_coefs<B))
+      coefs <- coefs[use_coefs, ]
+      simfunc <- function(coefs, fit, xreg, n.ahead){
+        fit$coefficients <- coefs[seq(along=fit$coefficients)]
+        fit$distrcoefs <- coefs[length(fit$coefficients)+seq(along=fit$distrcoefs)]
+        result <- tsglm.sim(n=n.ahead, xreg=xreg[-(1:fit$n_obs), , drop=FALSE], fit=fit, n_start=0)$ts
         return(result)
       }
-      futureobs <- matrix(apply(param, 1, simfunc, object=object, xreg=xreg, n.ahead=n.ahead), nrow=n.ahead, ncol=nrow(param))          
+      futureobs <- matrix(apply(coefs, 1, simfunc, fit=object, xreg=xreg, n.ahead=n.ahead), nrow=n.ahead, ncol=nrow(coefs))          
       if(type %in% c("quantiles", "onesided")){
         quantiles <- t(apply(futureobs, 1, quantile, probs=c(a, 1-a), type=1))
         lower <- if(type=="onesided"){integer(n.ahead)}else{quantiles[, 1]} 
@@ -125,7 +147,7 @@ predict.tsglm <- function(object, n.ahead=1, newobs=NULL, newxreg=NULL, level=0.
         predint <- ts(predint, start=tsp(object$ts)[2]+1/frequency(object$ts), frequency=frequency(object$ts))
         predmed <- ts(predmed, start=tsp(object$ts)[2]+1/frequency(object$ts), frequency=frequency(object$ts))
     }
-    result <- c(result, list(interval=predint, level=level, global=global, type=type, method=method, B=B, estim_error=estim_error, warning_messages=warning_messages, median=predmed))
+    result <- c(result, list(interval=predint, level=level, global=global, type=type, method=method, B=B, estim=estim, B_estim=B_estim, warning_messages=warning_messages, median=predmed))
   }
   return(result)
 }
