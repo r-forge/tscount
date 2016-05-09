@@ -64,4 +64,3 @@ checkdistr <- function(distr=c("poisson", "nbinom"), distrcoefs){
     if(distrcoefs[[1]]<=0) stop("The additional dispersion parameter for the negative binomial distribution has to be greater than zero")
   }
 }
-

@@ -19,6 +19,7 @@ pit.default <- function(response, pred, distr=c("poisson", "nbinom"), distrcoefs
   do.call("plot", args=c(list(x=histo), plot_args))
   #simconfint <- if(ci>0 && ci<1) (n/bins+c(-1,+1)*qnorm(1-(1-ci)/bins/2)*sqrt(n*(1/bins)*(1-1/bins)))/(n/bins) else NULL #simultaneous confidence band of level ci (normal approximation) for the histogram bars under the assumption of iid U(0,1) PIT values 
   #if(ci>0 && ci<1) abline(h=simconfint, lty="dashed", col=ci.col)
+  abline(h=1, lty="dashed", col="blue")
 }
 
 pit.tsglm <- function(object, bins=10, ...){

@@ -1,20 +1,12 @@
 predict.tsglm <- function(object, n.ahead=1, newobs=NULL, newxreg=NULL, level=0.95, global=FALSE, type=c("quantiles", "shortest", "onesided"), method=c("conddistr", "bootstrap"), B=1000, estim=c("ignore", "bootstrap", "normapprox", "given"), B_estim=B, coefs_given=NULL, ...){
   tsglm.check(object)
-  #Link and related functions:
-  if(object$link=="identity"){
-    trafo <- function(x) x #transformation function
-    g_inv <- function(x) x  #inverse of link function
-  }
-  if(object$link=="log"){
-    trafo <- function(x) if(!is.null(x)) log(x+1) else NULL #transformation function
-    g_inv <- function(x) exp(x) #inverse of link function
-  }
   newxreg <- if(is.null(newxreg)) matrix(0, nrow=n.ahead, ncol=ncol(object$xreg)) else as.matrix(newxreg)  #if no covariates are provided, these are set to zero
   stopifnot(n.ahead>0,
             n.ahead%%1==0,
             ncol(newxreg)==ncol(object$xreg)
   )
   n <- object$n_obs
+  link <- object$link
   model <- object$model
   p <- length(model$past_obs)
   P <- seq(along=numeric(p)) #sequence 1:p if p>0 and NULL otherwise
@@ -28,16 +20,16 @@ predict.tsglm <- function(object, n.ahead=1, newobs=NULL, newxreg=NULL, level=0.
   new[seq(along=newobs)] <- newobs
   ts <- c(object$ts, new)
   if(is.ts(object$ts)) ts <- ts(ts, start=start(object$ts), frequency=frequency(object$ts))
-  kappa <- c(rep(NA, n-object$n_eff), object$linear.predictors, rep(NA, n.ahead))
-  if(is.ts(object$ts)) kappa <- ts(kappa, start=start(object$ts), frequency=frequency(object$ts))
+  nu <- c(rep(NA, n-object$n_eff), object$linear.predictors, rep(NA, n.ahead))
+  if(is.ts(object$ts)) nu <- ts(nu, start=start(object$ts), frequency=frequency(object$ts))
   for(t in n+(1:n.ahead)){
-    kappa[t] <- sum(coef(object)*c(1, trafo(ts[t-model$past_obs]), kappa[t-model$past_mean]-if(r>0){sum((as.numeric(model$external)*coef(object)[1+p+q+R])*t(xreg[t-model$past_mean,]))}else{0}, xreg[t,])) 
-    if(is.na(ts[t])) ts[t] <- g_inv(kappa[t]) #unobserved future observations are replaced by their prediction (by the conditional mean)
+    nu[t] <- sum(coef(object)*c(1, trafo(ts[t-model$past_obs], link=link), nu[t-model$past_mean]-if(r>0){sum((as.numeric(model$external)*coef(object)[1+p+q+R])*t(xreg[t-model$past_mean,]))}else{0}, xreg[t,])) 
+    if(is.na(ts[t])) ts[t] <- g_inv(nu[t], link=link) #unobserved future observations are replaced by their prediction (by the conditional mean)
   }
   if(is.ts(object$ts)){
-    pred <- window(g_inv(kappa), start=tsp(object$ts)[2]+1/frequency(object$ts)) #use time series class if input time series has this class
+    pred <- window(g_inv(nu, link=link), start=tsp(object$ts)[2]+1/frequency(object$ts)) #use time series class if input time series has this class
   }else{
-    pred <- g_inv(kappa)[n+(1:n.ahead)]
+    pred <- g_inv(nu, link=link)[n+(1:n.ahead)]
   }
   result <- list(pred=pred)
 

@@ -11,7 +11,8 @@ simcoefs.tsglm <- function(fit, method=c("bootstrap", "normapprox"), B=1, parall
     simfit <- function(seed, fit, ...){
       set.seed(seed)
       ts_sim <- tsglm.sim(fit=fit)$ts
-      fit_sim <- tsglm(ts=ts_sim, model=fit$model, xreg=fit$xreg, link=fit$link, distr=fit$distr, score=FALSE, info="none", ...)
+      suppressWarnings(fit_sim <- tsglm(ts=ts_sim, model=fit$model, xreg=fit$xreg, link=fit$link, distr=fit$distr, score=FALSE, info="none", ...))
+      if(fit$distr=="nbinom" && fit_sim$distr=="poisson") fit_sim$distrcoefs <- c(size=NA)
       result <- c(coef(fit_sim), sigmasq=fit_sim$sigmasq, fit_sim$distrcoefs)
       return(result)
     }

@@ -8,11 +8,9 @@ importFrom(ltsa, tacvfARMA)
 export(
   tsglm,
   tsglm.sim,
-  ingarch.fit,
   ingarch.mean,
   ingarch.var,
   ingarch.acf,
-  loglin.fit,
   interv_covariate,
   interv_detect,
   interv_multiple,
@@ -22,6 +20,7 @@ export(
   scoring,
   pit,
   marcal,
+  QIC,
   ddistr,
   pdistr,
   qdistr,
@@ -46,6 +45,7 @@ S3method(se, tsglm)
 S3method(marcal, tsglm)
 S3method(pit, tsglm)
 S3method(scoring, tsglm)
+S3method(QIC, tsglm)
 S3method(interv_test, tsglm)
 S3method(interv_detect, tsglm)
 S3method(interv_multiple, tsglm)
