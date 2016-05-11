@@ -259,14 +259,7 @@ coef(vglm(campy ~ 1, family = garma(link="loge", p.ar.lag = 1, q.ma.lag = 0,
 
 
 ###################################################
-### code chunk number 33: INLA-package-install
-###################################################
-#The INLA package is not available on CRAN and needs to installed from another repository if it is not yet available.
-if(!require("INLA")) install.packages("INLA", repos="https://www.math.ntnu.no/inla/R/stable")
-
-
-###################################################
-### code chunk number 34: INLA-package
+### code chunk number 33: INLA-package
 ###################################################
 library("INLA")
 campyfit_INLA <- inla(ts ~ f(time, model = "rw1", cyclic = FALSE),
@@ -281,7 +274,7 @@ rowMeans(sapply(posterior, function(x) (unname(x$hyperpar))))
 
 
 ###################################################
-### code chunk number 35: INLA-package2
+### code chunk number 34: INLA-package2
 ###################################################
 mu <- rowMeans(sapply(posterior,
                       function(x) exp(unname(x$latent[seq(along=campy), 1]))))
@@ -289,7 +282,7 @@ campyfitted_INLA <- mu*mean(campy)
 
 
 ###################################################
-### code chunk number 36: KFAS-package
+### code chunk number 35: KFAS-package
 ###################################################
 library("KFAS")
 model <- SSModel(campy ~ SSMcustom(Z = 1, T = 1, R = 1, Q = 0,
@@ -308,7 +301,7 @@ exp(campyfit_KFAS$optim.out$par)
 
 
 ###################################################
-### code chunk number 37: comparison-acf
+### code chunk number 36: comparison-acf
 ###################################################
 par(mar=c(3, 3, 0.5, 0.5), mgp=c(1.8, 0.6, 0))
 layout(matrix(1:4, ncol=2))
@@ -323,7 +316,7 @@ legend("top", bty="n", legend="", title="KFAS", cex=1.3)
 
 
 ###################################################
-### code chunk number 38: comparison-fit
+### code chunk number 37: comparison-fit
 ###################################################
 par(mar=c(3, 3, 0.5, 0.5), mgp=c(1.8, 0.6, 0))
 plot(campy, type="p", xlim=c(1996, 2000.6), ylab="Number of cases", main="")
@@ -335,14 +328,14 @@ legend("topright", legend=c("tsglm", "glarma", "INLA", "KFAS"), lwd=2, lty=c("so
 
 
 ###################################################
-### code chunk number 39: gcmr-package-pre
+### code chunk number 38: gcmr-package-pre
 ###################################################
 width <- getOption("width")
 options(width=50)
 
 
 ###################################################
-### code chunk number 40: gcmr-package
+### code chunk number 39: gcmr-package
 ###################################################
 library("gcmr")
 gcmr(ts ~ 1, marginal = negbin.marg(link = "identity"),
@@ -350,13 +343,13 @@ gcmr(ts ~ 1, marginal = negbin.marg(link = "identity"),
 
 
 ###################################################
-### code chunk number 41: gcmr-package-post
+### code chunk number 40: gcmr-package-post
 ###################################################
 options(width=width)
 
 
 ###################################################
-### code chunk number 42: recursioninit
+### code chunk number 41: recursioninit
 ###################################################
 set.seed(1246)
 timser <- tsglm.sim(n=1000, param=list(intercept=0.5, past_obs=0.77, past_mean=0.22), model=list(past_obs=1, past_mean=1), link="identity")$ts
@@ -382,7 +375,7 @@ print(xtable(comparison, caption="Estimated parameters and log-likelihood of a t
 
 
 ###################################################
-### code chunk number 43: covariates_load
+### code chunk number 42: covariates_load
 ###################################################
 load("covariates.RData")
 estimates_list_id <- list(covariate_n100_id, covariate_n500_id, covariate_n1000_id, covariate_n2000_id)
@@ -390,7 +383,7 @@ estimates_list_log <- list(covariate_n100_log, covariate_n500_log, covariate_n10
 
 
 ###################################################
-### code chunk number 44: covariates_scatterplots
+### code chunk number 43: covariates_scatterplots
 ###################################################
 covariate_scatterplots <- function(x, main="", truevalue, show=1:12){
   #will only show the first eight types of covariates in vector 'show'
@@ -426,7 +419,7 @@ invisible(dev.off())
 
 
 ###################################################
-### code chunk number 45: covariates_boxplots
+### code chunk number 44: covariates_boxplots
 ###################################################
 covariate_boxplots <- function(estimates_list, index, truevalue, main="", label="", show=1:12){
   number_covariates <- length(show)
@@ -472,7 +465,7 @@ invisible(dev.off())
 
 
 ###################################################
-### code chunk number 46: covariates_qqplots
+### code chunk number 45: covariates_qqplots
 ###################################################
 covariate_qqplots <- function(x, main="", truevalue, show=1:12){
   #will only show the first eight types of covariates in vector 'show'
@@ -505,7 +498,7 @@ invisible(dev.off())
 
 
 ###################################################
-### code chunk number 47: distrcoef_load
+### code chunk number 46: distrcoef_load
 ###################################################
 load("distrcoef_size1.RData")
 estimates_distrcoef_size1_id <- sapply(list(distrcoef_n100_size1_id, distrcoef_n500_size1_id, distrcoef_n1000_size1_id, distrcoef_n2000_size1_id), function(x) x$estimates[4, ])
@@ -515,7 +508,7 @@ load("distrcoef_n200.RData")
 
 
 ###################################################
-### code chunk number 48: distrcoef_summary
+### code chunk number 47: distrcoef_summary
 ###################################################
 distrcoef_nu <- function(estimates) c(mean=mean(estimates, na.rm=TRUE), median=median(estimates, na.rm=TRUE), sd=sd(estimates, na.rm=TRUE), mad=mad(estimates, na.rm=TRUE), propNA=mean(is.na(estimates))*100)
 # distrcoef_id_summary <- rbind(
@@ -540,7 +533,7 @@ print(xtable(distrcoef_log_summary, caption="Summary statistics for the estimate
 
 
 ###################################################
-### code chunk number 49: distrcoef_boxplots
+### code chunk number 48: distrcoef_boxplots
 ###################################################
 ##RMSE:
 #apply(estimates_distrcoef_size1_id, 2, function(x) sqrt(mean((x-1)^2)))

@@ -60,12 +60,24 @@ Additionally, we provide a review of \proglang{R} packages which can be used for
 %% The address of (at least) one author should be given
 %% in the following format:
 \Address{
-  Tobias Liboschik\\
+  Tobias Liboschik \emph{(Corresponding author)}\\
   Department of Statistics\\
   TU Dortmund University\\
   44221 Dortmund, Germany\\
   E-mail: \email{liboschik@statistik.tu-dortmund.de}\\
-  URL: \url{http://www.statistik.tu-dortmund.de/liboschik-en.html}
+  URL: \url{http://www.statistik.tu-dortmund.de/liboschik-en.html}\\[1em]
+  Konstantinos Fokianos\\
+  Department of Mathematics \& Statistics\\
+  University of Cyprus\\
+  Nicosia 1678, Cyprus\\
+  E-mail: \email{fokianos@ucy.ac.cy}\\
+  URL: \url{http://www.mas.ucy.ac.cy/~fokianos}\\[1em]
+  Roland Fried\\
+  Department of Statistics\\
+  TU Dortmund University\\
+  44221 Dortmund, Germany\\
+  E-mail: \email{fried@statistik.tu-dortmund.de}\\
+  URL: \url{http://www.statistik.tu-dortmund.de/fried-en.html}
 }
 
 %% for those who use Sweave please include the following line (with % symbols):
@@ -87,6 +99,16 @@ options(prompt="R> ", continue="+  ", width=76, useFancyQuotes=FALSE, digits=4)
 %\large %increased text size
 %\doublespacing %increased line spread
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\setlength{\fboxsep}{2mm}
+\newlength{\parboxwidth}
+\setlength{\parboxwidth}{\textwidth}
+\advance\parboxwidth by -2\fboxsep
+\fbox{\parbox{\parboxwidth}{
+\small
+This document has been published as a vignette of the \proglang{R} package \pkg{tscount}. Last update: May~2016. A stable version has been published as a discussion paper in February 2015 (\doi{10.17877/DE290R-7239}). Please cite this manuscript as, e.g.:\\[0.5em]
+Tobias Liboschik, Konstantinos Fokianos \& Roland Fried (2016). ``tscount: An R Package for Analysis of Count Time Series Following Generalized Linear Models''. Vignette of \proglang{R} package \pkg{tscount} version~1.3.0.
+}}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -877,10 +899,10 @@ The time-varying intercept $\beta_{0,t}$ is assumed to depend on its previous va
 \end{align*}
 where $\Delta_d$ is the difference operator of order $d\in\{0,1,2\}$ and $\kappa_{\beta_0}$ a precision parameter. Explicitly, it holds $\beta_{0,t} \sim \text{N}(0,\kappa_{\beta_0}^{-1})$, $\beta_{0,t}|\beta_{0,t-1} \sim \text{N}(\beta_{0,t-1},\kappa_{\beta_0}^{-1})$ and $\beta_{0,t}|\beta_{0,t-1},\beta_{0,t-2} \sim \text{N}(2\beta_{0,t-1}-\beta_{0,t-2},\kappa_{\beta_0}^{-1})$ for $d=1,2,3$, respectively. For $d>0$ this induces dependence between successive observations. The other parameters, $\delta$ for the linear trend, $\gamma_t$ for a seasonal effect, and the vector $\boldsymbol{\eta}$ for the effect of a covariate vector $\boldsymbol{X}_t$, are also assumed to be normally distributed with certain priors. Inference is done in a Bayesian manner and utilizes an efficient integrated nested Laplace approximation (INLA) provided by the package \pkg{INLA} \citep{lindgren_bayesian_2015} (available from \url{http://www.r-inla.org}).
 In the following example we fit a Negative Binomial model without trend, seasonality or covariate effects but with a time-varying intercept of order $d=1$ to the Campylobacterosis data:
-<<INLA-package-install, include=FALSE, echo=FALSE, results=hide>>=
-#The INLA package is not available on CRAN and needs to installed from another repository if it is not yet available.
-if(!require("INLA")) install.packages("INLA", repos="https://www.math.ntnu.no/inla/R/stable")
-@
+%<<INLA-package-install, include=FALSE, echo=FALSE, results=hide>>=
+%#The INLA package is not available on CRAN and needs to installed from another repository if it is not yet available.
+%if(!require("INLA")) install.packages("INLA", repos="https://www.math.ntnu.no/inla/R/stable")
+%@
 <<INLA-package>>=
 library("INLA")
 campyfit_INLA <- inla(ts ~ f(time, model = "rw1", cyclic = FALSE),
