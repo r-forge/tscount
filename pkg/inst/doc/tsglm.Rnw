@@ -901,9 +901,9 @@ where $\Delta_d$ is the difference operator of order $d\in\{0,1,2\}$ and $\kappa
 In the following example we fit a Negative Binomial model without trend, seasonality or covariate effects but with a time-varying intercept of order $d=1$ to the Campylobacterosis data:
 %<<INLA-package-install, include=FALSE, echo=FALSE, results=hide>>=
 %#The INLA package is not available on CRAN and needs to installed from another repository if it is not yet available.
-%if(!require("INLA")) install.packages("INLA", repos="https://www.math.ntnu.no/inla/R/stable")
+%if(!require("INLA")) install.packages("INLA", repos="https://www.math.ntnu.no/inla/R/testing")
 %@
-<<INLA-package>>=
+<<INLA-package1a, eval=FALSE, purl=FALSE>>=
 library("INLA")
 campyfit_INLA <- inla(ts ~ f(time, model = "rw1", cyclic = FALSE),
                 data = data.frame(time = seq(along = campy), ts = campy),
@@ -913,6 +913,12 @@ campyfit_INLA <- inla(ts ~ f(time, model = "rw1", cyclic = FALSE),
                 control.inla = list(int.strategy = "grid", dz = 1,
                                     diff.logdens = 10))
 posterior <- inla.posterior.sample(1000, campyfit_INLA)
+@
+<<INLA-package1b, include=FALSE, echo=FALSE, results=hide>>=
+#save(posterior, file="INLA.RData")
+load("INLA.RData")
+@
+<<INLA-package1c>>=
 rowMeans(sapply(posterior, function(x) (unname(x$hyperpar))))
 @
 <<INLA-package2, include=FALSE, echo=FALSE, results=hide>>=
