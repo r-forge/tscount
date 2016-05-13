@@ -913,18 +913,17 @@ campyfit_INLA <- inla(ts ~ f(time, model = "rw1", cyclic = FALSE),
                 control.inla = list(int.strategy = "grid", dz = 1,
                                     diff.logdens = 10))
 posterior <- inla.posterior.sample(1000, campyfit_INLA)
-@
-<<INLA-package1b, include=FALSE, echo=FALSE, results=hide>>=
-#save(posterior, file="INLA.RData")
-load("INLA.RData")
-@
-<<INLA-package1c>>=
 rowMeans(sapply(posterior, function(x) (unname(x$hyperpar))))
 @
-<<INLA-package2, include=FALSE, echo=FALSE, results=hide>>=
-mu <- rowMeans(sapply(posterior,
-                      function(x) exp(unname(x$latent[seq(along=campy), 1]))))
-campyfitted_INLA <- mu*mean(campy)
+<<INLA-package1b, include=FALSE, echo=FALSE, results=hide>>=
+#campyest_INLA <- rowMeans(sapply(posterior, function(x) (unname(x$hyperpar))))
+#mu <- rowMeans(sapply(posterior, function(x) exp(unname(x$latent[seq(along=campy), 1]))))
+#campyfitted_INLA <- mu*mean(campy)
+#save(campyest_INLA, campyfitted_INLA, file="INLA.RData")
+load("INLA.RData")
+@
+<<INLA-package1c, echo=FALSE>>=
+campyest_INLA
 @
 The estimates for the parameters $\phi$ (the former) and $\kappa_{\beta_0}$ (the latter) in the output above are based on means of a sample of size 1000 from the posterior distribution. Fitted values $\widehat{\lambda}_1,\dots,\widehat{\lambda}_{140}$ are obtained in the same way (not shown in the above code).
 With the Bayesian approach it is very natural to obtain prediction intervals for future observations from the posterior distribution which account for the estimation and observation uncertainties. This is a clear advantage over the classical likelihood-based approach pursued in our package (cf. Section~\ref{sec:prediction}). A disadvantage of the Bayesian approach is its much higher computational effort which could be an obstacle for real-time applications and simultaneous analysis of several time series. The above example runs more than eight seconds on a standard office computer; this is seven times longer than \code{tsglm} takes to fit the model.
