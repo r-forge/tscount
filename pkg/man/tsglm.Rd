@@ -194,7 +194,7 @@ An object of class \code{"tsglm"}, which is a list with at least the following e
   
   \item{sigmasq}{the estimated overdispersion coefficient. Is zero in case of a Poisson distribution.}
 
-The functions \code{ingarch.fit} and \code{loglin.fit} have the same output except the elements \code{distr}, \code{distrcoefs} and \code{sigmasq}. In addition, they return the following list elements:
+The function \code{mean.fit} has the same output except the elements \code{distr}, \code{distrcoefs} and \code{sigmasq}. In addition, they return the following list elements:
 
   \item{inter}{some details on the intermediate estimation of the coefficients as returned by \code{\link{constrOptim}} or \code{\link{optim}}.} 
 
