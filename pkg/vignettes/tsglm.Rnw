@@ -604,7 +604,7 @@ The diagnostic plots like in Figure~\ref{fig:campydiagnostic} can be produced by
 par(mfrow = c(2, 2), mar=c(3, 4, 2, 0.5), mgp=c(1.8, 0.6, 0))
 acf(residuals(campyfit_pois), main="", xlab="Lag (in years)")
 title(main = "ACF of response residuals")
-marcal(campyfit_pois, ylim = c(-0.03, 0.03), main = "Marginal calibration")
+marcal(campyfit_pois, main = "Marginal calibration")
   lines(marcal(campyfit_nbin, plot = FALSE), lty = "dashed")
   legend("bottomright", legend = c("Pois", "NegBin"), lwd=1,
          lty=c("solid", "dashed"))
@@ -613,7 +613,7 @@ pit(campyfit_nbin, ylim = c(0, 1.5), main = "PIT Negative Binomial")
 @
 <<campy3b, eval=FALSE>>=
 acf(residuals(campyfit_pois), main = "ACF of response residuals")
-marcal(campyfit_pois, ylim = c(-0.03, 0.03), main = "Marginal calibration")
+marcal(campyfit_pois, main = "Marginal calibration")
   lines(marcal(campyfit_nbin, plot = FALSE), lty = "dashed")
   legend("bottomright", legend = c("Pois", "NegBin"), lwd = 1,
          lty = c("solid", "dashed"))
@@ -873,7 +873,7 @@ The package \pkg{acp} \citep{siakoulis_acp:_2015} has been published recently an
 \item The \pkg{acp} package is different in many technical details. Notably, it does not allow to incorporate the parameter constraints given in Section~\ref{sec:inference}.
 \item Quasi maximum likelihood fitting allows to choose a more flexible Negative Binomial model instead of a Poisson model (argument \code{distr = "nbinom"}).
 \item The \code{tsglm} function additionally comprises a log-linear model (argument \code{link = "log"}), which is more adequate for many count time series.
-\item The \code{tsglm} function allows for more flexible dependence modeling by allowing arbitrary specification of dynamics. This flexibility is missing by the \code{acp} function for model fitting because it requires all variables up to a given order to be included (e.g. $\lambda_{t-1},\dots,\lambda_{t-12}$ and not just $\lambda_{t-12}$). For instance, \code{tsglm} allows for stochastic seasonality (see Section~\ref{sec:campy}).
+\item The \code{tsglm} function allows for more flexible dependence modeling by allowing arbitrary specification of dynamics. This flexibility is missing by the \code{acp} function for model fitting because it requires all variables up to a given order to be included (e.g.,  $\lambda_{t-1},\dots,\lambda_{t-12}$ and not just $\lambda_{t-12}$). For instance, \code{tsglm} allows for stochastic seasonality (see Section~\ref{sec:campy}).
 \item The \code{tsglm} function differentiates between covariates with so-called external and internal effect (see Equation~\eqref{eq:linpredextint} and the accompanying discussion).
 \end{itemize}
 In the following example, an INGARCH(1,1) model (ignoring the seasonal effect) is fitted to the Campylobacterosis data analyzed in Section~\ref{sec:campy}:
@@ -1189,7 +1189,7 @@ For $p=q=2$ the required condition is
 \big\}\ < 1. \label{eq:paramspace_sim22}
 \end{split}
 \end{align}
-There are parameters which fulfill \eqref{eq:paramspace_tsglm} but not \eqref{eq:paramspace_sim22} (e.g. $\beta_1=-0.9$, $\beta_2=0.9$, $\alpha_1=0$, $\alpha_2=0$) and vice versa (e.g. $\beta_1=-1.8$, $\beta_2=0$, $\alpha_1=0.9$, $\alpha_2=0$). However, there exists a large intersection between values which fulfill \eqref{eq:paramspace_tsglm} and \eqref{eq:paramspace_sim22}.
+There are parameters which fulfill \eqref{eq:paramspace_tsglm} but not \eqref{eq:paramspace_sim22} (e.g.,  $\beta_1=-0.9$, $\beta_2=0.9$, $\alpha_1=0$, $\alpha_2=0$) and vice versa (e.g.,  $\beta_1=-1.8$, $\beta_2=0$, $\alpha_1=0.9$, $\alpha_2=0$). However, there exists a large intersection between values which fulfill \eqref{eq:paramspace_tsglm} and \eqref{eq:paramspace_sim22}.
 For the general case $p=q$ the condition can be obtained by considering the maximum among $p$ elements of the norms of matrix products with $p$ factors, where each factor corresponds to a $(2p-1)\times(2p-1)$ matrix. The implementation of this condition is a challenging problem and therefore we have decided in favor of \eqref{eq:paramspace_tsglm}. Alternatively, we can obtain unconstrained estimates (argument \code{final.control = list(constrained = NULL)}), which should be examined carefully.
 
 
