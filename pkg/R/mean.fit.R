@@ -58,7 +58,7 @@ mean.fit <- function(ts, model, xreg, link, score=TRUE, info=c("score", "none", 
   ##############
   #Starting value:
   begin_start <- proc.time()["elapsed"]
-  param_start <- start.fit(ts=ts, model=model, xreg=xreg, start.control=start.control, link="identity")
+  param_start <- start.fit(ts=ts, model=model, xreg=xreg, start.control=start.control, link=link)
 
   # # # # # # #
   if(!is.null(final.control$constrained)){ #in case of constrained optimization the starting values are a projection of the start estimation into the parameter space
