@@ -85,8 +85,7 @@ covariate_sim1 <- function(seed, covariate_type, covariate_factor=1, link="log",
   model <- list(past_obs=1, past_mean=1, external=TRUE)
   param <- c(param, list(xreg=covariate_factor*param$intercept))
   timser <- tsglm.sim(n, param=param, model=model, xreg=covariate, link=link)$ts
-  if(link=="identity") fit <- try(ingarch.fit(ts=timser, model=model, xreg=covariate, ...))
-  if(link=="log") fit <- try(loglin.fit(ts=timser, model=model, xreg=covariate, ...))
+  fit <- try(tsglm.meanfit(ts=timser, model=model, xreg=covariate, link=link, ...))
   if(class(fit)=="try-error") return(rep(NA, 11))
   if(fitonly) return(fit)
   if(plot){
