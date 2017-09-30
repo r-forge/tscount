@@ -7,6 +7,7 @@ importFrom(ltsa, tacvfARMA)
 
 export(
   tsglm,
+  mean.fit,
   tsglm.sim,
   ingarch.mean,
   ingarch.var,

@@ -60,7 +60,7 @@ Additionally, we provide a review of \proglang{R} packages which can be used for
 %% The address of (at least) one author should be given
 %% in the following format:
 \Address{
-  Tobias Liboschik \emph{(Corresponding author)}\\
+  Tobias Liboschik\\
   Department of Statistics\\
   TU Dortmund University\\
   44221 Dortmund, Germany\\
@@ -72,7 +72,7 @@ Additionally, we provide a review of \proglang{R} packages which can be used for
   Nicosia 1678, Cyprus\\
   E-mail: \email{fokianos@ucy.ac.cy}\\
   URL: \url{http://www.mas.ucy.ac.cy/~fokianos}\\[1em]
-  Roland Fried\\
+  Roland Fried \emph{(Corresponding author)}\\
   Department of Statistics\\
   TU Dortmund University\\
   44221 Dortmund, Germany\\
@@ -106,8 +106,8 @@ options(prompt="R> ", continue="+  ", width=76, useFancyQuotes=FALSE, digits=4)
 \advance\parboxwidth by -2\fboxsep
 \fbox{\parbox{\parboxwidth}{
 \small
-This document has been published as a vignette of the \proglang{R} package \pkg{tscount}. Last update: August~2016. An earlier version has been published as a discussion paper in February 2015 (\doi{10.17877/DE290R-7239}). A recent version has been conditionally accepted for publication in \emph{Journal of Statistical Software}. Please cite this manuscript as:\\[0.5em]
-Tobias Liboschik, Konstantinos Fokianos \& Roland Fried (2016). ``tscount: An R Package for Analysis of Count Time Series Following Generalized Linear Models''. To appear in \emph{Journal of Statistical Software}.
+This document has been published as a vignette of the \proglang{R} package \pkg{tscount}. Last update: September~2017. An earlier version has been published as a discussion paper in February 2015 (\doi{10.17877/DE290R-7239}). A recent version has been conditionally accepted for publication in \emph{Journal of Statistical Software}. Please cite this manuscript as:\\[0.5em]
+Tobias Liboschik, Konstantinos Fokianos \& Roland Fried. ``tscount: An R Package for Analysis of Count Time Series Following Generalized Linear Models''. To appear in \emph{Journal of Statistical Software}.
 }}
 
 
@@ -209,7 +209,7 @@ $Y_{t}|{\cal F}_{t-1} \sim \mathrm{NegBin}(\lambda_t,\phi)$, where the Negative 
 In this case, $\VAR\left(Y_{t}|{\cal F}_{t-1}\right)=\lambda_t+\lambda_t^2/\phi$, i.e., the conditional variance increases quadratically with $\lambda_t$. The Poisson distribution is a limiting case of the Negative Binomial when $\phi\to\infty$. 
 
 Note that the Negative Binomial distribution belongs to the class of mixed Poisson processes.
-A mixed Poisson process is specified by setting $Y_t=N_t(0,Z_t\lambda_t]$, where $\{N_t\}$ are i.i.d. Poisson processes with unit intensity and $\{Z_t\}$ are i.i.d. random variables with mean 1 and variance $\sigma^2$, independent of $\{Y_t\}$.
+A mixed Poisson process is specified by setting $Y_t=N_t(0,Z_t\lambda_t]$, where $\{N_t\}$ are i.i.d. Poisson processes with unit intensity and $\{Z_t\}$ are i.i.d. random variables with mean 1 and variance $\sigma^2$, independent of $\{Y_t\}$ \citep{christou_quasi-likelihood_2014}.
 When $\{Z_t\}$ is an i.i.d. process of Gamma random variables, then we obtain the Negative Binomial process with $\sigma^2=1/\phi$.
 We refer to $\sigma^2$ as the overdispersion coefficient because it is proportional to the extent of overdispersion of the conditional distribution. The limiting case of $\sigma^2=0$ corresponds to the Poisson distribution, i.e., no overdispersion.
 The estimation procedure we study is not confined to the Negative Binomial case but to any mixed Poisson distribution. However, the Negative Binomial assumption is required for prediction intervals and model assessment; these topics are discussed in Sections~\ref{sec:prediction} and \ref{sec:modelassessment}.
@@ -667,7 +667,8 @@ Next we study the monthly number of killed drivers of light goods vehicles in Gr
 %
 <<seatbelts1, echo=FALSE, fig=TRUE, include=FALSE, height=3, width=7>>=
 par(mar=c(3, 3, 0.5, 0.5), mgp=c(1.8, 0.6, 0))
-plot(Seatbelts[, "VanKilled"], ylab = "Number of casualties", type = "o", xaxt = "n", ylim = c(0, 18))
+plot(Seatbelts[, "VanKilled"], ylab = "Number of casualties", type = "o",
+     xaxt = "n", ylim = c(0, 18))
 axis(side = 1, at = 1969:1985)
 abline(v = 1983, col = "darkgrey", lwd=2)
 @
@@ -734,9 +735,13 @@ predictions_1982 <- predict(seatbeltsfit, n.ahead = 12,
                             level = 0.9, global = TRUE,
                             B = 2000, newxreg = regressors_1982)
 plot(window(timeseries, end = 1982.917), type = "o",
-     xlim = c(1978.7, 1982.9), ylim = c(0, 20), ylab = "Number of casualities")
+     xlim = c(1978.7, 1982.9), ylim = c(0, 20),
+     ylab = "Number of casualities")
 lines(fitted(seatbeltsfit), col = "black", lty = "longdash", lwd = 2)
-arrows(x0 = time(predictions_1982$interval), y0 = predictions_1982$interval[, "lower"], y1 = predictions_1982$interval[, "upper"], angle = 90, code = 3, length = 0.04, col = "darkgrey", lwd = 2)
+arrows(x0 = time(predictions_1982$interval),
+       y0 = predictions_1982$interval[, "lower"],
+       y1 = predictions_1982$interval[, "upper"],
+       angle = 90, code = 3, length = 0.04, col = "darkgrey", lwd = 2)
 points(timeseries_1982, pch = 16, type = "o") 
 lines(x = c(1981.917, time(predictions_1982$pred)), c(fitted(seatbeltsfit)[156], predictions_1982$pred), col = "black", lty = "solid", lwd = 2)
 @
@@ -798,7 +803,8 @@ Furthermore, the \code{glm} function does not induce the constraints on the vect
 At least for the very simple case of a Poisson INGARCH(1,0) model fitted to the Campylobacterosis data the \code{glm} function performs well and we obtain very similar parameter estimates like with the \code{tsglm} function:
 <<glm-function>>=
 campydata <- data.frame(ts = campy[-1], lag1 = campy[-length(campy)])
-coef(glm(ts ~ lag1, family = poisson(link = "identity"), data = campydata))
+coef(glm(ts ~ lag1, family = poisson(link = "identity"),
+         data = campydata))
 coef(tsglm(campy, model = list(past_obs = 1), link = "identity")) 
 @
 As described in more detail in Section~\ref{app:startestimation}, a fit by the \code{glm} function can be used as a starting value to the function \code{tsglm}.
@@ -873,7 +879,7 @@ The package \pkg{acp} \citep{siakoulis_acp:_2015} has been published recently an
 \item The \pkg{acp} package is different in many technical details. Notably, it does not allow to incorporate the parameter constraints given in Section~\ref{sec:inference}.
 \item Quasi maximum likelihood fitting allows to choose a more flexible Negative Binomial model instead of a Poisson model (argument \code{distr = "nbinom"}).
 \item The \code{tsglm} function additionally comprises a log-linear model (argument \code{link = "log"}), which is more adequate for many count time series.
-\item The \code{tsglm} function allows for more flexible dependence modeling by allowing arbitrary specification of dynamics. This flexibility is missing by the \code{acp} function for model fitting because it requires all variables up to a given order to be included (e.g.,  $\lambda_{t-1},\dots,\lambda_{t-12}$ and not just $\lambda_{t-12}$). For instance, \code{tsglm} allows for stochastic seasonality (see Section~\ref{sec:campy}).
+\item The \code{tsglm} function allows for more flexible dependence modeling by allowing arbitrary specification of dynamics. This flexibility is missing by the \code{acp} function for model fitting because it requires all variables up to a given order to be included (e.g., $\lambda_{t-1},\dots,\lambda_{t-12}$ and not just $\lambda_{t-12}$). For instance, \code{tsglm} allows for stochastic seasonality (see Section~\ref{sec:campy}).
 \item The \code{tsglm} function differentiates between covariates with so-called external and internal effect (see Equation~\eqref{eq:linpredextint} and the accompanying discussion).
 \end{itemize}
 In the following example, an INGARCH(1,1) model (ignoring the seasonal effect) is fitted to the Campylobacterosis data analyzed in Section~\ref{sec:campy}:
@@ -933,7 +939,7 @@ g(\lambda_t) = \boldsymbol{\eta}^\top\boldsymbol{X}_t +
 \end{align*}
 where the notation follows the GLARMA notation.
 Compared to the GLARMA model, the GARMA model does not include an offset and the ARMA structure applies to values which are transformed by the link function $g$, i.e., on the scale of the linear predictor. In case of a logarithmic link, the observations $Y_t$ are replaced by $\max(Y_t,c)$ for a threshold $c\in(0,1)$, such that $g(Y_t)$ is well-defined. In our package this problem is handled replacing $Y_t$ by $Y_t+1$.
-The package \pkg{gamlss.util} \citep{stasinopoulos_gamlss.util:_2015} contains the function \code{garmaFit} for fitting such GLARMA models. Like ordinary GLMs, these models are fitted by maximum likelihood employing the IRLS algorithm. As pointed out on the accompanying help page, the function \code{garmaFit} does not guarantee stationarity of the fitted model. Additionally, the function \code{garmaFit} does not allow to specify serial dependence of higher order without including all lower orders, which would be necessary for parsimoniously describing stochastic seasonality. The following example shows a fit of a Negative Binomial GARMA model of order $p=1$ and $q=1$ with link $g(\cdot)=\log(\cdot)$ to the Campybacterosis data:
+The package \pkg{gamlss.util} \citep{stasinopoulos_gamlss.util:_2015} contains the function \code{garmaFit} for fitting such GARMA models. Like ordinary GLMs, these models are fitted by maximum likelihood employing the IRLS algorithm. As pointed out on the accompanying help page, the function \code{garmaFit} does not guarantee stationarity of the fitted model. Additionally, the function \code{garmaFit} does not allow to specify serial dependence of higher order without including all lower orders, which would be necessary for parsimoniously describing stochastic seasonality. The following example shows a fit of a Negative Binomial GARMA model of order $p=1$ and $q=1$ with link $g(\cdot)=\log(\cdot)$ to the Campybacterosis data:
 <<gamlss.util-package>>=
 library("gamlss.util")
 coef(garmaFit(campy ~ 1, order = c(1, 1), family = NBI(mu.link = "log")))
@@ -941,8 +947,8 @@ coef(garmaFit(campy ~ 1, order = c(1, 1), family = NBI(mu.link = "log")))
 In the above output the AR coefficient $\phi_1$ is named \code{phi} and the MA coefficient $\psi_1$ \code{theta}.
 The function \code{garma} from the package \pkg{VGAM} \citep{yee_vgam:_2016} is an alternative implementation for fitting GARMA models. However, the accompanying help page warns that this function is still in premature stage and points to potential problems with the initialization (in version 1.0-1 of the package). In addition, \code{garma} allows only for autoregressive modeling (i.e. $q=0$) and the Negative Binomial distribution is not supported. Hence our example can only show a fit of a Poisson GARMA model of order $p=1$ and $q=0$ to the Campylobacterosis data:
 <<VGAM-package2>>=
-coef(vglm(campy ~ 1, family = garma(link="loge", p.ar.lag = 1, q.ma.lag = 0,
-                                    coefstart = c(0.1, 0.1))))
+coef(vglm(campy ~ 1, family = garma(link="loge", p.ar.lag = 1,
+                                q.ma.lag = 0, coefstart = c(0.1, 0.1))))
 @
 In this example the estimated coefficient for the autoregressive term is larger than one, which suggests that the fitted process is not stationary.
 We could not find settings for which the functions \code{garmaFit} and \code{garma} fit the same model and give identical or at least similar results.
@@ -972,11 +978,11 @@ The time-varying intercept $\beta_{0,t}$ is assumed to depend on its previous va
 \end{align*}
 for $d=1,2,3$, respectively. For $d>0$ this induces dependence between successive observations. The other parameters, $\delta$ for the linear trend, $\gamma_t$ for a seasonal effect, and the vector $\boldsymbol{\eta}$ for the effect of a covariate vector $\boldsymbol{X}_t$, are also assumed to be normally distributed with certain priors. Inference is done in a Bayesian framework and utilizes an efficient integrated nested Laplace approximation (INLA) provided by the package \pkg{INLA} \citep{lindgren_bayesian_2015} (available from \url{http://www.r-inla.org}).
 In the following example we fit a Negative Binomial model without trend, seasonality or covariate effects but with a time-varying intercept of order $d=1$ to the Campylobacterosis data:
-<<INLA-package-install, include=FALSE, echo=FALSE, results=hide>>=
+<<INLA-package-install, include=FALSE, echo=FALSE, results=hide, eval=FALSE>>=
 #The INLA package is not available on CRAN and needs to installed from another repository if it is not yet available.
 if(!require("INLA")) install.packages("INLA", repos="https://www.math.ntnu.no/inla/R/testing")
 @
-<<INLA-package>>=
+<<INLA-package, eval=FALSE>>=
 library("INLA")
 campyfit_INLA <- inla(ts ~ f(time, model = "rw1", cyclic = FALSE),
                 data = data.frame(time = seq(along = campy), ts = campy),
@@ -988,10 +994,16 @@ campyfit_INLA <- inla(ts ~ f(time, model = "rw1", cyclic = FALSE),
 posterior <- inla.posterior.sample(1000, campyfit_INLA)
 rowMeans(sapply(posterior, function(x) (unname(x$hyperpar))))
 @
-<<INLA-package2, include=FALSE, echo=FALSE, results=hide>>=
+<<INLA-package2, include=FALSE, echo=FALSE, results=hide, eval=FALSE>>=
 mu <- rowMeans(sapply(posterior,
                       function(x) exp(unname(x$latent[seq(along=campy), 1]))))
 campyfitted_INLA <- mu*mean(campy)
+@
+<<seatbelts3a, echo=FALSE>>=
+#param_INLA <- rowMeans(sapply(posterior, function(x) (unname(x$hyperpar))))
+#save(campyfitted_INLA, param_INLA, file="INLA.RData")
+load("INLA.RData")
+param_INLA
 @
 The estimates for the parameters $\phi$ (the former) and $\kappa_{\beta_0}$ (the latter) in the output above are based on means of a sample of size 1000 from the posterior distribution. Fitted values $\widehat{\lambda}_1,\dots,\widehat{\lambda}_{140}$ are obtained in the same way (not shown in the above code).
 With the Bayesian approach it is very natural to obtain prediction intervals for future observations from the posterior distribution which account for the estimation and observation uncertainties. This is a clear advantage over the classical likelihood-based approach pursued in our package (cf. Section~\ref{sec:prediction}). A disadvantage of the Bayesian approach is its much higher computational effort which could be an obstacle for real-time applications and simultaneous analysis of several time series. The above example runs more than eight seconds on a standard office computer (Intel Xeon CPU with 2.83~GHz); this is seven times longer than \code{tsglm} takes to fit the model.
@@ -1176,20 +1188,17 @@ For the first order model he obtains the weaker condition
 For $p=q=2$ the required condition is
 \begin{align}
 \begin{split}
-\max \big\{\ &
+\max \big\{ \ &
 \left| \alpha_1 \right| + \left| \alpha_2 \right| + \left| \beta_2 \right|,
-\left| \alpha_1  \alpha_2 \right| + \left| \alpha_2
- \alpha_1^2 \right| + \left| \alpha_1 + \beta_2 \right|, %
+\left| \alpha_1  \alpha_2 \right| + \left| \alpha_2 \alpha_1^2 \right| + \left| \alpha_1 + \beta_2 \right|, %
 \left| \alpha_2 \right| + \left| \alpha_1 + \beta_1 \right| + \left| \beta_2 \right|, \\
-& \left| \alpha_2  (\alpha_1 + \beta_1) \right| + \left| \alpha_2 + \alpha_1  (\alpha_1 + \beta_1) \right| + \left| (\alpha_1 + \beta_1)  \beta_2 \right|, %
-\left| \alpha_2 \right| + \left| \alpha_1 \right| + \left| \beta_2\right|, \\
-& \left| \alpha_2  (\alpha_1 + \beta_1) \right| + \left| \alpha_2 + \alpha_1  (\alpha_1 + \beta_1) \right| + \left| (\alpha_1 + \beta_1)  \beta_2 \right|, %
-\left| \alpha_2 \right| + \left| \alpha_1 + \beta_1 \right| + \left| \beta_2 \right|, \\
+& \left| \alpha_2  (\alpha_1 + \beta_1) \right| + \left| \alpha_2 + \alpha_1  (\alpha_1 + \beta_1) \right| + \left| (\alpha_1 + \beta_1)  \beta_2 \right|, \\
+& \left| \alpha_1 \alpha_2 \right| + \left| \alpha_2 + \alpha_1 (\alpha_1 + \beta_1) + \beta_2 \right| + \left| \alpha_1 \beta_2 \right|, \\
 & \left| (\alpha_1 + \beta_1)  \alpha_2 \right| + \left| \alpha_2 + (\alpha_1 + \beta_1)^2 + \beta_2 \right| + \left| (\alpha_1 + \beta_1)  \beta_2 \right|
-\big\}\ < 1. \label{eq:paramspace_sim22}
+\big\} \ < 1. \label{eq:paramspace_sim22}
 \end{split}
 \end{align}
-There are parameters which fulfill \eqref{eq:paramspace_tsglm} but not \eqref{eq:paramspace_sim22} (e.g.,  $\beta_1=-0.9$, $\beta_2=0.9$, $\alpha_1=0$, $\alpha_2=0$) and vice versa (e.g.,  $\beta_1=-1.8$, $\beta_2=0$, $\alpha_1=0.9$, $\alpha_2=0$). However, there exists a large intersection between values which fulfill \eqref{eq:paramspace_tsglm} and \eqref{eq:paramspace_sim22}.
+There are parameters which fulfill \eqref{eq:paramspace_tsglm} but not \eqref{eq:paramspace_sim22} (e.g., $\beta_1=-0.9$, $\beta_2=0.9$, $\alpha_1=0$, $\alpha_2=0$) and vice versa (e.g., $\beta_1=-1.8$, $\beta_2=0$, $\alpha_1=0.9$, $\alpha_2=0$). However, there exists a large intersection between values which fulfill \eqref{eq:paramspace_tsglm} and \eqref{eq:paramspace_sim22}.
 For the general case $p=q$ the condition can be obtained by considering the maximum among $p$ elements of the norms of matrix products with $p$ factors, where each factor corresponds to a $(2p-1)\times(2p-1)$ matrix. The implementation of this condition is a challenging problem and therefore we have decided in favor of \eqref{eq:paramspace_tsglm}. Alternatively, we can obtain unconstrained estimates (argument \code{final.control = list(constrained = NULL)}), which should be examined carefully.
 
 
