@@ -1,3 +1,6 @@
+Changes since version 1.4.3
+ * Added to the return values of the predict function the bootstrap samples used for computation of prediction intervals.
+
 Changes since version 1.4.2
  * Removed several unnecessary dependencies to other packages by using static output in the vignette. Those packages were only needed for a comparison with this package in section 8 of the vignette.
 

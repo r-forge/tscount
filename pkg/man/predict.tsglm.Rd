@@ -90,6 +90,8 @@ If prediction intervals are calculated, the list has the additional element:
   \item{warning_messages}{a character vector containing warning messages. This should be \code{NULL} if no warning messages occured.}
   
   \item{median}{a vector giving the median of the predictive distribution for each of the future time points. Has class \code{"ts"} if the response used for fitting has this class.}
+  
+    \item{futureobs}{a matrix (\code{n.ahead}, \code{B}) of bootstrap samples which were used for computing prediction intervals. Is \code{NULL} if computation was done by \code{method="conddistr"}.}
 }
 
 \references{

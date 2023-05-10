@@ -77,6 +77,7 @@ predict.tsglm <- function(object, n.ahead=1, newobs=NULL, newxreg=NULL, level=0.
       }
       predmed <- qdistr(p=0.5, meanvalue=pred, distr=object$distr, distrcoefs=object$distrcoefs)
       B <- NULL
+      futureobs <- NULL
     }
     if(method=="bootstrap"){
       if(!is.null(newobs)) stop("Computation of prediction intervals with argument 'method' set to \"bootstrap\"\ncan currently not take into account the future observations given in argument\n'newobs'. Either set argument 'method' to \"conddistr\" or do not compute\nprediction intervals at all by setting argument 'level' to zero.")
@@ -139,7 +140,7 @@ predict.tsglm <- function(object, n.ahead=1, newobs=NULL, newxreg=NULL, level=0.
         predint <- ts(predint, start=tsp(object$ts)[2]+1/frequency(object$ts), frequency=frequency(object$ts))
         predmed <- ts(predmed, start=tsp(object$ts)[2]+1/frequency(object$ts), frequency=frequency(object$ts))
     }
-    result <- c(result, list(interval=predint, level=level, global=global, type=type, method=method, B=B, estim=estim, B_estim=B_estim, warning_messages=warning_messages, median=predmed))
+    result <- c(result, list(interval=predint, level=level, global=global, type=type, method=method, B=B, estim=estim, B_estim=B_estim, warning_messages=warning_messages, median=predmed, futureobs=futureobs))
   }
   return(result)
 }
